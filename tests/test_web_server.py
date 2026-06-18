@@ -28,6 +28,13 @@ def test_production_ui_sections_are_available() -> None:
     assert 'id="exports"' in text
 
 
+def test_root_routes_are_reserved_for_claude_design() -> None:
+    text = Path(ROOT / "web" / "server.py").read_text(encoding="utf-8")
+
+    assert '"/", "/index.html", "/design.html", "/claude-design.html"' in text
+    assert '"/ops.html"' in text
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {

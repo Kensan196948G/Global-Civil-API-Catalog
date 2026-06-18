@@ -122,8 +122,12 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
+        if parsed.path in {"/", "/index.html", "/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=True)
+            return
+        if parsed.path == "/ops.html":
+            self.path = "/index.html"
+            super().do_GET()
             return
         if parsed.path == "/api/health":
             self.write_json({"status": "ok"})
@@ -153,8 +157,12 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
+        if parsed.path in {"/", "/index.html", "/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=False)
+            return
+        if parsed.path == "/ops.html":
+            self.path = "/index.html"
+            super().do_HEAD()
             return
         if parsed.path.startswith("/exports/"):
             self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=False)
