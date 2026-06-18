@@ -769,7 +769,8 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/05_kyukeishakeikaikuiki/10/909/403.png"
   },
   {
     "id": "GSI-HAZARD-TSUNAMI-001",
@@ -810,7 +811,8 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/04_tsunami_newlegend_data/10/909/403.png"
   },
   {
     "id": "GSI-HAZARD-STORM-SURGE-001",
@@ -851,7 +853,8 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/03_hightide_l2_shinsuishin_data/10/909/403.png"
   },
   {
     "id": "MLIT-REINFOLIB-LANDPRICE-001",
@@ -869,8 +872,8 @@
       "GeoJSON",
       "PBF"
     ],
-    "api_key_required": "unknown",
-    "auth_type": "unknown",
+    "api_key_required": "required",
+    "auth_type": "api_key",
     "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
     "commercial_use": "unknown",
     "update_frequency": "年次",
@@ -1306,7 +1309,8 @@
     "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n防災用途では最新性と責任範囲を明記する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://www.jma.go.jp/bosai/warning/data/warning/130000.json"
   },
   {
     "id": "JMA-EARTHQUAKE-001",
@@ -1715,7 +1719,8 @@
     "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n高頻度アクセスは禁止。キャッシュと利用制限を守る。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3Bnode(35.68,139.76,35.69,139.77)%3Bout%201%3B"
   },
   {
     "id": "OSM-TILE-001",
