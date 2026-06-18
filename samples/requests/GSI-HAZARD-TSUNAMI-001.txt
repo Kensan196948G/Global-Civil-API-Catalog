@@ -1,0 +1,1 @@
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://disaportaldata.gsi.go.jp/raster/04_tsunami_newlegend_data/10/909/403.png"

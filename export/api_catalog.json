@@ -1268,7 +1268,8 @@
     "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nURL時刻生成と仕様変更リスクに注意。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://www.jma.go.jp/bosai/amedas/data/latest_time.txt"
   },
   {
     "id": "JMA-WARNING-001",

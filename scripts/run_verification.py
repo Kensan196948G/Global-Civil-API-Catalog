@@ -55,6 +55,23 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
     }
 
     endpoint = item.get("sample_endpoint") or item.get("endpoint_template")
+    if endpoint:
+        request_path = Path(result["sample_request_path"])
+        request_path.parent.mkdir(parents=True, exist_ok=True)
+        request_path.write_text(
+            f'curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "{endpoint}"\n',
+            encoding="utf-8",
+        )
+
+    # Always ensure a response sample exists; the live path overwrites it with
+    # the real payload when a request is made.
+    response_path = Path(result["sample_response_path"])
+    response_path.parent.mkdir(parents=True, exist_ok=True)
+    if not response_path.exists():
+        response_path.write_text(
+            "no live response captured; see verification note\n", encoding="utf-8"
+        )
+
     if not live:
         return result
     if item["api_key_required"] == "required":

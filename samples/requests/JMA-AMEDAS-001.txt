@@ -1,0 +1,1 @@
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://www.jma.go.jp/bosai/amedas/data/latest_time.txt"

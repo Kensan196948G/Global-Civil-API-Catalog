@@ -36,7 +36,7 @@
 | MLIT-PLATEAU-001 | PLATEAU 3D都市モデル | 3D都市 | 国土交通省 | CityGML, 3D Tiles, GeoJSON | not_required | A | 4 | 接続検証済 | success | 都市スケールの3D確認、BIM/CIM連携、景観・日影・都市空間検討の基礎データとして使います。 |
 | MLIT-PLATEAU-SDK-001 | PLATEAU SDK/ユースケースデータ | 3D都市 | 国土交通省 | SDK, Sample Data | not_required | B | 3 | 接続候補 | success | 3D都市モデルやCityGMLを使い、景観、BIM/CIM、都市スケールの空間検討に利用します。大容量データのため範囲を絞って扱います。 |
 | JMA-FORECAST-001 | 気象庁 天気予報JSON | 気象 | 気象庁 | JSON | not_required | B | 5 | 本格利用候補 | success | 施工可否、作業計画、現場安全確認に使う天気予報データです。地域コードを指定して予報情報を取得します。 |
-| JMA-AMEDAS-001 | 気象庁 アメダスJSON | 気象 | 気象庁 | JSON | not_required | B | 4 | 接続候補 | warning | 天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。 |
+| JMA-AMEDAS-001 | 気象庁 アメダスJSON | 気象 | 気象庁 | JSON | not_required | B | 4 | 接続候補 | success | 天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。 |
 | JMA-WARNING-001 | 気象庁 警報注意報JSON | 気象 | 気象庁 | JSON | not_required | B | 4 | 接続候補 | success | 天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。 |
 | JMA-EARTHQUAKE-001 | 気象庁 地震情報 | 気象 | 気象庁 | XML, JSON相当 | not_required | B | 3 | 調査中 | - | 天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。 |
 | JMA-TYPHOON-001 | 気象庁 台風情報 | 気象 | 気象庁 | JSON相当, XML相当 | not_required | B | 3 | 調査中 | - | 天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。 |
