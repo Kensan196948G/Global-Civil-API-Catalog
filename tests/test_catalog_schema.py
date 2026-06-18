@@ -3,6 +3,7 @@ from pathlib import Path
 from scripts.catalog_utils import (
     ROOT,
     load_catalog,
+    load_catalog_metadata,
     load_verification_results,
     validate_catalog,
     validate_verification_results,
@@ -32,6 +33,19 @@ def test_release_acceptance_markers_exist() -> None:
     assert len(implementation_targets) >= 5
     assert len(production_candidates) >= 3
     assert all(item.get("adoption_reason") for item in production_candidates)
+
+
+def test_catalog_is_marked_as_production_import() -> None:
+    catalog = load_catalog()
+    metadata = load_catalog_metadata()
+
+    assert metadata["catalog_mode"] == "production"
+    assert metadata["source"] == "claude-design-bundle"
+    assert metadata["record_count"] == len(catalog)
+    assert all(item["catalog_mode"] == "production" for item in catalog)
+    assert all(item["production_source"] == "claude-design-bundle" for item in catalog)
+    assert all(item["usage_summary"] for item in catalog)
+    assert all(item["usage_notes"] for item in catalog)
 
 
 def test_sample_paths_exist_for_verification_results() -> None:

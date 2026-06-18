@@ -8,6 +8,7 @@ from urllib.parse import parse_qs, quote, unquote, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+DESIGN_HTML_PATH = Path(__file__).resolve().parent / "Global Civil API Catalog.html"
 DATA_DIR = ROOT / "data"
 EXPORT_DIR = ROOT / "export"
 
@@ -43,6 +44,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
+        if parsed.path in {"/", "/index.html"} and DESIGN_HTML_PATH.exists():
+            self.handle_design_html(include_body=True)
+            return
         if parsed.path == "/api/health":
             self.write_json({"status": "ok"})
             return
@@ -55,6 +59,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/summary":
             self.handle_summary()
             return
+        if parsed.path == "/api/metadata":
+            self.write_json(load_json(DATA_DIR / "catalog_metadata.json"))
+            return
         if parsed.path == "/api/export":
             self.handle_export_index()
             return
@@ -65,10 +72,22 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
+        if parsed.path in {"/", "/index.html"} and DESIGN_HTML_PATH.exists():
+            self.handle_design_html(include_body=False)
+            return
         if parsed.path.startswith("/exports/"):
             self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=False)
             return
         super().do_HEAD()
+
+    def handle_design_html(self, include_body: bool) -> None:
+        data = DESIGN_HTML_PATH.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        if include_body:
+            self.wfile.write(data)
 
     def handle_catalog(self, query: dict[str, list[str]]) -> None:
         catalog = load_json(DATA_DIR / "api_catalog.json")

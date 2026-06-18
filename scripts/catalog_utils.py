@@ -13,6 +13,7 @@ DATA_DIR = ROOT / "data"
 EXPORT_DIR = ROOT / "export"
 
 CATALOG_PATH = DATA_DIR / "api_catalog.json"
+CATALOG_METADATA_PATH = DATA_DIR / "catalog_metadata.json"
 VERIFICATION_PATH = DATA_DIR / "verification_results.json"
 
 REQUIRED_CATALOG_FIELDS = {
@@ -33,6 +34,8 @@ REQUIRED_CATALOG_FIELDS = {
     "connection_priority",
     "business_fit_score",
     "integration_score",
+    "usage_summary",
+    "usage_notes",
     "tags",
 }
 
@@ -85,6 +88,13 @@ def load_verification_results(path: Path = VERIFICATION_PATH) -> list[dict[str, 
     data = load_json(path)
     if not isinstance(data, list):
         raise ValueError("verification root must be a list")
+    return data
+
+
+def load_catalog_metadata(path: Path = CATALOG_METADATA_PATH) -> dict[str, Any]:
+    data = load_json(path)
+    if not isinstance(data, dict):
+        raise ValueError("catalog metadata root must be an object")
     return data
 
 
@@ -244,7 +254,7 @@ def latest_verification_by_api(records: list[dict[str, Any]]) -> dict[str, dict[
 def write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer = csv.DictWriter(file, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({field: row.get(field, "") for field in fieldnames})

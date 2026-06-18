@@ -9,6 +9,7 @@ from scripts.catalog_utils import (
     EXPORT_DIR,
     latest_verification_by_api,
     load_catalog,
+    load_catalog_metadata,
     load_verification_results,
     priority_rank,
     priority_score,
@@ -46,9 +47,18 @@ def build_catalog_markdown(catalog: list[dict], verification_by_api: dict[str, d
                 str(item["connection_priority"]),
                 item["connection_status"],
                 latest.get("result", "-"),
+                item.get("usage_summary", ""),
             ]
         )
-    return "# API台帳\n\n" + md_table(
+    metadata = load_catalog_metadata()
+    intro = (
+        "# API台帳\n\n"
+        f"- データ状態: {metadata.get('catalog_mode', '-')}\n"
+        f"- 取込元: {metadata.get('source', '-')}\n"
+        f"- 取込日: {metadata.get('imported_at', '-')}\n"
+        f"- 登録件数: {metadata.get('record_count', len(catalog))}件\n\n"
+    )
+    return intro + md_table(
         [
             "ID",
             "名称",
@@ -60,6 +70,7 @@ def build_catalog_markdown(catalog: list[dict], verification_by_api: dict[str, d
             "優先度",
             "状態",
             "最新検証",
+            "利用説明",
         ],
         rows,
     ) + "\n"
@@ -153,14 +164,19 @@ def export_all() -> list[str]:
         "category",
         "provider",
         "region",
+        "catalog_mode",
+        "production_source",
+        "production_imported_at",
         "api_key_required",
         "connection_status",
         "trust_rank",
         "connection_priority",
+        "usage_summary",
     ]
     write_csv(EXPORT_DIR / "api_catalog.csv", catalog, csv_fields)
     write_json(EXPORT_DIR / "api_catalog.json", catalog)
-    return list(outputs) + ["api_catalog.csv", "api_catalog.json"]
+    write_json(EXPORT_DIR / "catalog_metadata.json", load_catalog_metadata())
+    return list(outputs) + ["api_catalog.csv", "api_catalog.json", "catalog_metadata.json"]
 
 
 def main() -> int:

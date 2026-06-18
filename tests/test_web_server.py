@@ -1,4 +1,4 @@
-from web.server import latest_verification
+from web.server import DESIGN_HTML_PATH, latest_verification
 
 
 def test_latest_verification_prefers_newer_record() -> None:
@@ -8,3 +8,10 @@ def test_latest_verification_prefers_newer_record() -> None:
     ]
 
     assert latest_verification(results)["A"]["result"] == "success"
+
+
+def test_claude_design_html_is_available() -> None:
+    assert DESIGN_HTML_PATH.exists()
+    text = DESIGN_HTML_PATH.read_text(encoding="utf-8")
+    assert "Global Civil API Catalog" in text
+    assert "__bundler/manifest" in text

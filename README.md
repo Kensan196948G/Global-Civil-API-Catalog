@@ -21,6 +21,7 @@ flowchart LR
 | 🔑 | APIキー要否、認証方式、利用条件を確認 |
 | ✅ | 接続検証結果、注意点、サンプルを確認 |
 | ⭐ | 信頼度、接続優先度、本格利用候補を確認 |
+| 📝 | 登録APIごとの利用説明と注意点を確認 |
 | 📤 | Markdown、CSV、JSONで成果物を出力 |
 
 ## 読者別ガイド
@@ -136,6 +137,10 @@ flowchart TD
 | 実装接続候補 | 5件 |
 | 本格利用候補 | 3件 |
 
+- データ状態: **production**
+- 取込元: `web/Global Civil API Catalog.html` のClaude Design本番台帳リソース
+- 確認API: `http://192.168.0.185:49231/api/metadata`
+
 本格利用候補:
 - 🗺️ 地理院標準地図タイル
 - 🧭 国土数値情報 行政区域
@@ -150,6 +155,7 @@ flowchart TD
 | `export/接続検証結果.md` | 接続確認の履歴 |
 | `export/本格利用候補.md` | 後続システムで使う候補 |
 | `export/api_catalog.csv` | 表計算・BI向け一覧 |
+| `export/catalog_metadata.json` | 本番台帳の取込元、件数、ハッシュ |
 
 Web UIの `Exports` では、各成果物を画面で開くか、ファイルとしてダウンロードできます。
 
