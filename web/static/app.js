@@ -289,7 +289,7 @@ function initMap() {
 }
 
 const VIEWS = {
-  dashboard: { kicker: "OVERVIEW", title: "採用ダッシュボード", sub: "スコア・接続ステータス・優先度の全体像を本番データで表示します。" },
+  dashboard: { kicker: "OVERVIEW", title: "ダッシュボード", sub: "🏗️ 土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。" },
   catalog: { kicker: "LEDGER", title: "API・公開データ台帳", sub: "検索・絞り込み・スコア比較とAPI詳細を本番データで確認します。" },
   flow: { kicker: "HOW TO USE", title: "API活用フロー", sub: "選定から本番実装までの5ステップと、データ形式別の接続早見表。" },
   map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "公開タイルを実接続し、台帳のAPIを地図上で確認します。" },
