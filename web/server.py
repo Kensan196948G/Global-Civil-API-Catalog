@@ -149,6 +149,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         if parsed.path.startswith("/exports/"):
             self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=True)
             return
+        if parsed.path.startswith("/data/"):
+            self.handle_data_file(parsed.path)
+            return
         super().do_GET()
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
@@ -231,6 +234,22 @@ class CatalogHandler(SimpleHTTPRequestHandler):
                     }
                 )
         self.write_json(exports)
+
+    def handle_data_file(self, request_path: str) -> None:
+        # Serves canonical data files (api_catalog.json, verification_results.json,
+        # catalog_metadata.json) so the design bundle can fetch live data instead of
+        # relying on its embedded copies.
+        filename = unquote(request_path.removeprefix("/data/"))
+        path = (DATA_DIR / filename).resolve()
+        if not str(path).startswith(str(DATA_DIR.resolve())) or not path.exists():
+            self.send_error(404)
+            return
+        data = path.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def handle_export_file(
         self,
