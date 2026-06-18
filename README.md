@@ -1,95 +1,163 @@
 # Global Civil API Catalog
 
-国内外の土木建設関連API・公開データを台帳化し、利用条件、APIキー要否、接続検証結果、優先度を管理するための初期実装です。
+🏗️ **土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。**
 
-## 現在のRelease Ready範囲
+Web UI: **http://192.168.0.185:49231**  
+固定ポート: **49231**（変更しません）
 
-- API/公開データ台帳50件: `data/api_catalog.json`
-- 接続検証結果10件: `data/verification_results.json`
-- 初期接続サンプル5件: `scripts/connectors/`
-- サンプルリクエスト/レスポンス: `samples/`
-- Markdown/CSV/JSON成果物出力: `scripts/export_markdown.py`
-- スキーマ、スコアリング、出力、コネクタのテスト: `tests/`
-- Docker常駐Web UI: `web/`, `Dockerfile`, `deploy/`
+## このシステムで分かること
 
-本番公開、認証、DB、外部サービス設定、定期実行は未実装です。
-
-## ディレクトリ構成
-
-```text
-data/                 台帳JSONと接続検証結果
-docs/                 方針・計画ドキュメント
-export/               自動生成される成果物
-samples/requests/     curl等のサンプルリクエスト
-samples/responses/    最小化したサンプルレスポンス
-scripts/              検証・出力・接続サンプル
-tests/                自動テスト
-web/                  Web UIとJSON API
-deploy/               固定ポート、systemdユーザーサービス設定
+```mermaid
+flowchart LR
+  A["🌐 公開データ・API"] --> B["📚 API台帳"]
+  B --> C["✅ 接続検証"]
+  C --> D["⭐ 優先度評価"]
+  D --> E["🗺️ 現場・設計・研究・IT運用で利用"]
 ```
 
-## セットアップ
+| アイコン | 内容 |
+|---|---|
+| 📚 | API名、提供元、公式URL、データ形式を確認 |
+| 🔑 | APIキー要否、認証方式、利用条件を確認 |
+| ✅ | 接続検証結果、注意点、サンプルを確認 |
+| ⭐ | 信頼度、接続優先度、本格利用候補を確認 |
+| 📤 | Markdown、CSV、JSONで成果物を出力 |
 
-Python 3.12以上を推奨します。テスト実行には `pytest` が必要です。
+## 読者別ガイド
 
-```bash
-python -m pip install pytest
+### 🧭 非エンジニア・企画管理担当向け
+
+この台帳は「どの公開データが使えそうか」を一覧で見るための入口です。APIやプログラムの知識がなくても、Web UIで提供元、用途、利用条件、信頼度を確認できます。
+
+見る場所:
+- `API Catalog`: 登録済みデータ50件の一覧
+- `Latest Verification`: 接続確認の結果
+- `Exports`: 会議資料や検討資料に使える出力ファイル
+
+判断の流れ:
+
+```mermaid
+flowchart TD
+  A["📌 使いたい用途を決める"] --> B["🔍 カテゴリ・キーワードで探す"]
+  B --> C["⭐ 信頼度と優先度を見る"]
+  C --> D["⚠️ 利用条件とリスクを見る"]
+  D --> E["✅ 採用候補にするか判断"]
 ```
 
-## 主要コマンド
+### 👷 土木建設現場管理・監督者向け
 
-```bash
-make check
+現場では、天気、河川、防災、地図、地形などを素早く確認する用途を想定しています。現場判断に直結するデータは、`本格利用候補` または `実装接続済` を優先してください。
+
+主な確認ポイント:
+- 🌦️ 気象: 気象庁 天気予報JSON
+- 🌊 河川・水文: 水位、流量、雨量、USGS Water
+- 🛡️ 防災: 洪水、土砂災害、津波、高潮
+- 🗺️ 地図: 地理院標準地図、淡色地図、写真タイル
+
+```mermaid
+flowchart LR
+  A["現場状況"] --> B{"必要な情報"}
+  B --> C["🌦️ 気象"]
+  B --> D["🌊 河川"]
+  B --> E["🛡️ 防災"]
+  B --> F["🗺️ 地図"]
+  C --> G["施工判断"]
+  D --> G
+  E --> G
+  F --> G
 ```
 
-Pythonの構文チェック、台帳検証、テスト、成果物出力をまとめて実行します。
+### 📐 土木建設技術者向け
 
-```bash
-python scripts/validate_catalog.py
+設計、施工計画、候補地評価、リスク判定で使えるデータソースを整理しています。`connection_priority` が高いものから検証すると、後続システムへ組み込みやすくなります。
+
+優先データ例:
+- 地理院標準地図タイル: 共通ベースマップ
+- 地理院標高タイル: 標高、勾配、地形確認
+- 国土数値情報 行政区域: 位置判定、区域判定
+- 国土数値情報 洪水浸水想定区域: 候補地リスク
+- PLATEAU 3D都市モデル: BIM/CIM、3D都市検討
+
+確認順:
+
+```mermaid
+flowchart TD
+  A["🗂️ データ候補"] --> B["形式: JSON / GeoJSON / Tile / CityGML"]
+  B --> C["利用条件・出典表記"]
+  C --> D["接続容易性"]
+  D --> E["業務適合度"]
+  E --> F["後続システム採用"]
 ```
 
-台帳と検証結果の必須項目、ID重複、許可値、日付形式を検証します。
+### 🔬 土木建設研究者向け
 
-```bash
-python scripts/export_markdown.py
+国内外のデータ比較、研究テーマ探索、論文・実証実験のデータ選定に使えます。国内データだけでなく、NOAA、USGS、OpenStreetMap、OpenAQ、NASA系データも登録対象にしています。
+
+研究用途の見方:
+- 🌏 `region`: JP、US、Globalで比較
+- 🧪 `data_formats`: 解析可能な形式か確認
+- 📅 `update_frequency`: 時系列研究に使えるか確認
+- ⚖️ `license_note`: 論文、発表、二次利用時の条件を確認
+
+```mermaid
+flowchart LR
+  A["研究テーマ"] --> B["国内データ"]
+  A --> C["海外データ"]
+  B --> D["比較・検証"]
+  C --> D
+  D --> E["再現可能なデータ選定"]
 ```
 
-`export/API台帳.md`、`export/接続優先度.md`、`export/接続検証結果.md`、`export/本格利用候補.md` を生成します。
+### 🖥️ 社内IT部門・システム運用管理者向け
 
-```bash
-python scripts/run_verification.py --limit 10
+このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。Web UIはDockerとsystemdユーザーサービスで常時起動しています。
+
+運用確認:
+- 稼働URL: `http://192.168.0.185:49231`
+- サービス名: `global-civil-api-catalog-web.service`
+- コンテナ名: `global-civil-api-catalog-web`
+- ヘルスチェック: `http://192.168.0.185:49231/api/health`
+
+```mermaid
+flowchart TD
+  A["systemd user service"] --> B["Docker container"]
+  B --> C["Web UI"]
+  B --> D["JSON API"]
+  C --> E["利用者"]
+  D --> F["後続システム"]
 ```
 
-オフラインモードで検証対象の実行計画を表示します。実HTTPアクセスを行う場合のみ `--live` を付けてください。
+## 現在の登録状況
 
-## Web UI
+| 項目 | 件数 |
+|---|---:|
+| API・公開データ台帳 | 50件 |
+| 接続検証結果 | 10件 |
+| 実装接続候補 | 5件 |
+| 本格利用候補 | 3件 |
 
-固定ポートは `deploy/PORT.lock` の `49231` です。この番号はサービス登録後に変更しません。
+本格利用候補:
+- 🗺️ 地理院標準地図タイル
+- 🧭 国土数値情報 行政区域
+- 🌦️ 気象庁 天気予報JSON
 
-```bash
-docker build -t global-civil-api-catalog-web:local .
-docker run --rm -p 49231:8080 global-civil-api-catalog-web:local
-```
+## 成果物
 
-systemdユーザーサービスとして常時起動する場合:
+| 成果物 | 内容 |
+|---|---|
+| `export/API台帳.md` | 登録データ一覧 |
+| `export/接続優先度.md` | 優先順位とリスク |
+| `export/接続検証結果.md` | 接続確認の履歴 |
+| `export/本格利用候補.md` | 後続システムで使う候補 |
+| `export/api_catalog.csv` | 表計算・BI向け一覧 |
 
-```bash
-mkdir -p ~/.config/systemd/user
-cp deploy/global-civil-api-catalog-web.service ~/.config/systemd/user/
-systemctl --user daemon-reload
-systemctl --user enable --now global-civil-api-catalog-web.service
-```
+## 関連ドキュメント
 
-起動後は `http://<host-ip>:49231` でWeb UIを表示します。
-
-この環境では `http://192.168.0.185:49231` として登録済みです。運用メモは `docs/operations.md` を参照してください。
-
-## セキュリティ方針
-
-APIキー、トークン、個人情報、本番データはコミット禁止です。APIキーが必要なデータソースは、キーなしで台帳登録し、接続検証は `skipped` として記録します。サンプルレスポンスは最小化し、大容量バイナリや機密情報を保存しません。
-
-## 仕様書
-
-- `Global-Civil-API-Catalog_要件定義書.md`
-- `Global-Civil-API-Catalog_詳細仕様設計書.md`
-- `AGENTS.md`
+| リンク | 読む人 | 内容 |
+|---|---|---|
+| [技術スタック](docs/technical-stack.md) | IT部門・開発者 | 構成、コマンド、Docker、CI |
+| [運用メモ](docs/operations.md) | IT運用管理者 | systemd、Docker、固定ポート |
+| [接続検証計画](docs/verification-plan.md) | 技術者・IT部門 | 検証対象、判定、保存ルール |
+| [利用方針](docs/usage-policy.md) | 全利用者 | データ登録、秘密情報、利用条件 |
+| [要件定義書](Global-Civil-API-Catalog_要件定義書.md) | 企画・管理者 | 目的、スコープ、受入条件 |
+| [詳細仕様設計書](Global-Civil-API-Catalog_詳細仕様設計書.md) | 技術者・開発者 | データ設計、API設計、将来構成 |

@@ -12,4 +12,4 @@ export:
 	python scripts/export_markdown.py
 
 test:
-	python -m pytest -q
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q
