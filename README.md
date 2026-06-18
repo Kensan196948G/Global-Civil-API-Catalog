@@ -151,6 +151,8 @@ flowchart TD
 | `export/本格利用候補.md` | 後続システムで使う候補 |
 | `export/api_catalog.csv` | 表計算・BI向け一覧 |
 
+Web UIの `Exports` では、各成果物を画面で開くか、ファイルとしてダウンロードできます。
+
 ## 関連ドキュメント
 
 | リンク | 読む人 | 内容 |

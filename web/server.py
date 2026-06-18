@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,9 +59,16 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.handle_export_index()
             return
         if parsed.path.startswith("/exports/"):
-            self.handle_export_file(parsed.path)
+            self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=True)
             return
         super().do_GET()
+
+    def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
+        parsed = urlparse(self.path)
+        if parsed.path.startswith("/exports/"):
+            self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=False)
+            return
+        super().do_HEAD()
 
     def handle_catalog(self, query: dict[str, list[str]]) -> None:
         catalog = load_json(DATA_DIR / "api_catalog.json")
@@ -109,11 +116,22 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         exports = []
         for path in sorted(EXPORT_DIR.glob("*")):
             if path.is_file():
-                exports.append({"name": path.name, "url": f"/exports/{path.name}"})
+                exports.append(
+                    {
+                        "name": path.name,
+                        "url": f"/exports/{quote(path.name)}",
+                        "download_url": f"/exports/{quote(path.name)}?download=1",
+                    }
+                )
         self.write_json(exports)
 
-    def handle_export_file(self, request_path: str) -> None:
-        filename = request_path.removeprefix("/exports/")
+    def handle_export_file(
+        self,
+        request_path: str,
+        query: dict[str, list[str]],
+        include_body: bool,
+    ) -> None:
+        filename = unquote(request_path.removeprefix("/exports/"))
         path = (EXPORT_DIR / filename).resolve()
         if not str(path).startswith(str(EXPORT_DIR.resolve())) or not path.exists():
             self.send_error(404)
@@ -127,8 +145,15 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
+        if query.get("download", ["0"])[0] == "1":
+            encoded_name = quote(path.name)
+            self.send_header(
+                "Content-Disposition",
+                f"attachment; filename*=UTF-8''{encoded_name}",
+            )
         self.end_headers()
-        self.wfile.write(data)
+        if include_body:
+            self.wfile.write(data)
 
 
 def main() -> int:

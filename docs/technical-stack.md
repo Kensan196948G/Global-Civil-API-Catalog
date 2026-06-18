@@ -77,6 +77,8 @@ systemctl --user daemon-reload
 systemctl --user enable --now global-civil-api-catalog-web.service
 ```
 
+Exportファイルは `/api/export` で一覧を返し、`/exports/<filename>` で表示、`/exports/<filename>?download=1` で添付ファイルとしてダウンロードします。
+
 ## CI
 
 GitHub Actionsは `.github/workflows/validate.yml` で定義しています。
