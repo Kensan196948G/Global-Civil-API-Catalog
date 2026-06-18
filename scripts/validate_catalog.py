@@ -5,7 +5,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.catalog_utils import (
+from scripts.catalog_utils import (  # noqa: E402
     load_catalog,
     load_verification_results,
     validate_catalog,
