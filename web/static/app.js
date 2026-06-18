@@ -121,6 +121,22 @@ function filteredCatalog() {
     .sort((a, b) => b.connection_priority - a.connection_priority || a.id.localeCompare(b.id));
 }
 
+function scoreBreakdownHtml(item) {
+  const sb = item.score_breakdown;
+  if (!sb) return "";
+  const row = (label, value, factors) =>
+    `<div class="sbRow"><b>${escapeHtml(label)} ${escapeHtml(value)}</b><span>${escapeHtml((factors || []).join(" / "))}</span></div>`;
+  return `
+    <div class="scoreBreak">
+      <div class="sbTitle">スコア算定の根拠（評価値）</div>
+      ${row("事業適合度", sb.business_fit.score, sb.business_fit.factors)}
+      ${row("連携実装性", sb.integration.score, sb.integration.factors)}
+      ${row("信頼度", `${sb.trust.rank}（${sb.trust.score}）`, sb.trust.factors)}
+      ${row("優先度", `${sb.priority.rank}（${sb.priority.score}）`, sb.priority.factors)}
+    </div>
+  `;
+}
+
 function renderCatalog() {
   const rows = filteredCatalog();
   byId("catalogResultCount").textContent = `${rows.length}件`;
@@ -145,6 +161,7 @@ function renderCatalog() {
             ${item.sample_endpoint ? `<a href="${escapeHtml(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
           </div>
           <small>形式: ${escapeHtml((item.data_formats || []).join(", "))}</small>
+          ${scoreBreakdownHtml(item)}
         </details>
       </td>
     </tr>

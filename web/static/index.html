@@ -61,6 +61,8 @@
             <div class="metric"><small class="metricLabel">平均 連携実装性</small><span id="avgInt">-</span><small class="metricSub">integration</small></div>
           </section>
 
+          <p class="scoreNote">※ 事業適合度・連携実装性・信頼度・優先度は、台帳の各項目から<strong>算定式で自動計算した評価値</strong>です。算定基準は「API活用フロー」、個別の根拠は「API台帳」の各行詳細で確認できます。</p>
+
           <section class="dashboardGrid">
             <article class="panel">
               <div class="panelHeader">
@@ -201,6 +203,56 @@ L.tileLayer(
   'https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
   { attribution: '地理院タイル' }
 ).addTo(map);</code></pre>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>スコア算定基準</h2>
+                <p>各スコアは台帳の項目から算定式で自動計算した<strong>評価値</strong>です（実測値ではありません）。個別の内訳は「API台帳」の各行詳細で確認できます。</p>
+              </div>
+            </div>
+            <div class="rubricGrid">
+              <div class="rubricCard">
+                <h3>事業適合度 <small>0–100</small></h3>
+                <ul>
+                  <li>提供元種別：公的/国際/公式 +30・財団 +22・企業 +12</li>
+                  <li>商用利用：可 +25・条件付 +12・不明 +8</li>
+                  <li>更新頻度：高頻度 +15・その他 +10</li>
+                  <li>対象案件：1件あたり +7（最大 +20）</li>
+                  <li>接続状態：本格利用候補 +10 … 調査中 +2</li>
+                </ul>
+              </div>
+              <div class="rubricCard">
+                <h3>連携実装性 <small>0–100</small></h3>
+                <ul>
+                  <li>APIキー：不要 +30・不明 +12・必要 +8</li>
+                  <li>認証方式：なし +15・APIキー +8</li>
+                  <li>データ形式：扱いやすい(JSON/タイル) +20・要変換 +10</li>
+                  <li>エンドポイント：具体的 +15・雛形 +8</li>
+                  <li>ドキュメント +10 / 実接続検証 成功 +10</li>
+                </ul>
+              </div>
+              <div class="rubricCard">
+                <h3>信頼度ランク <small>A–E</small></h3>
+                <ul>
+                  <li>公的/国際/公式/財団 +30</li>
+                  <li>公式ドキュメント +20 / ライセンス明記 +20</li>
+                  <li>更新頻度 +10 / データ形式 +10 / 検証成功 +10</li>
+                  <li>合計 90↑=A・70↑=B・50↑=C・30↑=D</li>
+                </ul>
+              </div>
+              <div class="rubricCard">
+                <h3>接続優先度 <small>1–5</small></h3>
+                <ul>
+                  <li>信頼度 × 0.30</li>
+                  <li>事業適合度 × 0.35</li>
+                  <li>連携実装性 × 0.20</li>
+                  <li>対象案件規模 × 0.15</li>
+                  <li>合計 85↑=5・70↑=4・55↑=3・40↑=2</li>
+                </ul>
+              </div>
             </div>
           </section>
         </div>
