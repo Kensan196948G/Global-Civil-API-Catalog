@@ -136,18 +136,24 @@ small {
   gap: 2px;
 }
 
-.sideNav a {
+.navBtn {
   position: relative;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   padding: 12px 16px;
   border-radius: 7px;
   color: var(--ink-2);
   text-decoration: none;
+  font-family: var(--sans);
   font-weight: 500;
   font-size: 14px;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.sideNav a::before {
+.navBtn::before {
   content: "";
   position: absolute;
   left: 0;
@@ -158,14 +164,21 @@ small {
   background: transparent;
 }
 
-.sideNav a:hover,
-.sideNav a:focus {
+.navBtn:hover,
+.navBtn:focus {
   background: rgba(0, 0, 0, 0.045);
   color: var(--head);
 }
 
-.sideNav a:hover::before,
-.sideNav a:focus::before {
+.navBtn.active {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--head);
+  font-weight: 700;
+}
+
+.navBtn:hover::before,
+.navBtn:focus::before,
+.navBtn.active::before {
   background: var(--gold);
 }
 
@@ -208,6 +221,109 @@ main {
   margin: 0 auto;
   padding: 28px;
   align-content: start;
+}
+
+/* ---------- views ---------- */
+.view {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.view[hidden] {
+  display: none;
+}
+
+.viewHead {
+  padding: 2px 2px 0;
+}
+
+.viewHead h2 {
+  font-size: 25px;
+  line-height: 1.2;
+  color: var(--head);
+}
+
+.viewHead p:not(.eyebrow) {
+  margin-top: 7px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- API usage flow ---------- */
+.flowGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.flowStep {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--bg-soft);
+}
+
+.flowStep span {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold-deep);
+}
+
+.flowStep strong {
+  display: block;
+  margin: 10px 0 6px;
+  font-size: 14px;
+  color: var(--head);
+}
+
+.flowStep p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.refTable {
+  min-width: 0;
+}
+
+.refTable td code,
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--chip);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--ink-2);
+}
+
+.snippet {
+  margin-top: 18px;
+}
+
+.snippetHead {
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.snippet pre {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #1b2a32;
+  overflow-x: auto;
+}
+
+.snippet pre code {
+  background: transparent;
+  padding: 0;
+  color: #e8e2d6;
+  font-size: 12.5px;
+  line-height: 1.65;
 }
 
 /* ---------- hero ---------- */
@@ -803,11 +919,16 @@ details p {
   }
 
   .sideNav {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .serviceBox {
     margin-top: 0;
+  }
+
+  .metrics,
+  .flowGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .heroBand,
@@ -839,6 +960,7 @@ details p {
   .metrics,
   .sideNav,
   .opsGrid,
+  .flowGrid,
   .exportGrid {
     grid-template-columns: 1fr;
   }

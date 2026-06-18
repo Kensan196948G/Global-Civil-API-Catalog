@@ -68,7 +68,6 @@ function renderSummary() {
   byId("candidateCount").textContent = state.summary.candidate_count;
   byId("avgFit").textContent = average(state.catalog, "business_fit_score");
   byId("avgInt").textContent = average(state.catalog, "integration_score");
-  byId("catalogMode").textContent = `${state.metadata.catalog_mode} / ${state.metadata.imported_at}`;
   byId("metadataLine").textContent = `${state.metadata.source_path} から ${state.metadata.record_count}件を本番反映`;
   byId("importedAt").textContent = state.metadata.imported_at;
   byId("sourceName").textContent = state.metadata.source;
@@ -282,6 +281,40 @@ function initMap() {
   renderMapFeatures();
 }
 
+const VIEWS = {
+  dashboard: { kicker: "OVERVIEW", title: "採用ダッシュボード", sub: "スコア・接続ステータス・優先度の全体像を本番データで表示します。" },
+  catalog: { kicker: "LEDGER", title: "API・公開データ台帳", sub: "検索・絞り込み・スコア比較とAPI詳細を本番データで確認します。" },
+  flow: { kicker: "HOW TO USE", title: "API活用フロー", sub: "選定から本番実装までの5ステップと、データ形式別の接続早見表。" },
+  map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "公開タイルを実接続し、台帳のAPIを地図上で確認します。" },
+  exports: { kicker: "EXPORTS", title: "成果物エクスポート", sub: "台帳データから各種ファイルを生成・出力します。" },
+};
+
+function setView(view) {
+  if (!VIEWS[view]) view = "dashboard";
+  document.querySelectorAll(".view").forEach((el) => {
+    el.hidden = el.dataset.view !== view;
+  });
+  document.querySelectorAll(".navBtn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.view === view);
+  });
+  const meta = VIEWS[view];
+  byId("viewKicker").textContent = meta.kicker;
+  byId("viewTitle").textContent = meta.title;
+  byId("viewSub").textContent = meta.sub;
+  if (view === "map" && state.map) {
+    state.map.invalidateSize();
+    renderMapFeatures();
+  }
+  window.scrollTo(0, 0);
+}
+
+function initNav() {
+  document.querySelectorAll(".navBtn").forEach((btn) => {
+    btn.addEventListener("click", () => setView(btn.dataset.view));
+  });
+  setView("dashboard");
+}
+
 async function boot() {
   [state.summary, state.metadata, state.catalog, state.verification, state.exports, state.liveMap] = await Promise.all([
     loadJson("/api/summary"),
@@ -298,6 +331,7 @@ async function boot() {
   renderVerification();
   renderExports();
   initMap();
+  initNav();
   ["searchInput", "categoryFilter", "statusFilter", "regionFilter"].forEach((id) => {
     byId(id).addEventListener("input", renderCatalog);
     byId(id).addEventListener("change", renderCatalog);
