@@ -1,8 +1,13 @@
 const state = {
   summary: null,
+  metadata: null,
   catalog: [],
   verification: [],
   exports: [],
+  liveMap: null,
+  map: null,
+  markers: [],
+  tileLayers: new Map(),
 };
 
 const byId = (id) => document.getElementById(id);
@@ -11,20 +16,6 @@ async function loadJson(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`${url}: ${response.status}`);
   return response.json();
-}
-
-function badge(value) {
-  const klass = value === "success" || value === "A" || value === "本格利用候補" ? "good" :
-    value === "warning" || value === "保留" || value === "調査中" ? "warn" : "";
-  return `<span class="badge ${klass}">${value}</span>`;
-}
-
-function countBy(items, key) {
-  return items.reduce((acc, item) => {
-    const value = item[key] || "未設定";
-    acc[value] = (acc[value] || 0) + 1;
-    return acc;
-  }, {});
 }
 
 function escapeHtml(value) {
@@ -36,18 +27,55 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function badge(value) {
+  const text = escapeHtml(value || "-");
+  const klass = value === "success" || value === "A" || value === "本格利用候補" || value === "production"
+    ? "good"
+    : value === "warning" || value === "保留" || value === "調査中"
+      ? "warn"
+      : "";
+  return `<span class="badge ${klass}">${text}</span>`;
+}
+
+function countBy(items, key) {
+  return items.reduce((acc, item) => {
+    const value = item[key] || "未設定";
+    acc[value] = (acc[value] || 0) + 1;
+    return acc;
+  }, {});
+}
+
+function uniqueValues(key) {
+  return [...new Set(state.catalog.map((item) => item[key]).filter(Boolean))].sort();
+}
+
+function fillSelect(id, values) {
+  const select = byId(id);
+  const first = select.options[0].outerHTML;
+  select.innerHTML = first + values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+}
+
 function renderSummary() {
   byId("catalogCount").textContent = state.summary.catalog_count;
   byId("verificationCount").textContent = state.summary.verification_count;
   byId("implementedCount").textContent = state.summary.implemented_count;
   byId("candidateCount").textContent = state.summary.candidate_count;
+  byId("catalogMode").textContent = `${state.metadata.catalog_mode} / ${state.metadata.imported_at}`;
+  byId("metadataLine").textContent = `${state.metadata.source_path} から ${state.metadata.record_count}件を本番反映`;
+  byId("importedAt").textContent = state.metadata.imported_at;
+  byId("sourceName").textContent = state.metadata.source;
+  const productionCount = state.catalog.filter((item) => item.catalog_mode === "production").length;
+  byId("productionCoverage").textContent = `${productionCount}/${state.catalog.length}`;
+}
 
-  for (const category of state.summary.categories) {
-    byId("categoryFilter").insertAdjacentHTML("beforeend", `<option value="${category}">${category}</option>`);
-  }
-  for (const status of state.summary.statuses) {
-    byId("statusFilter").insertAdjacentHTML("beforeend", `<option value="${status}">${status}</option>`);
-  }
+function renderFilters() {
+  const categories = uniqueValues("category");
+  const statuses = uniqueValues("connection_status");
+  fillSelect("categoryFilter", categories);
+  fillSelect("statusFilter", statuses);
+  fillSelect("regionFilter", uniqueValues("region"));
+  fillSelect("mapCategoryFilter", categories);
+  fillSelect("mapStatusFilter", statuses);
 }
 
 function renderDistribution() {
@@ -55,7 +83,6 @@ function renderDistribution() {
   const maxCategory = Math.max(...Object.values(categoryCounts));
   byId("categoryList").innerHTML = Object.entries(categoryCounts)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
     .map(([name, count]) => `
       <div class="barItem">
         <div><strong>${escapeHtml(name)}</strong><span>${count}件</span></div>
@@ -68,87 +95,210 @@ function renderDistribution() {
     .sort((a, b) => b[1] - a[1])
     .map(([name, count]) => `
       <div class="statusItem">
-        ${badge(escapeHtml(name))}
+        ${badge(name)}
         <strong>${count}</strong>
       </div>
     `).join("");
 }
 
-function renderCatalog() {
+function filteredCatalog() {
   const q = byId("searchInput").value.trim().toLowerCase();
   const category = byId("categoryFilter").value;
   const status = byId("statusFilter").value;
-  const rows = state.catalog
+  const region = byId("regionFilter").value;
+  return state.catalog
     .filter((item) => !q || JSON.stringify(item).toLowerCase().includes(q))
     .filter((item) => !category || item.category === category)
     .filter((item) => !status || item.connection_status === status)
-    .map((item) => `
-      <tr>
-        <td><strong>${item.id}</strong></td>
-        <td>${item.name}</td>
-        <td>${item.category}</td>
-        <td>${item.provider}</td>
-        <td>${item.data_formats.join(", ")}</td>
-        <td>${item.api_key_required}</td>
-        <td>${badge(item.trust_rank)}</td>
-        <td>${item.connection_priority}</td>
-        <td>${badge(item.connection_status)}</td>
-        <td>
-          <details>
-            <summary>${escapeHtml(item.usage_summary || "利用説明を確認")}</summary>
-            <p>${escapeHtml(item.usage_notes || "").replaceAll("\n", "<br>")}</p>
-          </details>
-        </td>
-      </tr>
-    `);
-  byId("catalogRows").innerHTML = rows.join("");
+    .filter((item) => !region || item.region === region)
+    .sort((a, b) => b.connection_priority - a.connection_priority || a.id.localeCompare(b.id));
+}
+
+function renderCatalog() {
+  const rows = filteredCatalog();
+  byId("catalogResultCount").textContent = `${rows.length}件`;
+  byId("catalogRows").innerHTML = rows.map((item) => `
+    <tr>
+      <td><strong>${escapeHtml(item.id)}</strong><br>${badge(item.catalog_mode)}</td>
+      <td>${escapeHtml(item.name)}</td>
+      <td>${escapeHtml(item.category)}<br><small>${escapeHtml(item.sub_category || "")}</small></td>
+      <td>${escapeHtml(item.provider)}</td>
+      <td>${escapeHtml(item.region)}</td>
+      <td>${escapeHtml(item.api_key_required)}<br><small>${escapeHtml(item.auth_type)}</small></td>
+      <td>${badge(item.trust_rank)}</td>
+      <td>${item.connection_priority}</td>
+      <td>${badge(item.connection_status)}</td>
+      <td>
+        <details>
+          <summary>${escapeHtml(item.usage_summary || "利用説明を確認")}</summary>
+          <p>${escapeHtml(item.usage_notes || "").replaceAll("\n", "<br>")}</p>
+          <div class="detailLinks">
+            <a href="${escapeHtml(item.official_url)}" target="_blank" rel="noreferrer">公式</a>
+            <a href="${escapeHtml(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
+            ${item.sample_endpoint ? `<a href="${escapeHtml(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
+          </div>
+          <small>形式: ${escapeHtml((item.data_formats || []).join(", "))}</small>
+        </details>
+      </td>
+    </tr>
+  `).join("");
 }
 
 function renderVerification() {
-  const rows = state.verification.slice(0, 10).map((item) => `
+  const latestRows = [...state.verification]
+    .sort((a, b) => b.verified_at.localeCompare(a.verified_at))
+    .slice(0, 5);
+  byId("verificationList").innerHTML = latestRows.map((item) => `
     <div class="listItem">
       <div>
-        <strong>${item.api_id}</strong>
-        <span>${item.verified_at} / ${item.note || ""}</span>
+        <strong>${escapeHtml(item.api_id)}</strong>
+        <span>${escapeHtml(item.verified_at)} / ${escapeHtml(item.note || "")}</span>
       </div>
       ${badge(item.result)}
     </div>
-  `);
-  byId("verificationList").innerHTML = rows.join("");
+  `).join("");
+}
+
+function exportKind(name) {
+  if (name.endsWith(".md")) return "Markdown";
+  if (name.endsWith(".csv")) return "CSV";
+  if (name.endsWith(".json")) return "JSON";
+  return "File";
 }
 
 function renderExports() {
   byId("exportList").innerHTML = state.exports.map((item) => `
-    <div class="listItem">
+    <article class="exportItem">
       <div>
-        <strong>${item.name}</strong>
-        <span>成果物ファイル</span>
+        <strong>${escapeHtml(item.name)}</strong>
+        <span>${exportKind(item.name)} / 本番データ成果物</span>
       </div>
       <div class="exportActions">
         <a href="${item.url}" target="_blank" rel="noreferrer">開く</a>
         <a href="${item.download_url || `${item.url}?download=1`}" download>ダウンロード</a>
       </div>
-    </div>
+    </article>
   `).join("");
 }
 
+function markerColor(feature) {
+  if (feature.connection_status === "本格利用候補") return "#0f6f3c";
+  if (feature.connection_status === "実装接続済") return "#235789";
+  if (feature.connection_status === "接続検証済") return "#0b6b61";
+  if (feature.connection_status === "保留") return "#9a5b00";
+  return "#6d7680";
+}
+
+function markerIcon(feature) {
+  return L.divIcon({
+    className: "catalogMarker",
+    html: `<span style="background:${markerColor(feature)}">${escapeHtml(feature.connection_priority)}</span>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+}
+
+function filteredMapFeatures() {
+  const category = byId("mapCategoryFilter").value;
+  const status = byId("mapStatusFilter").value;
+  return state.liveMap.features
+    .filter((item) => !category || item.category === category)
+    .filter((item) => !status || item.connection_status === status);
+}
+
+function renderMapFeatures() {
+  state.markers.forEach((marker) => marker.remove());
+  state.markers = filteredMapFeatures().map((feature) => {
+    const marker = L.marker([feature.lat, feature.lon], { icon: markerIcon(feature) }).addTo(state.map);
+    marker.bindPopup(`
+      <strong>${escapeHtml(feature.name)}</strong><br>
+      ${escapeHtml(feature.provider)} / ${escapeHtml(feature.category)}<br>
+      状態: ${escapeHtml(feature.connection_status)} / 検証: ${escapeHtml(feature.latest_verification)}<br>
+      <small>${escapeHtml(feature.usage_summary)}</small>
+    `);
+    return marker;
+  });
+  byId("mapFeatureList").innerHTML = filteredMapFeatures().slice(0, 12).map((feature) => `
+    <button class="mapFeatureButton" data-id="${escapeHtml(feature.id)}">
+      <strong>${escapeHtml(feature.name)}</strong>
+      <span>${escapeHtml(feature.category)} / ${escapeHtml(feature.connection_status)}</span>
+    </button>
+  `).join("");
+  document.querySelectorAll(".mapFeatureButton").forEach((button) => {
+    button.addEventListener("click", () => {
+      const feature = state.liveMap.features.find((item) => item.id === button.dataset.id);
+      if (!feature) return;
+      state.map.setView([feature.lat, feature.lon], 7);
+    });
+  });
+}
+
+function renderLayerList() {
+  byId("layerList").innerHTML = state.liveMap.layers.slice(0, 10).map((layer, index) => `
+    <label class="layerToggle">
+      <input type="checkbox" data-layer="${escapeHtml(layer.id)}" ${index === 0 || layer.enabled ? "checked" : ""} />
+      <span>${escapeHtml(layer.name)}</span>
+    </label>
+  `).join("");
+  document.querySelectorAll("[data-layer]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const layer = state.tileLayers.get(input.dataset.layer);
+      if (!layer) return;
+      if (input.checked) layer.addTo(state.map);
+      else layer.remove();
+    });
+  });
+}
+
+function initMap() {
+  if (!window.L) {
+    byId("map").innerHTML = "<p>地図ライブラリを読み込めませんでした。ネットワーク接続を確認してください。</p>";
+    return;
+  }
+  const { center } = state.liveMap;
+  state.map = L.map("map", { scrollWheelZoom: true }).setView([center.lat, center.lon], center.zoom);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(state.map);
+  state.liveMap.layers.slice(0, 10).forEach((layer, index) => {
+    const tileLayer = L.tileLayer(layer.tile_url, {
+      maxZoom: 18,
+      opacity: 0.55,
+      attribution: escapeHtml(layer.attribution || layer.provider),
+    });
+    state.tileLayers.set(layer.id, tileLayer);
+    if (index === 0 || layer.enabled) tileLayer.addTo(state.map);
+  });
+  renderLayerList();
+  renderMapFeatures();
+}
+
 async function boot() {
-  [state.summary, state.catalog, state.verification, state.exports] = await Promise.all([
+  [state.summary, state.metadata, state.catalog, state.verification, state.exports, state.liveMap] = await Promise.all([
     loadJson("/api/summary"),
+    loadJson("/api/metadata"),
     loadJson("/api/catalog"),
     loadJson("/api/verification"),
     loadJson("/api/export"),
+    loadJson("/api/live-map"),
   ]);
   renderSummary();
+  renderFilters();
   renderDistribution();
   renderCatalog();
   renderVerification();
   renderExports();
-  byId("searchInput").addEventListener("input", renderCatalog);
-  byId("categoryFilter").addEventListener("change", renderCatalog);
-  byId("statusFilter").addEventListener("change", renderCatalog);
+  initMap();
+  ["searchInput", "categoryFilter", "statusFilter", "regionFilter"].forEach((id) => {
+    byId(id).addEventListener("input", renderCatalog);
+    byId(id).addEventListener("change", renderCatalog);
+  });
+  ["mapCategoryFilter", "mapStatusFilter"].forEach((id) => {
+    byId(id).addEventListener("change", renderMapFeatures);
+  });
 }
 
 boot().catch((error) => {
-  document.body.innerHTML = `<main><section class="panel"><h1>Load failed</h1><p>${error.message}</p></section></main>`;
+  document.body.innerHTML = `<main><section class="panel"><h1>Load failed</h1><p>${escapeHtml(error.message)}</p></section></main>`;
 });

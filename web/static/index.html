@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Global Civil API Catalog</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -13,39 +19,38 @@
           <div class="brandMark">GC</div>
           <div>
             <h1>Global Civil API Catalog</h1>
-            <p>土木建設API接続台帳</p>
+            <p>本番API・公開データ台帳</p>
           </div>
         </div>
         <nav class="sideNav">
-          <a href="#overview">Overview</a>
-          <a href="#workflow">Workflow</a>
-          <a href="#audiences">Users</a>
-          <a href="#catalog">Catalog</a>
-          <a href="#verification">Verification</a>
-          <a href="#exports">Exports</a>
+          <a href="#dashboard">ダッシュボード</a>
+          <a href="#catalog">API台帳</a>
+          <a href="#live-map">ライブマップ</a>
+          <a href="#exports">成果物エクスポート</a>
         </nav>
         <div class="serviceBox">
           <span class="statusDot"></span>
           <div>
-            <strong>Service Active</strong>
+            <strong id="serviceStatus">Service Active</strong>
             <small>192.168.0.185:49231</small>
           </div>
         </div>
       </aside>
 
       <main>
-        <section id="overview" class="heroBand">
+        <section id="dashboard" class="heroBand">
           <div>
-            <p class="eyebrow">Release Ready Catalog</p>
-            <h2>土木建設で使える公開データを、判断できる台帳へ。</h2>
+            <p class="eyebrow" id="catalogMode">Production Catalog</p>
+            <h2>土木建設API・公開データを、すぐ使える本番台帳として運用します。</h2>
             <p>
-              地図、地形、防災、気象、河川、3D都市、海外APIを横断し、
-              利用条件・接続検証・優先度・利用説明を一画面で確認できます。
+              ダッシュボード、API台帳、ライブマップ、成果物エクスポートはすべて
+              サーバーAPIから本番データを取得して表示します。
             </p>
           </div>
           <div class="heroActions">
             <a href="#catalog">台帳を見る</a>
-            <a href="#exports">成果物を出力</a>
+            <a href="#live-map">地図で見る</a>
+            <a href="#exports">成果物を取得</a>
           </div>
         </section>
 
@@ -56,71 +61,51 @@
           <div class="metric"><span id="candidateCount">-</span><small>本格利用候補</small></div>
         </section>
 
-        <section id="workflow" class="panel">
-          <div class="panelHeader">
-            <h2>Connection Workflow</h2>
-            <p>公開データを業務利用候補へ進める判断フロー</p>
-          </div>
-          <div class="flowGrid">
-            <div class="flowStep"><span>01</span><strong>公開データ</strong><small>公式URL・提供元を確認</small></div>
-            <div class="flowStep"><span>02</span><strong>台帳登録</strong><small>形式・キー要否・利用条件</small></div>
-            <div class="flowStep"><span>03</span><strong>接続検証</strong><small>HTTP結果・サンプル保存</small></div>
-            <div class="flowStep"><span>04</span><strong>優先度評価</strong><small>信頼度・業務適合度</small></div>
-            <div class="flowStep"><span>05</span><strong>業務利用候補</strong><small>現場・設計・研究・IT運用</small></div>
-          </div>
-        </section>
-
-        <section id="audiences" class="audienceGrid" aria-label="audience guides">
-          <article>
-            <span>🧭</span>
-            <h3>非エンジニア</h3>
-            <p>用途、提供元、信頼度、利用条件から採用候補を確認。</p>
-          </article>
-          <article>
-            <span>👷</span>
-            <h3>現場管理・監督者</h3>
-            <p>気象、河川、防災、地図を施工判断の入口として確認。</p>
-          </article>
-          <article>
-            <span>📐</span>
-            <h3>土木建設技術者</h3>
-            <p>地形、行政区域、リスクレイヤを設計・施工計画に接続。</p>
-          </article>
-          <article>
-            <span>🔬</span>
-            <h3>研究者・IT運用</h3>
-            <p>国内外比較、再現性、API運用リスクを確認。</p>
-          </article>
-        </section>
-
         <section class="dashboardGrid">
           <article class="panel">
             <div class="panelHeader">
-              <h2>Category Distribution</h2>
-              <p>登録カテゴリの偏りを確認</p>
+              <div>
+                <h2>ダッシュボード</h2>
+                <p id="metadataLine">本番台帳メタデータを確認中</p>
+              </div>
+              <a class="textButton" href="/api/metadata" target="_blank" rel="noreferrer">metadata</a>
+            </div>
+            <div class="opsGrid">
+              <div><strong id="importedAt">-</strong><span>取込日</span></div>
+              <div><strong id="sourceName">-</strong><span>取込元</span></div>
+              <div><strong id="productionCoverage">-</strong><span>Production反映</span></div>
             </div>
             <div id="categoryList" class="barList"></div>
           </article>
+
           <article class="panel">
             <div class="panelHeader">
-              <h2>Status Pipeline</h2>
-              <p>接続状態ごとの進捗</p>
+              <div>
+                <h2>接続状態</h2>
+                <p>本番利用へ進める優先度を確認</p>
+              </div>
             </div>
             <div id="statusList" class="statusList"></div>
+            <div id="verificationList" class="list compactList"></div>
           </article>
         </section>
 
         <section id="catalog" class="panel">
           <div class="panelHeader">
             <div>
-              <h2>API Catalog</h2>
-              <p>利用説明は各行の詳細を開いて確認できます。</p>
+              <h2>API台帳</h2>
+              <p>検索、絞り込み、詳細確認、公式URL確認まで本番データで実行します。</p>
             </div>
             <div class="controls">
               <input id="searchInput" type="search" placeholder="キーワード検索" />
               <select id="categoryFilter"><option value="">全カテゴリ</option></select>
               <select id="statusFilter"><option value="">全ステータス</option></select>
+              <select id="regionFilter"><option value="">全地域</option></select>
             </div>
+          </div>
+          <div class="tableToolbar">
+            <strong id="catalogResultCount">0件</strong>
+            <span>信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span>
           </div>
           <div class="tableWrap">
             <table>
@@ -130,12 +115,12 @@
                   <th>名称</th>
                   <th>カテゴリ</th>
                   <th>提供元</th>
-                  <th>形式</th>
+                  <th>地域</th>
                   <th>キー</th>
                   <th>信頼度</th>
                   <th>優先度</th>
                   <th>状態</th>
-                  <th>利用説明</th>
+                  <th>利用説明・接続情報</th>
                 </tr>
               </thead>
               <tbody id="catalogRows"></tbody>
@@ -143,25 +128,46 @@
           </div>
         </section>
 
-        <section class="dashboardGrid lowerGrid">
-          <article id="verification" class="panel">
-            <div class="panelHeader">
-              <h2>Latest Verification</h2>
-              <p>直近の接続検証結果</p>
+        <section id="live-map" class="panel mapPanel">
+          <div class="panelHeader">
+            <div>
+              <h2>ライブマップ</h2>
+              <p>本番台帳のAPI・公開データを地図上で確認します。</p>
             </div>
-            <div id="verificationList" class="list"></div>
-          </article>
-          <article id="exports" class="panel">
-            <div class="panelHeader">
-              <h2>Exports</h2>
-              <p>成果物を開く、またはダウンロード</p>
+            <div class="controls">
+              <select id="mapCategoryFilter"><option value="">全カテゴリ</option></select>
+              <select id="mapStatusFilter"><option value="">全ステータス</option></select>
             </div>
-            <div id="exportList" class="list"></div>
-          </article>
+          </div>
+          <div class="mapLayout">
+            <div id="map" class="mapCanvas" aria-label="API live map"></div>
+            <aside class="mapSide">
+              <h3>表示レイヤ</h3>
+              <div id="layerList" class="layerList"></div>
+              <h3>地図上のAPI</h3>
+              <div id="mapFeatureList" class="list compactList"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="exports" class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>成果物エクスポート</h2>
+              <p>Markdown、CSV、JSON、メタデータを開く・ダウンロードできます。</p>
+            </div>
+            <a class="textButton" href="/api/export" target="_blank" rel="noreferrer">export index</a>
+          </div>
+          <div id="exportList" class="exportGrid"></div>
         </section>
       </main>
     </div>
 
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="/app.js"></script>
   </body>
 </html>

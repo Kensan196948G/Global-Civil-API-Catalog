@@ -178,7 +178,8 @@ main {
 }
 
 .heroActions a,
-.exportActions a {
+.exportActions a,
+.textButton {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
@@ -189,6 +190,10 @@ main {
   color: var(--accent-2);
   text-decoration: none;
   font-weight: 750;
+}
+
+.textButton {
+  white-space: nowrap;
 }
 
 .heroActions a:first-child {
@@ -295,6 +300,18 @@ main {
   justify-content: flex-end;
 }
 
+.tableToolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+
+.tableToolbar strong {
+  color: var(--ink);
+}
+
 input,
 select {
   height: 38px;
@@ -312,7 +329,7 @@ select {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1320px;
+  min-width: 1360px;
 }
 
 th,
@@ -370,9 +387,36 @@ details p {
 
 .barList,
 .statusList,
-.list {
+.list,
+.layerList,
+.exportGrid {
   display: grid;
   gap: 10px;
+}
+
+.opsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.opsGrid div {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f9fbfb;
+}
+
+.opsGrid strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.opsGrid span {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .barItem {
@@ -419,6 +463,149 @@ details p {
   display: block;
 }
 
+.compactList {
+  margin-top: 14px;
+}
+
+.detailLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.detailLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--accent-2);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.mapPanel {
+  padding-bottom: 18px;
+}
+
+.mapLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 14px;
+  min-height: 560px;
+}
+
+.mapCanvas {
+  min-height: 560px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #dfe8ec;
+}
+
+.mapCanvas p {
+  padding: 20px;
+  color: var(--muted);
+}
+
+.mapSide {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.layerToggle {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f9fbfb;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.layerToggle input {
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+}
+
+.mapFeatureButton {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mapFeatureButton:hover,
+.mapFeatureButton:focus {
+  background: #f4f8f8;
+}
+
+.mapFeatureButton strong,
+.mapFeatureButton span {
+  display: block;
+}
+
+.mapFeatureButton span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.catalogMarker {
+  display: grid;
+  place-items: center;
+}
+
+.catalogMarker span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(23, 33, 38, 0.28);
+}
+
+.exportGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.exportItem {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f9fbfb;
+}
+
+.exportItem strong,
+.exportItem span {
+  display: block;
+}
+
+.exportItem span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 @media (max-width: 1120px) {
   .appShell {
     grid-template-columns: 1fr;
@@ -435,8 +622,14 @@ details p {
 
   .heroBand,
   .dashboardGrid,
-  .flowGrid {
+  .flowGrid,
+  .mapLayout,
+  .exportGrid {
     grid-template-columns: 1fr;
+  }
+
+  .mapSide {
+    grid-row: 2;
   }
 }
 
@@ -456,7 +649,8 @@ details p {
 
   .metrics,
   .audienceGrid,
-  .sideNav {
+  .sideNav,
+  .opsGrid {
     grid-template-columns: 1fr;
   }
 
