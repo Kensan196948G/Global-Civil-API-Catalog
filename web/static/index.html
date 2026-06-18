@@ -221,10 +221,32 @@ L.tileLayer(
             <div class="mapLayout">
               <div id="map" class="mapCanvas" aria-label="API live map"></div>
               <aside class="mapSide">
-                <h3>表示レイヤ</h3>
-                <div id="layerList" class="layerList"></div>
-                <h3>地図上のAPI</h3>
-                <div id="mapFeatureList" class="list compactList"></div>
+                <div class="mapSideSection">
+                  <div class="mapSideHead">
+                    <h3>表示レイヤ</h3>
+                    <span class="countPill" id="layerCount">-</span>
+                  </div>
+                  <div id="layerList" class="layerList"></div>
+                </div>
+
+                <div class="mapSideSection">
+                  <h3>凡例（接続状態）</h3>
+                  <ul class="legendList">
+                    <li><span class="legendDot" style="background:#0f6f3c"></span>本格利用候補</li>
+                    <li><span class="legendDot" style="background:#235789"></span>実装接続済</li>
+                    <li><span class="legendDot" style="background:#0b6b61"></span>接続検証済</li>
+                    <li><span class="legendDot" style="background:#9a5b00"></span>保留</li>
+                    <li><span class="legendDot" style="background:#6d7680"></span>その他</li>
+                  </ul>
+                </div>
+
+                <div class="mapSideSection mapFeatures">
+                  <div class="mapSideHead">
+                    <h3>地図上のAPI</h3>
+                    <span class="countPill" id="featureCount">-</span>
+                  </div>
+                  <div id="mapFeatureList" class="list compactList"></div>
+                </div>
               </aside>
             </div>
           </section>

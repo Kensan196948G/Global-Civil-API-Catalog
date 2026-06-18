@@ -225,10 +225,15 @@ function renderMapFeatures() {
     `);
     return marker;
   });
-  byId("mapFeatureList").innerHTML = filteredMapFeatures().slice(0, 12).map((feature) => `
+  const features = filteredMapFeatures();
+  byId("featureCount").textContent = `${features.length}件`;
+  byId("mapFeatureList").innerHTML = features.map((feature) => `
     <button class="mapFeatureButton" data-id="${escapeHtml(feature.id)}">
-      <strong>${escapeHtml(feature.name)}</strong>
-      <span>${escapeHtml(feature.category)} / ${escapeHtml(feature.connection_status)}</span>
+      <span class="featureDot" style="background:${markerColor(feature)}"></span>
+      <span class="featureBody">
+        <strong>${escapeHtml(feature.name)}</strong>
+        <span>${escapeHtml(feature.category)} / ${escapeHtml(feature.connection_status)}</span>
+      </span>
     </button>
   `).join("");
   document.querySelectorAll(".mapFeatureButton").forEach((button) => {
@@ -241,7 +246,9 @@ function renderMapFeatures() {
 }
 
 function renderLayerList() {
-  byId("layerList").innerHTML = state.liveMap.layers.slice(0, 10).map((layer, index) => `
+  const layers = state.liveMap.layers.slice(0, 10);
+  byId("layerCount").textContent = `${layers.length}層`;
+  byId("layerList").innerHTML = layers.map((layer, index) => `
     <label class="layerToggle">
       <input type="checkbox" data-layer="${escapeHtml(layer.id)}" ${index === 0 || layer.enabled ? "checked" : ""} />
       <span>${escapeHtml(layer.name)}</span>
