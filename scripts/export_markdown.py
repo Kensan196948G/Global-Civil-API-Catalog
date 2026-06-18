@@ -46,6 +46,7 @@ def build_catalog_markdown(catalog: list[dict], verification_by_api: dict[str, d
                 str(item["connection_priority"]),
                 item["connection_status"],
                 latest.get("result", "-"),
+                item.get("usage_summary", ""),
             ]
         )
     return "# API台帳\n\n" + md_table(
@@ -60,6 +61,7 @@ def build_catalog_markdown(catalog: list[dict], verification_by_api: dict[str, d
             "優先度",
             "状態",
             "最新検証",
+            "利用説明",
         ],
         rows,
     ) + "\n"
@@ -157,6 +159,7 @@ def export_all() -> list[str]:
         "connection_status",
         "trust_rank",
         "connection_priority",
+        "usage_summary",
     ]
     write_csv(EXPORT_DIR / "api_catalog.csv", catalog, csv_fields)
     write_json(EXPORT_DIR / "api_catalog.json", catalog)

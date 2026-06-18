@@ -1,52 +1,1941 @@
 [
-  {"id":"GSI-TILE-STD-001","name":"地理院標準地図タイル","category":"地図","sub_category":"ベースマップ","provider":"国土地理院","provider_type":"government","region":"JP","official_url":"https://maps.gsi.go.jp/development/ichiran.html","document_url":"https://maps.gsi.go.jp/development/ichiran.html","endpoint_template":"https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png","sample_endpoint":"https://cyberjapandata.gsi.go.jp/xyz/std/10/909/403.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"出典「国土地理院」または「地理院タイル」の明示が必要。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"本格利用候補","trust_rank":"A","connection_priority":5,"business_fit_score":98,"integration_score":95,"risk_note":"個別タイルごとの出典条件を確認する。","target_projects":["Open Civil Site Risk Checker","Public Infrastructure Maintenance Map","Civil Disaster Early Insight Map"],"adoption_reason":"国内土木建設システムの共通地図基盤として必須。","tags":["map","tile","gsi","jp"]},
-  {"id":"GSI-TILE-PALE-001","name":"地理院淡色地図タイル","category":"地図","sub_category":"ベースマップ","provider":"国土地理院","provider_type":"government","region":"JP","official_url":"https://maps.gsi.go.jp/development/ichiran.html","document_url":"https://maps.gsi.go.jp/development/ichiran.html","endpoint_template":"https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png","sample_endpoint":"https://cyberjapandata.gsi.go.jp/xyz/pale/10/909/403.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"出典表記が必要。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"A","connection_priority":5,"business_fit_score":90,"integration_score":95,"risk_note":"背景図用途では視認性評価が必要。","target_projects":["Public Infrastructure Maintenance Map"],"tags":["map","tile","gsi","jp"]},
-  {"id":"GSI-TILE-PHOTO-001","name":"地理院写真タイル","category":"地図","sub_category":"航空写真","provider":"国土地理院","provider_type":"government","region":"JP","official_url":"https://maps.gsi.go.jp/development/ichiran.html","document_url":"https://maps.gsi.go.jp/development/ichiran.html","endpoint_template":"https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg","sample_endpoint":"https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/10/909/403.jpg","data_formats":["XYZ Tile","JPEG"],"api_key_required":"not_required","auth_type":"none","license_note":"出典表記が必要。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"A","connection_priority":4,"business_fit_score":84,"integration_score":90,"risk_note":"撮影時期の差異に注意。","target_projects":["Open Civil Site Risk Checker"],"tags":["map","photo","tile","jp"]},
-  {"id":"GSI-ELEVATION-001","name":"地理院標高タイル","category":"地形","sub_category":"標高","provider":"国土地理院","provider_type":"government","region":"JP","official_url":"https://maps.gsi.go.jp/development/ichiran.html","document_url":"https://maps.gsi.go.jp/development/ichiran.html","endpoint_template":"https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/{z}/{x}/{y}.png","sample_endpoint":"https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/14/14549/6451.png","data_formats":["XYZ Tile","DEM","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"出典表記が必要。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"実装接続済","trust_rank":"A","connection_priority":5,"business_fit_score":95,"integration_score":88,"risk_note":"測地成果と欠損値の扱いを明示する。","target_projects":["Open Civil Site Risk Checker","Civil Open Data Intelligence Platform"],"tags":["dem","elevation","gsi","jp"]},
-  {"id":"GSI-VECTOR-001","name":"地理院Vector","category":"地形","sub_category":"ベクトルタイル","provider":"国土地理院","provider_type":"government","region":"JP","official_url":"https://maps.gsi.go.jp/vector/","document_url":"https://maps.gsi.go.jp/vector/","endpoint_template":"https://cyberjapandata.gsi.go.jp/xyz/experimental_bvmap/{z}/{x}/{y}.pbf","sample_endpoint":"https://cyberjapandata.gsi.go.jp/xyz/experimental_bvmap/10/909/403.pbf","data_formats":["Vector Tile","PBF"],"api_key_required":"not_required","auth_type":"none","license_note":"出典表記が必要。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":82,"integration_score":72,"risk_note":"実験的提供範囲の確認が必要。","target_projects":["Public Infrastructure Maintenance Map"],"tags":["vector","gsi","pbf"]},
-  {"id":"MLIT-KSJ-N03-001","name":"国土数値情報 行政区域","category":"行政","sub_category":"行政区域","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html","endpoint_template":"https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html","sample_endpoint":"https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"年次","last_checked_at":"2026-06-18","connection_status":"本格利用候補","trust_rank":"A","connection_priority":5,"business_fit_score":96,"integration_score":82,"risk_note":"年度、測地系、属性定義の差分管理が必要。","target_projects":["Open Civil Site Risk Checker","Construction Logistics Route Planner","Civil Disaster Early Insight Map"],"adoption_reason":"位置判定、行政区域、各種リスクレイヤの基礎データとして重要。","tags":["boundary","mlit","ksj","jp"]},
-  {"id":"MLIT-KSJ-L03-001","name":"国土数値情報 土地利用細分メッシュ","category":"土地","sub_category":"土地利用","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"数年","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":84,"integration_score":78,"risk_note":"最新版と過年度の比較条件を確認する。","target_projects":["Open Civil Site Risk Checker"],"tags":["landuse","mesh","mlit"]},
-  {"id":"MLIT-KSJ-A09-001","name":"国土数値情報 都市地域","category":"都市","sub_category":"都市計画","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":83,"integration_score":78,"risk_note":"都市計画の詳細制限は別資料確認が必要。","target_projects":["Open Civil Site Risk Checker"],"tags":["urban","planning","mlit"]},
-  {"id":"MLIT-KSJ-ROAD-001","name":"国土数値情報 道路密度・道路延長","category":"交通","sub_category":"道路","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"年次/随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":3,"business_fit_score":72,"integration_score":75,"risk_note":"搬入ルート評価には道路幅員等の補助データが必要。","target_projects":["Construction Logistics Route Planner"],"tags":["road","transport","mlit"]},
-  {"id":"MLIT-KSJ-RAIL-001","name":"国土数値情報 鉄道","category":"交通","sub_category":"鉄道","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":3,"business_fit_score":70,"integration_score":76,"risk_note":"近接施工判定には詳細な権利範囲確認が必要。","target_projects":["Construction Logistics Route Planner"],"tags":["rail","transport","mlit"]},
-  {"id":"MLIT-KSJ-PORT-001","name":"国土数値情報 港湾","category":"交通","sub_category":"港湾","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":80,"integration_score":76,"risk_note":"港湾区域の定義差分を確認する。","target_projects":["Construction Logistics Route Planner"],"tags":["port","marine","mlit"]},
-  {"id":"MLIT-KSJ-AIRPORT-001","name":"国土数値情報 空港","category":"交通","sub_category":"空港","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":3,"business_fit_score":68,"integration_score":76,"risk_note":"高さ制限等は別資料が必要。","target_projects":["Construction Logistics Route Planner"],"tags":["airport","transport","mlit"]},
-  {"id":"MLIT-KSJ-FLOOD-001","name":"国土数値情報 洪水浸水想定区域","category":"防災","sub_category":"洪水","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"A","connection_priority":5,"business_fit_score":95,"integration_score":78,"risk_note":"河川管理者ごとの差分と想定規模を明示する。","target_projects":["Open Civil Site Risk Checker","Civil Disaster Early Insight Map"],"tags":["flood","hazard","mlit"]},
-  {"id":"MLIT-KSJ-LANDSLIDE-001","name":"国土数値情報 土砂災害警戒区域","category":"防災","sub_category":"土砂災害","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":5,"business_fit_score":92,"integration_score":78,"risk_note":"自治体更新とのタイムラグに注意。","target_projects":["Open Civil Site Risk Checker","Civil Disaster Early Insight Map"],"tags":["landslide","hazard","mlit"]},
-  {"id":"MLIT-KSJ-TSUNAMI-001","name":"国土数値情報 津波浸水想定","category":"防災","sub_category":"津波","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":86,"integration_score":78,"risk_note":"対象地域と想定条件を明記する。","target_projects":["Civil Disaster Early Insight Map"],"tags":["tsunami","hazard","mlit"]},
-  {"id":"MLIT-KSJ-STORM-SURGE-001","name":"国土数値情報 高潮浸水想定","category":"防災","sub_category":"高潮","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://nlftp.mlit.go.jp/ksj/","document_url":"https://nlftp.mlit.go.jp/ksj/","endpoint_template":"https://nlftp.mlit.go.jp/ksj/","data_formats":["GeoJSON","GML","SHP"],"api_key_required":"not_required","auth_type":"none","license_note":"国土数値情報の利用約款に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":85,"integration_score":78,"risk_note":"沿岸・港湾案件で優先確認する。","target_projects":["Civil Disaster Early Insight Map"],"tags":["storm-surge","hazard","mlit"]},
-  {"id":"GSI-HAZARD-FLOOD-001","name":"ハザードマップ洪水タイル","category":"防災","sub_category":"洪水","provider":"国土地理院/国土交通省","provider_type":"government","region":"JP","official_url":"https://disaportal.gsi.go.jp/","document_url":"https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html","endpoint_template":"https://disaportaldata.gsi.go.jp/raster/01_flood_l2_shinsuishin/{z}/{x}/{y}.png","sample_endpoint":"https://disaportaldata.gsi.go.jp/raster/01_flood_l2_shinsuishin/10/909/403.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"ハザードマップポータルの利用条件と出典表記に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"実装接続済","trust_rank":"A","connection_priority":5,"business_fit_score":94,"integration_score":86,"risk_note":"タイルなしの404を正常扱いする場合がある。","target_projects":["Open Civil Site Risk Checker","Civil Disaster Early Insight Map"],"tags":["hazard","flood","tile"]},
-  {"id":"GSI-HAZARD-LANDSLIDE-001","name":"ハザードマップ土砂災害タイル","category":"防災","sub_category":"土砂災害","provider":"国土地理院/国土交通省","provider_type":"government","region":"JP","official_url":"https://disaportal.gsi.go.jp/","document_url":"https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html","endpoint_template":"https://disaportaldata.gsi.go.jp/raster/{layer}/{z}/{x}/{y}.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"ハザードマップポータルの利用条件と出典表記に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":90,"integration_score":82,"risk_note":"正式レイヤIDの確認が必要。","target_projects":["Open Civil Site Risk Checker"],"tags":["hazard","landslide","tile"]},
-  {"id":"GSI-HAZARD-TSUNAMI-001","name":"ハザードマップ津波タイル","category":"防災","sub_category":"津波","provider":"国土地理院/国土交通省","provider_type":"government","region":"JP","official_url":"https://disaportal.gsi.go.jp/","document_url":"https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html","endpoint_template":"https://disaportaldata.gsi.go.jp/raster/{layer}/{z}/{x}/{y}.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"ハザードマップポータルの利用条件と出典表記に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":84,"integration_score":82,"risk_note":"正式レイヤIDの確認が必要。","target_projects":["Civil Disaster Early Insight Map"],"tags":["hazard","tsunami","tile"]},
-  {"id":"GSI-HAZARD-STORM-SURGE-001","name":"ハザードマップ高潮タイル","category":"防災","sub_category":"高潮","provider":"国土地理院/国土交通省","provider_type":"government","region":"JP","official_url":"https://disaportal.gsi.go.jp/","document_url":"https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html","endpoint_template":"https://disaportaldata.gsi.go.jp/raster/{layer}/{z}/{x}/{y}.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"ハザードマップポータルの利用条件と出典表記に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":4,"business_fit_score":83,"integration_score":82,"risk_note":"正式レイヤIDの確認が必要。","target_projects":["Civil Disaster Early Insight Map"],"tags":["hazard","storm-surge","tile"]},
-  {"id":"MLIT-REINFOLIB-LANDPRICE-001","name":"不動産情報ライブラリ 地価公示","category":"不動産","sub_category":"地価","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.reinfolib.mlit.go.jp/","document_url":"https://www.reinfolib.mlit.go.jp/help/apiManual/","endpoint_template":"https://www.reinfolib.mlit.go.jp/ex-api/external/XKT002","data_formats":["API","GeoJSON","PBF"],"api_key_required":"unknown","auth_type":"unknown","license_note":"不動産情報ライブラリのAPI利用条件を確認する。","commercial_use":"unknown","update_frequency":"年次","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"A","connection_priority":4,"business_fit_score":80,"integration_score":62,"risk_note":"APIキー要否と商用利用条件の確定が必要。","target_projects":["Open Civil Site Risk Checker"],"tags":["land-price","real-estate","mlit"]},
-  {"id":"MLIT-REINFOLIB-LANDPRICE-LOCAL-001","name":"不動産情報ライブラリ 地価調査","category":"不動産","sub_category":"地価","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.reinfolib.mlit.go.jp/","document_url":"https://www.reinfolib.mlit.go.jp/help/apiManual/","endpoint_template":"https://www.reinfolib.mlit.go.jp/ex-api/","data_formats":["API","GeoJSON","PBF"],"api_key_required":"unknown","auth_type":"unknown","license_note":"不動産情報ライブラリのAPI利用条件を確認する。","commercial_use":"unknown","update_frequency":"年次","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"A","connection_priority":3,"business_fit_score":76,"integration_score":60,"risk_note":"認証方式と利用制限を確認する。","target_projects":["Open Civil Site Risk Checker"],"tags":["land-price","real-estate","mlit"]},
-  {"id":"MLIT-REINFOLIB-TRADE-001","name":"不動産情報ライブラリ 不動産取引価格","category":"不動産","sub_category":"取引価格","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.reinfolib.mlit.go.jp/","document_url":"https://www.reinfolib.mlit.go.jp/help/apiManual/","endpoint_template":"https://www.reinfolib.mlit.go.jp/ex-api/","data_formats":["API","JSON"],"api_key_required":"unknown","auth_type":"unknown","license_note":"不動産情報ライブラリのAPI利用条件を確認する。","commercial_use":"unknown","update_frequency":"四半期等","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":72,"integration_score":60,"risk_note":"用途により個別地点情報の扱いに注意。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["transaction","real-estate","mlit"]},
-  {"id":"MLIT-REINFOLIB-CITYPLAN-001","name":"不動産情報ライブラリ 都市計画","category":"都市","sub_category":"都市計画","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.reinfolib.mlit.go.jp/","document_url":"https://www.reinfolib.mlit.go.jp/help/apiManual/","endpoint_template":"https://www.reinfolib.mlit.go.jp/ex-api/","data_formats":["API","GeoJSON","PBF"],"api_key_required":"unknown","auth_type":"unknown","license_note":"不動産情報ライブラリのAPI利用条件を確認する。","commercial_use":"unknown","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"A","connection_priority":4,"business_fit_score":84,"integration_score":60,"risk_note":"規制確認には公式都市計画図との照合が必要。","target_projects":["Open Civil Site Risk Checker"],"tags":["city-planning","real-estate","mlit"]},
-  {"id":"MLIT-REINFOLIB-SCHOOL-001","name":"不動産情報ライブラリ 学校","category":"周辺","sub_category":"公共施設","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.reinfolib.mlit.go.jp/","document_url":"https://www.reinfolib.mlit.go.jp/help/apiManual/","endpoint_template":"https://www.reinfolib.mlit.go.jp/ex-api/","data_formats":["API","GeoJSON","PBF"],"api_key_required":"unknown","auth_type":"unknown","license_note":"不動産情報ライブラリのAPI利用条件を確認する。","commercial_use":"unknown","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"C","connection_priority":2,"business_fit_score":50,"integration_score":60,"risk_note":"土木建設主要用途では優先度低。","target_projects":[],"tags":["school","facility","mlit"]},
-  {"id":"MLIT-REINFOLIB-MEDICAL-001","name":"不動産情報ライブラリ 医療機関","category":"周辺","sub_category":"公共施設","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.reinfolib.mlit.go.jp/","document_url":"https://www.reinfolib.mlit.go.jp/help/apiManual/","endpoint_template":"https://www.reinfolib.mlit.go.jp/ex-api/","data_formats":["API","GeoJSON","PBF"],"api_key_required":"unknown","auth_type":"unknown","license_note":"不動産情報ライブラリのAPI利用条件を確認する。","commercial_use":"unknown","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"C","connection_priority":2,"business_fit_score":52,"integration_score":60,"risk_note":"土木建設主要用途では優先度低。","target_projects":[],"tags":["medical","facility","mlit"]},
-  {"id":"MLIT-PLATEAU-001","name":"PLATEAU 3D都市モデル","category":"3D都市","sub_category":"3D都市モデル","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.mlit.go.jp/plateau/","document_url":"https://www.mlit.go.jp/plateau/","endpoint_template":"https://www.geospatial.jp/ckan/dataset/plateau","data_formats":["CityGML","3D Tiles","GeoJSON"],"api_key_required":"not_required","auth_type":"none","license_note":"PLATEAUの利用規約と各データセットの条件に従う。","commercial_use":"allowed","update_frequency":"年次/随時","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"A","connection_priority":4,"business_fit_score":82,"integration_score":62,"risk_note":"ファイルサイズが大きいためメタデータ優先で扱う。","target_projects":["Open BIM/CIM Dictionary Assistant","Public Infrastructure Maintenance Map"],"tags":["plateau","3d","citygml"]},
-  {"id":"MLIT-PLATEAU-SDK-001","name":"PLATEAU SDK/ユースケースデータ","category":"3D都市","sub_category":"SDK","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.mlit.go.jp/plateau/","document_url":"https://www.mlit.go.jp/plateau/","endpoint_template":"https://www.mlit.go.jp/plateau/","data_formats":["SDK","Sample Data"],"api_key_required":"not_required","auth_type":"none","license_note":"PLATEAUの利用規約に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":3,"business_fit_score":70,"integration_score":58,"risk_note":"SDKバージョンとの互換性を確認する。","target_projects":["Open BIM/CIM Dictionary Assistant"],"tags":["plateau","sdk","3d"]},
-  {"id":"JMA-FORECAST-001","name":"気象庁 天気予報JSON","category":"気象","sub_category":"予報","provider":"気象庁","provider_type":"government","region":"JP","official_url":"https://www.jma.go.jp/","document_url":"https://www.jma.go.jp/bosai/forecast/","endpoint_template":"https://www.jma.go.jp/bosai/forecast/data/forecast/{area_code}.json","sample_endpoint":"https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json","data_formats":["JSON"],"api_key_required":"not_required","auth_type":"none","license_note":"気象庁ホームページの利用規約に従う。","commercial_use":"allowed","update_frequency":"定時","last_checked_at":"2026-06-18","connection_status":"本格利用候補","trust_rank":"B","connection_priority":5,"business_fit_score":93,"integration_score":88,"risk_note":"公式API仕様ではない可能性があるため仕様変更リスクを明記する。","target_projects":["Construction Weather & Water Decision Support","Civil Disaster Early Insight Map"],"adoption_reason":"施工判断、現場安全、災害対応に直結する短周期データ。","tags":["weather","forecast","jma"]},
-  {"id":"JMA-AMEDAS-001","name":"気象庁 アメダスJSON","category":"気象","sub_category":"観測","provider":"気象庁","provider_type":"government","region":"JP","official_url":"https://www.jma.go.jp/","document_url":"https://www.jma.go.jp/bosai/amedas/","endpoint_template":"https://www.jma.go.jp/bosai/amedas/data/map/{datetime}.json","data_formats":["JSON"],"api_key_required":"not_required","auth_type":"none","license_note":"気象庁ホームページの利用規約に従う。","commercial_use":"allowed","update_frequency":"短周期","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":4,"business_fit_score":88,"integration_score":72,"risk_note":"URL時刻生成と仕様変更リスクに注意。","target_projects":["Construction Weather & Water Decision Support"],"tags":["weather","amedas","jma"]},
-  {"id":"JMA-WARNING-001","name":"気象庁 警報注意報JSON","category":"気象","sub_category":"警報注意報","provider":"気象庁","provider_type":"government","region":"JP","official_url":"https://www.jma.go.jp/","document_url":"https://www.jma.go.jp/bosai/warning/","endpoint_template":"https://www.jma.go.jp/bosai/warning/data/warning/{area_code}.json","data_formats":["JSON"],"api_key_required":"not_required","auth_type":"none","license_note":"気象庁ホームページの利用規約に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":4,"business_fit_score":90,"integration_score":72,"risk_note":"防災用途では最新性と責任範囲を明記する。","target_projects":["Construction Weather & Water Decision Support","Civil Disaster Early Insight Map"],"tags":["weather","warning","jma"]},
-  {"id":"JMA-EARTHQUAKE-001","name":"気象庁 地震情報","category":"気象","sub_category":"地震","provider":"気象庁","provider_type":"government","region":"JP","official_url":"https://www.jma.go.jp/","document_url":"https://www.jma.go.jp/bosai/map.html#contents=earthquake_map","endpoint_template":"https://www.jma.go.jp/","data_formats":["XML","JSON相当"],"api_key_required":"not_required","auth_type":"none","license_note":"気象庁ホームページの利用規約に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":75,"integration_score":58,"risk_note":"機械取得方法と再配信条件を確認する。","target_projects":["Civil Disaster Early Insight Map"],"tags":["earthquake","jma"]},
-  {"id":"JMA-TYPHOON-001","name":"気象庁 台風情報","category":"気象","sub_category":"台風","provider":"気象庁","provider_type":"government","region":"JP","official_url":"https://www.jma.go.jp/","document_url":"https://www.jma.go.jp/bosai/map.html#contents=typhoon","endpoint_template":"https://www.jma.go.jp/","data_formats":["JSON相当","XML相当"],"api_key_required":"not_required","auth_type":"none","license_note":"気象庁ホームページの利用規約に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":78,"integration_score":58,"risk_note":"海上工事用途では公式警報との照合が必要。","target_projects":["Construction Weather & Water Decision Support"],"tags":["typhoon","jma"]},
-  {"id":"MLIT-WATER-RAIN-001","name":"水文水質データベース 雨量","category":"河川","sub_category":"雨量","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www1.river.go.jp/","document_url":"https://www1.river.go.jp/","endpoint_template":"https://www1.river.go.jp/","data_formats":["Web","CSV相当"],"api_key_required":"not_required","auth_type":"none","license_note":"提供元の利用条件を確認する。","commercial_use":"unknown","update_frequency":"観測周期","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":82,"integration_score":52,"risk_note":"公式API形式と取得条件の確認が必要。","target_projects":["Construction Weather & Water Decision Support"],"tags":["rain","river","mlit"]},
-  {"id":"MLIT-WATER-LEVEL-001","name":"水文水質データベース 水位","category":"河川","sub_category":"水位","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www1.river.go.jp/","document_url":"https://www1.river.go.jp/","endpoint_template":"https://www1.river.go.jp/","data_formats":["Web","CSV相当"],"api_key_required":"not_required","auth_type":"none","license_note":"提供元の利用条件を確認する。","commercial_use":"unknown","update_frequency":"観測周期","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":84,"integration_score":52,"risk_note":"公式API形式と取得条件の確認が必要。","target_projects":["Construction Weather & Water Decision Support"],"tags":["water-level","river","mlit"]},
-  {"id":"MLIT-WATER-FLOW-001","name":"水文水質データベース 流量","category":"河川","sub_category":"流量","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www1.river.go.jp/","document_url":"https://www1.river.go.jp/","endpoint_template":"https://www1.river.go.jp/","data_formats":["Web","CSV相当"],"api_key_required":"not_required","auth_type":"none","license_note":"提供元の利用条件を確認する。","commercial_use":"unknown","update_frequency":"観測周期","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"C","connection_priority":2,"business_fit_score":70,"integration_score":48,"risk_note":"取得容易性が未確認。","target_projects":["Construction Weather & Water Decision Support"],"tags":["flow","river","mlit"]},
-  {"id":"MLIT-RIVER-DISASTER-001","name":"川の防災情報","category":"河川","sub_category":"防災情報","provider":"国土交通省","provider_type":"government","region":"JP","official_url":"https://www.river.go.jp/","document_url":"https://www.river.go.jp/","endpoint_template":"https://www.river.go.jp/","data_formats":["Web","地図"],"api_key_required":"not_required","auth_type":"none","license_note":"提供元の利用条件を確認する。","commercial_use":"unknown","update_frequency":"リアルタイム","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":82,"integration_score":45,"risk_note":"スクレイピング前提にしない。","target_projects":["Civil Disaster Early Insight Map"],"tags":["river","disaster","mlit"]},
-  {"id":"JCG-UMISHIRU-001","name":"海上保安庁 海しる","category":"海象","sub_category":"海洋情報","provider":"海上保安庁","provider_type":"government","region":"JP","official_url":"https://www.msil.go.jp/","document_url":"https://www.msil.go.jp/","endpoint_template":"https://www.msil.go.jp/","data_formats":["API","地図","データ"],"api_key_required":"unknown","auth_type":"unknown","license_note":"海しるの利用条件を確認する。","commercial_use":"unknown","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"A","connection_priority":3,"business_fit_score":78,"integration_score":50,"risk_note":"API提供範囲と利用条件の確認が必要。","target_projects":["Construction Weather & Water Decision Support"],"tags":["marine","jcg"]},
-  {"id":"NOWPHAS-WAVE-001","name":"NOWPHAS 港湾波浪情報","category":"海象","sub_category":"波浪","provider":"港湾空港技術研究所等","provider_type":"official","region":"JP","official_url":"https://www.mlit.go.jp/kowan/nowphas/","document_url":"https://www.mlit.go.jp/kowan/nowphas/","endpoint_template":"https://www.mlit.go.jp/kowan/nowphas/","data_formats":["Web","CSV相当"],"api_key_required":"unknown","auth_type":"unknown","license_note":"提供元の利用条件を確認する。","commercial_use":"unknown","update_frequency":"観測周期","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"A","connection_priority":3,"business_fit_score":78,"integration_score":48,"risk_note":"機械取得方法と再利用条件を確認する。","target_projects":["Construction Weather & Water Decision Support"],"tags":["wave","marine","port"]},
-  {"id":"MOE-AIR-POLLUTION-001","name":"環境省 大気汚染物質広域監視","category":"環境","sub_category":"大気","provider":"環境省","provider_type":"government","region":"JP","official_url":"https://soramame.env.go.jp/","document_url":"https://soramame.env.go.jp/","endpoint_template":"https://soramame.env.go.jp/","data_formats":["Web","CSV相当"],"api_key_required":"not_required","auth_type":"none","license_note":"提供元の利用条件を確認する。","commercial_use":"unknown","update_frequency":"時間","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":2,"business_fit_score":58,"integration_score":45,"risk_note":"機械取得方法を確認する。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["air","environment","moe"]},
-  {"id":"OSM-OVERPASS-001","name":"OpenStreetMap Overpass API","category":"国際地図","sub_category":"OSM","provider":"OSM","provider_type":"foundation","region":"Global","official_url":"https://www.openstreetmap.org/","document_url":"https://wiki.openstreetmap.org/wiki/Overpass_API","endpoint_template":"https://overpass-api.de/api/interpreter","data_formats":["Overpass QL","JSON","XML"],"api_key_required":"not_required","auth_type":"none","license_note":"Open Database Licenseとタイル/API利用ポリシーに従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"B","connection_priority":3,"business_fit_score":72,"integration_score":70,"risk_note":"高頻度アクセスは禁止。キャッシュと利用制限を守る。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["osm","overpass","global"]},
-  {"id":"OSM-TILE-001","name":"OSM Tile","category":"国際地図","sub_category":"ベースマップ","provider":"OSM","provider_type":"foundation","region":"Global","official_url":"https://www.openstreetmap.org/","document_url":"https://operations.osmfoundation.org/policies/tiles/","endpoint_template":"https://tile.openstreetmap.org/{z}/{x}/{y}.png","data_formats":["XYZ Tile","PNG"],"api_key_required":"not_required","auth_type":"none","license_note":"OSM Tile Usage PolicyとODbLに従う。","commercial_use":"restricted","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":2,"business_fit_score":60,"integration_score":72,"risk_note":"本番用途では独自タイルまたは商用プロバイダ検討。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["osm","tile","global"]},
-  {"id":"OPENTOPOGRAPHY-API-001","name":"OpenTopography API","category":"国際地形","sub_category":"DEM","provider":"OpenTopography","provider_type":"official","region":"Global","official_url":"https://opentopography.org/","document_url":"https://opentopography.org/developers","endpoint_template":"https://portal.opentopography.org/API/","data_formats":["REST","GeoTIFF"],"api_key_required":"unknown","auth_type":"unknown","license_note":"データセットごとのライセンスに従う。","commercial_use":"unknown","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":2,"business_fit_score":60,"integration_score":48,"risk_note":"APIキー要否とデータセット別条件を確認する。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["dem","topography","global"]},
-  {"id":"OVERTURE-MAPS-001","name":"Overture Maps","category":"国際建物","sub_category":"建物/基盤地物","provider":"Overture Maps Foundation","provider_type":"foundation","region":"Global","official_url":"https://overturemaps.org/","document_url":"https://docs.overturemaps.org/","endpoint_template":"https://docs.overturemaps.org/","data_formats":["Parquet","GeoParquet"],"api_key_required":"not_required","auth_type":"none","license_note":"Overture Mapsのデータライセンスに従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":3,"business_fit_score":68,"integration_score":50,"risk_note":"データ容量が大きいため抽出設計が必要。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["building","geoparquet","global"]},
-  {"id":"NOAA-NWS-001","name":"NOAA NWS API","category":"国際気象","sub_category":"天気予報","provider":"NOAA/NWS","provider_type":"government","region":"US","official_url":"https://www.weather.gov/","document_url":"https://www.weather.gov/documentation/services-web-api","endpoint_template":"https://api.weather.gov/points/{lat},{lon}","sample_endpoint":"https://api.weather.gov/points/38.8894,-77.0352","data_formats":["REST","JSON-LD"],"api_key_required":"not_required","auth_type":"none","license_note":"NWS API利用条件とUser-Agent要件に従う。","commercial_use":"allowed","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"B","connection_priority":3,"business_fit_score":62,"integration_score":82,"risk_note":"User-Agentに連絡先を含める運用を検討する。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["noaa","weather","us"]},
-  {"id":"NOAA-CDO-001","name":"NOAA Climate Data Online API","category":"国際気象","sub_category":"気候","provider":"NOAA/NCEI","provider_type":"government","region":"US","official_url":"https://www.ncei.noaa.gov/cdo-web/","document_url":"https://www.ncei.noaa.gov/cdo-web/webservices/v2","endpoint_template":"https://www.ncei.noaa.gov/cdo-web/api/v2/","data_formats":["REST","JSON"],"api_key_required":"required","auth_type":"api_key","license_note":"NOAA CDO API利用条件に従う。","commercial_use":"allowed","update_frequency":"日次等","last_checked_at":"2026-06-18","connection_status":"保留","trust_rank":"C","connection_priority":2,"business_fit_score":55,"integration_score":42,"risk_note":"APIキーが必要なためCIではskipped扱い。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["noaa","climate","api-key"]},
-  {"id":"USGS-WATER-001","name":"USGS Water Data APIs","category":"国際水文","sub_category":"水位/流量","provider":"USGS","provider_type":"government","region":"US","official_url":"https://www.usgs.gov/products/web-tools/apis","document_url":"https://www.usgs.gov/tools/usgs-water-data-apis","endpoint_template":"https://waterservices.usgs.gov/nwis/iv/?format=json&sites={site}&parameterCd={parameter}","sample_endpoint":"https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060","data_formats":["REST","JSON"],"api_key_required":"not_required","auth_type":"none","license_note":"USGS利用条件に従う。","commercial_use":"allowed","update_frequency":"短周期/日次","last_checked_at":"2026-06-18","connection_status":"接続検証済","trust_rank":"A","connection_priority":4,"business_fit_score":74,"integration_score":85,"risk_note":"米国向け比較データとして利用する。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["usgs","water","us"]},
-  {"id":"USGS-EARTHQUAKE-001","name":"USGS Earthquake API","category":"国際災害","sub_category":"地震","provider":"USGS","provider_type":"government","region":"Global","official_url":"https://earthquake.usgs.gov/","document_url":"https://earthquake.usgs.gov/fdsnws/event/1/","endpoint_template":"https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson","data_formats":["GeoJSON"],"api_key_required":"not_required","auth_type":"none","license_note":"USGS利用条件に従う。","commercial_use":"allowed","update_frequency":"リアルタイム","last_checked_at":"2026-06-18","connection_status":"接続候補","trust_rank":"A","connection_priority":3,"business_fit_score":66,"integration_score":82,"risk_note":"国内地震情報とは用途を分ける。","target_projects":["Civil Disaster Early Insight Map"],"tags":["usgs","earthquake","geojson"]},
-  {"id":"OPENAQ-API-001","name":"OpenAQ API","category":"国際環境","sub_category":"大気","provider":"OpenAQ","provider_type":"official","region":"Global","official_url":"https://openaq.org/","document_url":"https://docs.openaq.org/","endpoint_template":"https://api.openaq.org/","data_formats":["REST","JSON"],"api_key_required":"unknown","auth_type":"unknown","license_note":"OpenAQの利用条件を確認する。","commercial_use":"unknown","update_frequency":"時間","last_checked_at":"2026-06-18","connection_status":"調査中","trust_rank":"B","connection_priority":2,"business_fit_score":52,"integration_score":58,"risk_note":"APIバージョンと認証要件を確認する。","target_projects":["Civil Open Data Intelligence Platform"],"tags":["air","openaq","global"]},
-  {"id":"NASA-FIRMS-001","name":"NASA Earthdata / FIRMS","category":"衛星","sub_category":"災害/火災","provider":"NASA","provider_type":"government","region":"Global","official_url":"https://firms.modaps.eosdis.nasa.gov/","document_url":"https://firms.modaps.eosdis.nasa.gov/api/","endpoint_template":"https://firms.modaps.eosdis.nasa.gov/api/","data_formats":["API","GeoJSON","CSV"],"api_key_required":"required","auth_type":"api_key","license_note":"NASA FIRMSおよびEarthdataの利用条件に従う。","commercial_use":"unknown","update_frequency":"随時","last_checked_at":"2026-06-18","connection_status":"保留","trust_rank":"C","connection_priority":2,"business_fit_score":58,"integration_score":40,"risk_note":"APIキーが必要なため初期CIでは検証しない。","target_projects":["Civil Disaster Early Insight Map"],"tags":["nasa","firms","satellite"]}
+  {
+    "id": "GSI-TILE-STD-001",
+    "name": "地理院標準地図タイル",
+    "category": "地図",
+    "sub_category": "ベースマップ",
+    "provider": "国土地理院",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "document_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "endpoint_template": "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+    "sample_endpoint": "https://cyberjapandata.gsi.go.jp/xyz/std/10/909/403.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "出典「国土地理院」または「地理院タイル」の明示が必要。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "本格利用候補",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 98,
+    "integration_score": 95,
+    "risk_note": "個別タイルごとの出典条件を確認する。",
+    "target_projects": [
+      "Open Civil Site Risk Checker",
+      "Public Infrastructure Maintenance Map",
+      "Civil Disaster Early Insight Map"
+    ],
+    "adoption_reason": "国内土木建設システムの共通地図基盤として必須。",
+    "tags": [
+      "map",
+      "tile",
+      "gsi",
+      "jp"
+    ],
+    "usage_summary": "国内案件の共通ベースマップとして最優先で利用します。現場位置、候補地、リスクレイヤを重ねる土台になります。",
+    "usage_notes": "出典表記を必ず付けます。タイルURLはズーム・x・yを指定して利用します。\n地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n個別タイルごとの出典条件を確認する。"
+  },
+  {
+    "id": "GSI-TILE-PALE-001",
+    "name": "地理院淡色地図タイル",
+    "category": "地図",
+    "sub_category": "ベースマップ",
+    "provider": "国土地理院",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "document_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "endpoint_template": "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+    "sample_endpoint": "https://cyberjapandata.gsi.go.jp/xyz/pale/10/909/403.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "出典表記が必要。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 90,
+    "integration_score": 95,
+    "risk_note": "背景図用途では視認性評価が必要。",
+    "target_projects": [
+      "Public Infrastructure Maintenance Map"
+    ],
+    "tags": [
+      "map",
+      "tile",
+      "gsi",
+      "jp"
+    ],
+    "usage_summary": "背景地図、位置確認、現地概況の把握に利用します。Web地図や台帳画面のベースレイヤとして扱いやすいデータです。",
+    "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n背景図用途では視認性評価が必要。"
+  },
+  {
+    "id": "GSI-TILE-PHOTO-001",
+    "name": "地理院写真タイル",
+    "category": "地図",
+    "sub_category": "航空写真",
+    "provider": "国土地理院",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "document_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "endpoint_template": "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg",
+    "sample_endpoint": "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/10/909/403.jpg",
+    "data_formats": [
+      "XYZ Tile",
+      "JPEG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "出典表記が必要。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 84,
+    "integration_score": 90,
+    "risk_note": "撮影時期の差異に注意。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "map",
+      "photo",
+      "tile",
+      "jp"
+    ],
+    "usage_summary": "背景地図、位置確認、現地概況の把握に利用します。Web地図や台帳画面のベースレイヤとして扱いやすいデータです。",
+    "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n撮影時期の差異に注意。"
+  },
+  {
+    "id": "GSI-ELEVATION-001",
+    "name": "地理院標高タイル",
+    "category": "地形",
+    "sub_category": "標高",
+    "provider": "国土地理院",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "document_url": "https://maps.gsi.go.jp/development/ichiran.html",
+    "endpoint_template": "https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/{z}/{x}/{y}.png",
+    "sample_endpoint": "https://cyberjapandata.gsi.go.jp/xyz/dem5a_png/14/14549/6451.png",
+    "data_formats": [
+      "XYZ Tile",
+      "DEM",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "出典表記が必要。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "実装接続済",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 95,
+    "integration_score": 88,
+    "risk_note": "測地成果と欠損値の扱いを明示する。",
+    "target_projects": [
+      "Open Civil Site Risk Checker",
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "dem",
+      "elevation",
+      "gsi",
+      "jp"
+    ],
+    "usage_summary": "候補地の標高、周辺地形、概略勾配の把握に使います。造成、排水、災害リスクの初期確認に役立ちます。",
+    "usage_notes": "欠損値、解像度、測地成果の扱いを確認します。精密設計では測量成果や詳細DEMと照合します。\n地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n測地成果と欠損値の扱いを明示する。"
+  },
+  {
+    "id": "GSI-VECTOR-001",
+    "name": "地理院Vector",
+    "category": "地形",
+    "sub_category": "ベクトルタイル",
+    "provider": "国土地理院",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://maps.gsi.go.jp/vector/",
+    "document_url": "https://maps.gsi.go.jp/vector/",
+    "endpoint_template": "https://cyberjapandata.gsi.go.jp/xyz/experimental_bvmap/{z}/{x}/{y}.pbf",
+    "sample_endpoint": "https://cyberjapandata.gsi.go.jp/xyz/experimental_bvmap/10/909/403.pbf",
+    "data_formats": [
+      "Vector Tile",
+      "PBF"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "出典表記が必要。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 82,
+    "integration_score": 72,
+    "risk_note": "実験的提供範囲の確認が必要。",
+    "target_projects": [
+      "Public Infrastructure Maintenance Map"
+    ],
+    "tags": [
+      "vector",
+      "gsi",
+      "pbf"
+    ],
+    "usage_summary": "標高、地形、勾配、地盤・施工条件の初期確認に利用します。候補地比較や危険箇所の一次把握に向きます。",
+    "usage_notes": "ベクトルタイルなどで使う圧縮バイナリ形式です。対応ライブラリが必要です。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n実験的提供範囲の確認が必要。"
+  },
+  {
+    "id": "MLIT-KSJ-N03-001",
+    "name": "国土数値情報 行政区域",
+    "category": "行政",
+    "sub_category": "行政区域",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html",
+    "sample_endpoint": "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "年次",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "本格利用候補",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 96,
+    "integration_score": 82,
+    "risk_note": "年度、測地系、属性定義の差分管理が必要。",
+    "target_projects": [
+      "Open Civil Site Risk Checker",
+      "Construction Logistics Route Planner",
+      "Civil Disaster Early Insight Map"
+    ],
+    "adoption_reason": "位置判定、行政区域、各種リスクレイヤの基礎データとして重要。",
+    "tags": [
+      "boundary",
+      "mlit",
+      "ksj",
+      "jp"
+    ],
+    "usage_summary": "住所・座標を行政区域にひも付ける基礎データです。案件管理、地域別集計、許認可確認の起点になります。",
+    "usage_notes": "年度版の差分、測地系、属性定義を確認してから後続システムへ取り込みます。\nGISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n年度、測地系、属性定義の差分管理が必要。"
+  },
+  {
+    "id": "MLIT-KSJ-L03-001",
+    "name": "国土数値情報 土地利用細分メッシュ",
+    "category": "土地",
+    "sub_category": "土地利用",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "数年",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 84,
+    "integration_score": 78,
+    "risk_note": "最新版と過年度の比較条件を確認する。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "landuse",
+      "mesh",
+      "mlit"
+    ],
+    "usage_summary": "土地利用やメッシュ情報を用いて、候補地の周辺特性や利用状況を把握します。計画初期の比較検討に向きます。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n最新版と過年度の比較条件を確認する。"
+  },
+  {
+    "id": "MLIT-KSJ-A09-001",
+    "name": "国土数値情報 都市地域",
+    "category": "都市",
+    "sub_category": "都市計画",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 83,
+    "integration_score": 78,
+    "risk_note": "都市計画の詳細制限は別資料確認が必要。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "urban",
+      "planning",
+      "mlit"
+    ],
+    "usage_summary": "都市計画、用途地域、規制確認の入口として利用します。詳細判断では自治体の公式資料と照合してください。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n都市計画の詳細制限は別資料確認が必要。"
+  },
+  {
+    "id": "MLIT-KSJ-ROAD-001",
+    "name": "国土数値情報 道路密度・道路延長",
+    "category": "交通",
+    "sub_category": "道路",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "年次/随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 72,
+    "integration_score": 75,
+    "risk_note": "搬入ルート評価には道路幅員等の補助データが必要。",
+    "target_projects": [
+      "Construction Logistics Route Planner"
+    ],
+    "tags": [
+      "road",
+      "transport",
+      "mlit"
+    ],
+    "usage_summary": "道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n搬入ルート評価には道路幅員等の補助データが必要。"
+  },
+  {
+    "id": "MLIT-KSJ-RAIL-001",
+    "name": "国土数値情報 鉄道",
+    "category": "交通",
+    "sub_category": "鉄道",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 70,
+    "integration_score": 76,
+    "risk_note": "近接施工判定には詳細な権利範囲確認が必要。",
+    "target_projects": [
+      "Construction Logistics Route Planner"
+    ],
+    "tags": [
+      "rail",
+      "transport",
+      "mlit"
+    ],
+    "usage_summary": "道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n近接施工判定には詳細な権利範囲確認が必要。"
+  },
+  {
+    "id": "MLIT-KSJ-PORT-001",
+    "name": "国土数値情報 港湾",
+    "category": "交通",
+    "sub_category": "港湾",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 80,
+    "integration_score": 76,
+    "risk_note": "港湾区域の定義差分を確認する。",
+    "target_projects": [
+      "Construction Logistics Route Planner"
+    ],
+    "tags": [
+      "port",
+      "marine",
+      "mlit"
+    ],
+    "usage_summary": "道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n港湾区域の定義差分を確認する。"
+  },
+  {
+    "id": "MLIT-KSJ-AIRPORT-001",
+    "name": "国土数値情報 空港",
+    "category": "交通",
+    "sub_category": "空港",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 68,
+    "integration_score": 76,
+    "risk_note": "高さ制限等は別資料が必要。",
+    "target_projects": [
+      "Construction Logistics Route Planner"
+    ],
+    "tags": [
+      "airport",
+      "transport",
+      "mlit"
+    ],
+    "usage_summary": "道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n高さ制限等は別資料が必要。"
+  },
+  {
+    "id": "MLIT-KSJ-FLOOD-001",
+    "name": "国土数値情報 洪水浸水想定区域",
+    "category": "防災",
+    "sub_category": "洪水",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 95,
+    "integration_score": 78,
+    "risk_note": "河川管理者ごとの差分と想定規模を明示する。",
+    "target_projects": [
+      "Open Civil Site Risk Checker",
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "flood",
+      "hazard",
+      "mlit"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n河川管理者ごとの差分と想定規模を明示する。"
+  },
+  {
+    "id": "MLIT-KSJ-LANDSLIDE-001",
+    "name": "国土数値情報 土砂災害警戒区域",
+    "category": "防災",
+    "sub_category": "土砂災害",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 92,
+    "integration_score": 78,
+    "risk_note": "自治体更新とのタイムラグに注意。",
+    "target_projects": [
+      "Open Civil Site Risk Checker",
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "landslide",
+      "hazard",
+      "mlit"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n自治体更新とのタイムラグに注意。"
+  },
+  {
+    "id": "MLIT-KSJ-TSUNAMI-001",
+    "name": "国土数値情報 津波浸水想定",
+    "category": "防災",
+    "sub_category": "津波",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 86,
+    "integration_score": 78,
+    "risk_note": "対象地域と想定条件を明記する。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "tsunami",
+      "hazard",
+      "mlit"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n対象地域と想定条件を明記する。"
+  },
+  {
+    "id": "MLIT-KSJ-STORM-SURGE-001",
+    "name": "国土数値情報 高潮浸水想定",
+    "category": "防災",
+    "sub_category": "高潮",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://nlftp.mlit.go.jp/ksj/",
+    "document_url": "https://nlftp.mlit.go.jp/ksj/",
+    "endpoint_template": "https://nlftp.mlit.go.jp/ksj/",
+    "data_formats": [
+      "GeoJSON",
+      "GML",
+      "SHP"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "国土数値情報の利用約款に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 85,
+    "integration_score": 78,
+    "risk_note": "沿岸・港湾案件で優先確認する。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "storm-surge",
+      "hazard",
+      "mlit"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n沿岸・港湾案件で優先確認する。"
+  },
+  {
+    "id": "GSI-HAZARD-FLOOD-001",
+    "name": "ハザードマップ洪水タイル",
+    "category": "防災",
+    "sub_category": "洪水",
+    "provider": "国土地理院/国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://disaportal.gsi.go.jp/",
+    "document_url": "https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html",
+    "endpoint_template": "https://disaportaldata.gsi.go.jp/raster/01_flood_l2_shinsuishin/{z}/{x}/{y}.png",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/01_flood_l2_shinsuishin/10/909/403.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "ハザードマップポータルの利用条件と出典表記に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "実装接続済",
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 94,
+    "integration_score": 86,
+    "risk_note": "タイルなしの404を正常扱いする場合がある。",
+    "target_projects": [
+      "Open Civil Site Risk Checker",
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "hazard",
+      "flood",
+      "tile"
+    ],
+    "usage_summary": "洪水浸水想定をWeb地図上に重ね、候補地や現場周辺のリスクを直感的に確認します。",
+    "usage_notes": "タイルが存在しない地点では404が正常な場合があります。想定規模と出典を明示してください。\n地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nタイルなしの404を正常扱いする場合がある。"
+  },
+  {
+    "id": "GSI-HAZARD-LANDSLIDE-001",
+    "name": "ハザードマップ土砂災害タイル",
+    "category": "防災",
+    "sub_category": "土砂災害",
+    "provider": "国土地理院/国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://disaportal.gsi.go.jp/",
+    "document_url": "https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html",
+    "endpoint_template": "https://disaportaldata.gsi.go.jp/raster/{layer}/{z}/{x}/{y}.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "ハザードマップポータルの利用条件と出典表記に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 90,
+    "integration_score": 82,
+    "risk_note": "正式レイヤIDの確認が必要。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "hazard",
+      "landslide",
+      "tile"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。"
+  },
+  {
+    "id": "GSI-HAZARD-TSUNAMI-001",
+    "name": "ハザードマップ津波タイル",
+    "category": "防災",
+    "sub_category": "津波",
+    "provider": "国土地理院/国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://disaportal.gsi.go.jp/",
+    "document_url": "https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html",
+    "endpoint_template": "https://disaportaldata.gsi.go.jp/raster/{layer}/{z}/{x}/{y}.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "ハザードマップポータルの利用条件と出典表記に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 84,
+    "integration_score": 82,
+    "risk_note": "正式レイヤIDの確認が必要。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "hazard",
+      "tsunami",
+      "tile"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。"
+  },
+  {
+    "id": "GSI-HAZARD-STORM-SURGE-001",
+    "name": "ハザードマップ高潮タイル",
+    "category": "防災",
+    "sub_category": "高潮",
+    "provider": "国土地理院/国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://disaportal.gsi.go.jp/",
+    "document_url": "https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html",
+    "endpoint_template": "https://disaportaldata.gsi.go.jp/raster/{layer}/{z}/{x}/{y}.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "ハザードマップポータルの利用条件と出典表記に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 83,
+    "integration_score": 82,
+    "risk_note": "正式レイヤIDの確認が必要。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "hazard",
+      "storm-surge",
+      "tile"
+    ],
+    "usage_summary": "洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。",
+    "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。"
+  },
+  {
+    "id": "MLIT-REINFOLIB-LANDPRICE-001",
+    "name": "不動産情報ライブラリ 地価公示",
+    "category": "不動産",
+    "sub_category": "地価",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.reinfolib.mlit.go.jp/",
+    "document_url": "https://www.reinfolib.mlit.go.jp/help/apiManual/",
+    "endpoint_template": "https://www.reinfolib.mlit.go.jp/ex-api/external/XKT002",
+    "data_formats": [
+      "API",
+      "GeoJSON",
+      "PBF"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "年次",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 80,
+    "integration_score": 62,
+    "risk_note": "APIキー要否と商用利用条件の確定が必要。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "land-price",
+      "real-estate",
+      "mlit"
+    ],
+    "usage_summary": "地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPIキー要否と商用利用条件の確定が必要。"
+  },
+  {
+    "id": "MLIT-REINFOLIB-LANDPRICE-LOCAL-001",
+    "name": "不動産情報ライブラリ 地価調査",
+    "category": "不動産",
+    "sub_category": "地価",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.reinfolib.mlit.go.jp/",
+    "document_url": "https://www.reinfolib.mlit.go.jp/help/apiManual/",
+    "endpoint_template": "https://www.reinfolib.mlit.go.jp/ex-api/",
+    "data_formats": [
+      "API",
+      "GeoJSON",
+      "PBF"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "年次",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "A",
+    "connection_priority": 3,
+    "business_fit_score": 76,
+    "integration_score": 60,
+    "risk_note": "認証方式と利用制限を確認する。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "land-price",
+      "real-estate",
+      "mlit"
+    ],
+    "usage_summary": "地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n認証方式と利用制限を確認する。"
+  },
+  {
+    "id": "MLIT-REINFOLIB-TRADE-001",
+    "name": "不動産情報ライブラリ 不動産取引価格",
+    "category": "不動産",
+    "sub_category": "取引価格",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.reinfolib.mlit.go.jp/",
+    "document_url": "https://www.reinfolib.mlit.go.jp/help/apiManual/",
+    "endpoint_template": "https://www.reinfolib.mlit.go.jp/ex-api/",
+    "data_formats": [
+      "API",
+      "JSON"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "四半期等",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 72,
+    "integration_score": 60,
+    "risk_note": "用途により個別地点情報の扱いに注意。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "transaction",
+      "real-estate",
+      "mlit"
+    ],
+    "usage_summary": "地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n用途により個別地点情報の扱いに注意。"
+  },
+  {
+    "id": "MLIT-REINFOLIB-CITYPLAN-001",
+    "name": "不動産情報ライブラリ 都市計画",
+    "category": "都市",
+    "sub_category": "都市計画",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.reinfolib.mlit.go.jp/",
+    "document_url": "https://www.reinfolib.mlit.go.jp/help/apiManual/",
+    "endpoint_template": "https://www.reinfolib.mlit.go.jp/ex-api/",
+    "data_formats": [
+      "API",
+      "GeoJSON",
+      "PBF"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 84,
+    "integration_score": 60,
+    "risk_note": "規制確認には公式都市計画図との照合が必要。",
+    "target_projects": [
+      "Open Civil Site Risk Checker"
+    ],
+    "tags": [
+      "city-planning",
+      "real-estate",
+      "mlit"
+    ],
+    "usage_summary": "都市計画、用途地域、規制確認の入口として利用します。詳細判断では自治体の公式資料と照合してください。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n規制確認には公式都市計画図との照合が必要。"
+  },
+  {
+    "id": "MLIT-REINFOLIB-SCHOOL-001",
+    "name": "不動産情報ライブラリ 学校",
+    "category": "周辺",
+    "sub_category": "公共施設",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.reinfolib.mlit.go.jp/",
+    "document_url": "https://www.reinfolib.mlit.go.jp/help/apiManual/",
+    "endpoint_template": "https://www.reinfolib.mlit.go.jp/ex-api/",
+    "data_formats": [
+      "API",
+      "GeoJSON",
+      "PBF"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "C",
+    "connection_priority": 2,
+    "business_fit_score": 50,
+    "integration_score": 60,
+    "risk_note": "土木建設主要用途では優先度低。",
+    "target_projects": [],
+    "tags": [
+      "school",
+      "facility",
+      "mlit"
+    ],
+    "usage_summary": "学校、医療機関など周辺施設の把握に利用します。工事影響、生活環境、説明資料作成の補助情報です。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n土木建設主要用途では優先度低。"
+  },
+  {
+    "id": "MLIT-REINFOLIB-MEDICAL-001",
+    "name": "不動産情報ライブラリ 医療機関",
+    "category": "周辺",
+    "sub_category": "公共施設",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.reinfolib.mlit.go.jp/",
+    "document_url": "https://www.reinfolib.mlit.go.jp/help/apiManual/",
+    "endpoint_template": "https://www.reinfolib.mlit.go.jp/ex-api/",
+    "data_formats": [
+      "API",
+      "GeoJSON",
+      "PBF"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "C",
+    "connection_priority": 2,
+    "business_fit_score": 52,
+    "integration_score": 60,
+    "risk_note": "土木建設主要用途では優先度低。",
+    "target_projects": [],
+    "tags": [
+      "medical",
+      "facility",
+      "mlit"
+    ],
+    "usage_summary": "学校、医療機関など周辺施設の把握に利用します。工事影響、生活環境、説明資料作成の補助情報です。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n土木建設主要用途では優先度低。"
+  },
+  {
+    "id": "MLIT-PLATEAU-001",
+    "name": "PLATEAU 3D都市モデル",
+    "category": "3D都市",
+    "sub_category": "3D都市モデル",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.mlit.go.jp/plateau/",
+    "document_url": "https://www.mlit.go.jp/plateau/",
+    "endpoint_template": "https://www.geospatial.jp/ckan/dataset/plateau",
+    "data_formats": [
+      "CityGML",
+      "3D Tiles",
+      "GeoJSON"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "PLATEAUの利用規約と各データセットの条件に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "年次/随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 82,
+    "integration_score": 62,
+    "risk_note": "ファイルサイズが大きいためメタデータ優先で扱う。",
+    "target_projects": [
+      "Open BIM/CIM Dictionary Assistant",
+      "Public Infrastructure Maintenance Map"
+    ],
+    "tags": [
+      "plateau",
+      "3d",
+      "citygml"
+    ],
+    "usage_summary": "都市スケールの3D確認、BIM/CIM連携、景観・日影・都市空間検討の基礎データとして使います。",
+    "usage_notes": "データ容量が大きいため、対象都市・範囲・LODを絞って利用します。\n3D都市モデル向けの詳細形式です。大容量になりやすいため範囲指定が重要です。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nファイルサイズが大きいためメタデータ優先で扱う。"
+  },
+  {
+    "id": "MLIT-PLATEAU-SDK-001",
+    "name": "PLATEAU SDK/ユースケースデータ",
+    "category": "3D都市",
+    "sub_category": "SDK",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.mlit.go.jp/plateau/",
+    "document_url": "https://www.mlit.go.jp/plateau/",
+    "endpoint_template": "https://www.mlit.go.jp/plateau/",
+    "data_formats": [
+      "SDK",
+      "Sample Data"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "PLATEAUの利用規約に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 70,
+    "integration_score": 58,
+    "risk_note": "SDKバージョンとの互換性を確認する。",
+    "target_projects": [
+      "Open BIM/CIM Dictionary Assistant"
+    ],
+    "tags": [
+      "plateau",
+      "sdk",
+      "3d"
+    ],
+    "usage_summary": "3D都市モデルやCityGMLを使い、景観、BIM/CIM、都市スケールの空間検討に利用します。大容量データのため範囲を絞って扱います。",
+    "usage_notes": "APIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nSDKバージョンとの互換性を確認する。"
+  },
+  {
+    "id": "JMA-FORECAST-001",
+    "name": "気象庁 天気予報JSON",
+    "category": "気象",
+    "sub_category": "予報",
+    "provider": "気象庁",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.jma.go.jp/",
+    "document_url": "https://www.jma.go.jp/bosai/forecast/",
+    "endpoint_template": "https://www.jma.go.jp/bosai/forecast/data/forecast/{area_code}.json",
+    "sample_endpoint": "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json",
+    "data_formats": [
+      "JSON"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "気象庁ホームページの利用規約に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "定時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "本格利用候補",
+    "trust_rank": "B",
+    "connection_priority": 5,
+    "business_fit_score": 93,
+    "integration_score": 88,
+    "risk_note": "公式API仕様ではない可能性があるため仕様変更リスクを明記する。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support",
+      "Civil Disaster Early Insight Map"
+    ],
+    "adoption_reason": "施工判断、現場安全、災害対応に直結する短周期データ。",
+    "tags": [
+      "weather",
+      "forecast",
+      "jma"
+    ],
+    "usage_summary": "施工可否、作業計画、現場安全確認に使う天気予報データです。地域コードを指定して予報情報を取得します。",
+    "usage_notes": "便利なJSONですが、仕様変更リスクがあります。重要判断では気象庁公式画面や警報情報も併用します。\n機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n公式API仕様ではない可能性があるため仕様変更リスクを明記する。"
+  },
+  {
+    "id": "JMA-AMEDAS-001",
+    "name": "気象庁 アメダスJSON",
+    "category": "気象",
+    "sub_category": "観測",
+    "provider": "気象庁",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.jma.go.jp/",
+    "document_url": "https://www.jma.go.jp/bosai/amedas/",
+    "endpoint_template": "https://www.jma.go.jp/bosai/amedas/data/map/{datetime}.json",
+    "data_formats": [
+      "JSON"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "気象庁ホームページの利用規約に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "短周期",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 4,
+    "business_fit_score": 88,
+    "integration_score": 72,
+    "risk_note": "URL時刻生成と仕様変更リスクに注意。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "weather",
+      "amedas",
+      "jma"
+    ],
+    "usage_summary": "天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。",
+    "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nURL時刻生成と仕様変更リスクに注意。"
+  },
+  {
+    "id": "JMA-WARNING-001",
+    "name": "気象庁 警報注意報JSON",
+    "category": "気象",
+    "sub_category": "警報注意報",
+    "provider": "気象庁",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.jma.go.jp/",
+    "document_url": "https://www.jma.go.jp/bosai/warning/",
+    "endpoint_template": "https://www.jma.go.jp/bosai/warning/data/warning/{area_code}.json",
+    "data_formats": [
+      "JSON"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "気象庁ホームページの利用規約に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 4,
+    "business_fit_score": 90,
+    "integration_score": 72,
+    "risk_note": "防災用途では最新性と責任範囲を明記する。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support",
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "weather",
+      "warning",
+      "jma"
+    ],
+    "usage_summary": "天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。",
+    "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n防災用途では最新性と責任範囲を明記する。"
+  },
+  {
+    "id": "JMA-EARTHQUAKE-001",
+    "name": "気象庁 地震情報",
+    "category": "気象",
+    "sub_category": "地震",
+    "provider": "気象庁",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.jma.go.jp/",
+    "document_url": "https://www.jma.go.jp/bosai/map.html#contents=earthquake_map",
+    "endpoint_template": "https://www.jma.go.jp/",
+    "data_formats": [
+      "XML",
+      "JSON相当"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "気象庁ホームページの利用規約に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 75,
+    "integration_score": 58,
+    "risk_note": "機械取得方法と再配信条件を確認する。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "earthquake",
+      "jma"
+    ],
+    "usage_summary": "天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。",
+    "usage_notes": "構造化データですが、パース処理が必要です。スキーマと項目定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n機械取得方法と再配信条件を確認する。"
+  },
+  {
+    "id": "JMA-TYPHOON-001",
+    "name": "気象庁 台風情報",
+    "category": "気象",
+    "sub_category": "台風",
+    "provider": "気象庁",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.jma.go.jp/",
+    "document_url": "https://www.jma.go.jp/bosai/map.html#contents=typhoon",
+    "endpoint_template": "https://www.jma.go.jp/",
+    "data_formats": [
+      "JSON相当",
+      "XML相当"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "気象庁ホームページの利用規約に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 78,
+    "integration_score": 58,
+    "risk_note": "海上工事用途では公式警報との照合が必要。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "typhoon",
+      "jma"
+    ],
+    "usage_summary": "天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。",
+    "usage_notes": "APIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n海上工事用途では公式警報との照合が必要。"
+  },
+  {
+    "id": "MLIT-WATER-RAIN-001",
+    "name": "水文水質データベース 雨量",
+    "category": "河川",
+    "sub_category": "雨量",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www1.river.go.jp/",
+    "document_url": "https://www1.river.go.jp/",
+    "endpoint_template": "https://www1.river.go.jp/",
+    "data_formats": [
+      "Web",
+      "CSV相当"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "提供元の利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "観測周期",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 82,
+    "integration_score": 52,
+    "risk_note": "公式API形式と取得条件の確認が必要。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "rain",
+      "river",
+      "mlit"
+    ],
+    "usage_summary": "雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。",
+    "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n公式API形式と取得条件の確認が必要。"
+  },
+  {
+    "id": "MLIT-WATER-LEVEL-001",
+    "name": "水文水質データベース 水位",
+    "category": "河川",
+    "sub_category": "水位",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www1.river.go.jp/",
+    "document_url": "https://www1.river.go.jp/",
+    "endpoint_template": "https://www1.river.go.jp/",
+    "data_formats": [
+      "Web",
+      "CSV相当"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "提供元の利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "観測周期",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 84,
+    "integration_score": 52,
+    "risk_note": "公式API形式と取得条件の確認が必要。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "water-level",
+      "river",
+      "mlit"
+    ],
+    "usage_summary": "雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。",
+    "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n公式API形式と取得条件の確認が必要。"
+  },
+  {
+    "id": "MLIT-WATER-FLOW-001",
+    "name": "水文水質データベース 流量",
+    "category": "河川",
+    "sub_category": "流量",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www1.river.go.jp/",
+    "document_url": "https://www1.river.go.jp/",
+    "endpoint_template": "https://www1.river.go.jp/",
+    "data_formats": [
+      "Web",
+      "CSV相当"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "提供元の利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "観測周期",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "C",
+    "connection_priority": 2,
+    "business_fit_score": 70,
+    "integration_score": 48,
+    "risk_note": "取得容易性が未確認。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "flow",
+      "river",
+      "mlit"
+    ],
+    "usage_summary": "雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。",
+    "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n取得容易性が未確認。"
+  },
+  {
+    "id": "MLIT-RIVER-DISASTER-001",
+    "name": "川の防災情報",
+    "category": "河川",
+    "sub_category": "防災情報",
+    "provider": "国土交通省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.river.go.jp/",
+    "document_url": "https://www.river.go.jp/",
+    "endpoint_template": "https://www.river.go.jp/",
+    "data_formats": [
+      "Web",
+      "地図"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "提供元の利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "リアルタイム",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 82,
+    "integration_score": 45,
+    "risk_note": "スクレイピング前提にしない。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "river",
+      "disaster",
+      "mlit"
+    ],
+    "usage_summary": "雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。",
+    "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nスクレイピング前提にしない。"
+  },
+  {
+    "id": "JCG-UMISHIRU-001",
+    "name": "海上保安庁 海しる",
+    "category": "海象",
+    "sub_category": "海洋情報",
+    "provider": "海上保安庁",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://www.msil.go.jp/",
+    "document_url": "https://www.msil.go.jp/",
+    "endpoint_template": "https://www.msil.go.jp/",
+    "data_formats": [
+      "API",
+      "地図",
+      "データ"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "海しるの利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "A",
+    "connection_priority": 3,
+    "business_fit_score": 78,
+    "integration_score": 50,
+    "risk_note": "API提供範囲と利用条件の確認が必要。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "marine",
+      "jcg"
+    ],
+    "usage_summary": "海洋、波浪、潮位などを確認し、港湾・海洋土木の施工判断や安全確認に利用します。観測地点と利用条件を確認します。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPI提供範囲と利用条件の確認が必要。"
+  },
+  {
+    "id": "NOWPHAS-WAVE-001",
+    "name": "NOWPHAS 港湾波浪情報",
+    "category": "海象",
+    "sub_category": "波浪",
+    "provider": "港湾空港技術研究所等",
+    "provider_type": "official",
+    "region": "JP",
+    "official_url": "https://www.mlit.go.jp/kowan/nowphas/",
+    "document_url": "https://www.mlit.go.jp/kowan/nowphas/",
+    "endpoint_template": "https://www.mlit.go.jp/kowan/nowphas/",
+    "data_formats": [
+      "Web",
+      "CSV相当"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "提供元の利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "観測周期",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "A",
+    "connection_priority": 3,
+    "business_fit_score": 78,
+    "integration_score": 48,
+    "risk_note": "機械取得方法と再利用条件を確認する。",
+    "target_projects": [
+      "Construction Weather & Water Decision Support"
+    ],
+    "tags": [
+      "wave",
+      "marine",
+      "port"
+    ],
+    "usage_summary": "海洋、波浪、潮位などを確認し、港湾・海洋土木の施工判断や安全確認に利用します。観測地点と利用条件を確認します。",
+    "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n機械取得方法と再利用条件を確認する。"
+  },
+  {
+    "id": "MOE-AIR-POLLUTION-001",
+    "name": "環境省 大気汚染物質広域監視",
+    "category": "環境",
+    "sub_category": "大気",
+    "provider": "環境省",
+    "provider_type": "government",
+    "region": "JP",
+    "official_url": "https://soramame.env.go.jp/",
+    "document_url": "https://soramame.env.go.jp/",
+    "endpoint_template": "https://soramame.env.go.jp/",
+    "data_formats": [
+      "Web",
+      "CSV相当"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "提供元の利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "時間",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 2,
+    "business_fit_score": 58,
+    "integration_score": 45,
+    "risk_note": "機械取得方法を確認する。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "air",
+      "environment",
+      "moe"
+    ],
+    "usage_summary": "大気、水質、環境監視などを確認し、環境影響や安全配慮の参考情報として利用します。公式データの取得条件を確認します。",
+    "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n機械取得方法を確認する。"
+  },
+  {
+    "id": "OSM-OVERPASS-001",
+    "name": "OpenStreetMap Overpass API",
+    "category": "国際地図",
+    "sub_category": "OSM",
+    "provider": "OSM",
+    "provider_type": "foundation",
+    "region": "Global",
+    "official_url": "https://www.openstreetmap.org/",
+    "document_url": "https://wiki.openstreetmap.org/wiki/Overpass_API",
+    "endpoint_template": "https://overpass-api.de/api/interpreter",
+    "data_formats": [
+      "Overpass QL",
+      "JSON",
+      "XML"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "Open Database Licenseとタイル/API利用ポリシーに従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 72,
+    "integration_score": 70,
+    "risk_note": "高頻度アクセスは禁止。キャッシュと利用制限を守る。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "osm",
+      "overpass",
+      "global"
+    ],
+    "usage_summary": "海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。",
+    "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n高頻度アクセスは禁止。キャッシュと利用制限を守る。"
+  },
+  {
+    "id": "OSM-TILE-001",
+    "name": "OSM Tile",
+    "category": "国際地図",
+    "sub_category": "ベースマップ",
+    "provider": "OSM",
+    "provider_type": "foundation",
+    "region": "Global",
+    "official_url": "https://www.openstreetmap.org/",
+    "document_url": "https://operations.osmfoundation.org/policies/tiles/",
+    "endpoint_template": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "data_formats": [
+      "XYZ Tile",
+      "PNG"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "OSM Tile Usage PolicyとODbLに従う。",
+    "commercial_use": "restricted",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 2,
+    "business_fit_score": 60,
+    "integration_score": 72,
+    "risk_note": "本番用途では独自タイルまたは商用プロバイダ検討。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "osm",
+      "tile",
+      "global"
+    ],
+    "usage_summary": "海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。",
+    "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n本番用途では独自タイルまたは商用プロバイダ検討。"
+  },
+  {
+    "id": "OPENTOPOGRAPHY-API-001",
+    "name": "OpenTopography API",
+    "category": "国際地形",
+    "sub_category": "DEM",
+    "provider": "OpenTopography",
+    "provider_type": "official",
+    "region": "Global",
+    "official_url": "https://opentopography.org/",
+    "document_url": "https://opentopography.org/developers",
+    "endpoint_template": "https://portal.opentopography.org/API/",
+    "data_formats": [
+      "REST",
+      "GeoTIFF"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "データセットごとのライセンスに従う。",
+    "commercial_use": "unknown",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 2,
+    "business_fit_score": 60,
+    "integration_score": 48,
+    "risk_note": "APIキー要否とデータセット別条件を確認する。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "dem",
+      "topography",
+      "global"
+    ],
+    "usage_summary": "海外の標高・地形データを取得し、広域地形解析や比較研究に利用します。データセットごとのライセンスを確認します。",
+    "usage_notes": "システム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPIキー要否とデータセット別条件を確認する。"
+  },
+  {
+    "id": "OVERTURE-MAPS-001",
+    "name": "Overture Maps",
+    "category": "国際建物",
+    "sub_category": "建物/基盤地物",
+    "provider": "Overture Maps Foundation",
+    "provider_type": "foundation",
+    "region": "Global",
+    "official_url": "https://overturemaps.org/",
+    "document_url": "https://docs.overturemaps.org/",
+    "endpoint_template": "https://docs.overturemaps.org/",
+    "data_formats": [
+      "Parquet",
+      "GeoParquet"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "Overture Mapsのデータライセンスに従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 68,
+    "integration_score": 50,
+    "risk_note": "データ容量が大きいため抽出設計が必要。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "building",
+      "geoparquet",
+      "global"
+    ],
+    "usage_summary": "海外の建物・基盤地物データを使い、都市分析や海外案件の初期調査に利用します。大容量データの抽出設計が必要です。",
+    "usage_notes": "分析向けの列指向形式です。抽出範囲と処理環境を設計してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nデータ容量が大きいため抽出設計が必要。"
+  },
+  {
+    "id": "NOAA-NWS-001",
+    "name": "NOAA NWS API",
+    "category": "国際気象",
+    "sub_category": "天気予報",
+    "provider": "NOAA/NWS",
+    "provider_type": "government",
+    "region": "US",
+    "official_url": "https://www.weather.gov/",
+    "document_url": "https://www.weather.gov/documentation/services-web-api",
+    "endpoint_template": "https://api.weather.gov/points/{lat},{lon}",
+    "sample_endpoint": "https://api.weather.gov/points/38.8894,-77.0352",
+    "data_formats": [
+      "REST",
+      "JSON-LD"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "NWS API利用条件とUser-Agent要件に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 62,
+    "integration_score": 82,
+    "risk_note": "User-Agentに連絡先を含める運用を検討する。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "noaa",
+      "weather",
+      "us"
+    ],
+    "usage_summary": "米国の天気・予報APIとして、海外案件やAPI設計比較に使います。JSON-LDで地点情報から予報系データへ接続できます。",
+    "usage_notes": "User-Agent要件を守り、米国内地点を対象に利用します。\nシステム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nUser-Agentに連絡先を含める運用を検討する。"
+  },
+  {
+    "id": "NOAA-CDO-001",
+    "name": "NOAA Climate Data Online API",
+    "category": "国際気象",
+    "sub_category": "気候",
+    "provider": "NOAA/NCEI",
+    "provider_type": "government",
+    "region": "US",
+    "official_url": "https://www.ncei.noaa.gov/cdo-web/",
+    "document_url": "https://www.ncei.noaa.gov/cdo-web/webservices/v2",
+    "endpoint_template": "https://www.ncei.noaa.gov/cdo-web/api/v2/",
+    "data_formats": [
+      "REST",
+      "JSON"
+    ],
+    "api_key_required": "required",
+    "auth_type": "api_key",
+    "license_note": "NOAA CDO API利用条件に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "日次等",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "保留",
+    "trust_rank": "C",
+    "connection_priority": 2,
+    "business_fit_score": 55,
+    "integration_score": 42,
+    "risk_note": "APIキーが必要なためCIではskipped扱い。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "noaa",
+      "climate",
+      "api-key"
+    ],
+    "usage_summary": "海外気象・気候データを使い、海外案件や比較研究の気象条件を確認します。User-AgentやAPIキー要件に注意します。",
+    "usage_notes": "システム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキーが必要です。キーは環境変数やシークレット管理で扱い、台帳には保存しません。\nAPIキーが必要なためCIではskipped扱い。"
+  },
+  {
+    "id": "USGS-WATER-001",
+    "name": "USGS Water Data APIs",
+    "category": "国際水文",
+    "sub_category": "水位/流量",
+    "provider": "USGS",
+    "provider_type": "government",
+    "region": "US",
+    "official_url": "https://www.usgs.gov/products/web-tools/apis",
+    "document_url": "https://www.usgs.gov/tools/usgs-water-data-apis",
+    "endpoint_template": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites={site}&parameterCd={parameter}",
+    "sample_endpoint": "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060",
+    "data_formats": [
+      "REST",
+      "JSON"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "USGS利用条件に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "短周期/日次",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続検証済",
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 74,
+    "integration_score": 85,
+    "risk_note": "米国向け比較データとして利用する。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "usgs",
+      "water",
+      "us"
+    ],
+    "usage_summary": "米国の水位・流量データを取得し、海外水文データの比較、研究、サンプル実装に使います。",
+    "usage_notes": "観測所IDとパラメータコードを正しく指定します。国内河川判断には国内公式情報を優先します。\nシステム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n米国向け比較データとして利用する。"
+  },
+  {
+    "id": "USGS-EARTHQUAKE-001",
+    "name": "USGS Earthquake API",
+    "category": "国際災害",
+    "sub_category": "地震",
+    "provider": "USGS",
+    "provider_type": "government",
+    "region": "Global",
+    "official_url": "https://earthquake.usgs.gov/",
+    "document_url": "https://earthquake.usgs.gov/fdsnws/event/1/",
+    "endpoint_template": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson",
+    "data_formats": [
+      "GeoJSON"
+    ],
+    "api_key_required": "not_required",
+    "auth_type": "none",
+    "license_note": "USGS利用条件に従う。",
+    "commercial_use": "allowed",
+    "update_frequency": "リアルタイム",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "接続候補",
+    "trust_rank": "A",
+    "connection_priority": 3,
+    "business_fit_score": 66,
+    "integration_score": 82,
+    "risk_note": "国内地震情報とは用途を分ける。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "usgs",
+      "earthquake",
+      "geojson"
+    ],
+    "usage_summary": "地震など国際的な災害データを使い、広域リスク把握や研究に利用します。国内公式情報とは用途を分けます。",
+    "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n国内地震情報とは用途を分ける。"
+  },
+  {
+    "id": "OPENAQ-API-001",
+    "name": "OpenAQ API",
+    "category": "国際環境",
+    "sub_category": "大気",
+    "provider": "OpenAQ",
+    "provider_type": "official",
+    "region": "Global",
+    "official_url": "https://openaq.org/",
+    "document_url": "https://docs.openaq.org/",
+    "endpoint_template": "https://api.openaq.org/",
+    "data_formats": [
+      "REST",
+      "JSON"
+    ],
+    "api_key_required": "unknown",
+    "auth_type": "unknown",
+    "license_note": "OpenAQの利用条件を確認する。",
+    "commercial_use": "unknown",
+    "update_frequency": "時間",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 2,
+    "business_fit_score": 52,
+    "integration_score": 58,
+    "risk_note": "APIバージョンと認証要件を確認する。",
+    "target_projects": [
+      "Civil Open Data Intelligence Platform"
+    ],
+    "tags": [
+      "air",
+      "openaq",
+      "global"
+    ],
+    "usage_summary": "海外・国際的な環境観測データを使い、大気環境や環境比較に利用します。APIバージョンと認証要件を確認してください。",
+    "usage_notes": "システム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPIバージョンと認証要件を確認する。"
+  },
+  {
+    "id": "NASA-FIRMS-001",
+    "name": "NASA Earthdata / FIRMS",
+    "category": "衛星",
+    "sub_category": "災害/火災",
+    "provider": "NASA",
+    "provider_type": "government",
+    "region": "Global",
+    "official_url": "https://firms.modaps.eosdis.nasa.gov/",
+    "document_url": "https://firms.modaps.eosdis.nasa.gov/api/",
+    "endpoint_template": "https://firms.modaps.eosdis.nasa.gov/api/",
+    "data_formats": [
+      "API",
+      "GeoJSON",
+      "CSV"
+    ],
+    "api_key_required": "required",
+    "auth_type": "api_key",
+    "license_note": "NASA FIRMSおよびEarthdataの利用条件に従う。",
+    "commercial_use": "unknown",
+    "update_frequency": "随時",
+    "last_checked_at": "2026-06-18",
+    "connection_status": "保留",
+    "trust_rank": "C",
+    "connection_priority": 2,
+    "business_fit_score": 58,
+    "integration_score": 40,
+    "risk_note": "APIキーが必要なため初期CIでは検証しない。",
+    "target_projects": [
+      "Civil Disaster Early Insight Map"
+    ],
+    "tags": [
+      "nasa",
+      "firms",
+      "satellite"
+    ],
+    "usage_summary": "衛星観測、火災、災害関連データを使い、広域監視や災害初動の参考にします。APIキーと利用条件の確認が必要です。",
+    "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキーが必要です。キーは環境変数やシークレット管理で扱い、台帳には保存しません。\nAPIキーが必要なため初期CIでは検証しない。"
+  }
 ]

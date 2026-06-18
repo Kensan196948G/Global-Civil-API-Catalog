@@ -52,6 +52,12 @@ function renderCatalog() {
         <td>${badge(item.trust_rank)}</td>
         <td>${item.connection_priority}</td>
         <td>${badge(item.connection_status)}</td>
+        <td>
+          <details>
+            <summary>${item.usage_summary || "利用説明を確認"}</summary>
+            <p>${(item.usage_notes || "").replaceAll("\\n", "<br>")}</p>
+          </details>
+        </td>
       </tr>
     `);
   byId("catalogRows").innerHTML = rows.join("");

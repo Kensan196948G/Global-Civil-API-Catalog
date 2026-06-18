@@ -129,7 +129,7 @@ select {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1060px;
+  min-width: 1280px;
 }
 
 th,
@@ -144,6 +144,22 @@ td {
 th {
   color: var(--muted);
   font-weight: 700;
+}
+
+details {
+  max-width: 360px;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+details p {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .badge {

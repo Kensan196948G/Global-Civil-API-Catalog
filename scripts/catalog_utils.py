@@ -33,6 +33,8 @@ REQUIRED_CATALOG_FIELDS = {
     "connection_priority",
     "business_fit_score",
     "integration_score",
+    "usage_summary",
+    "usage_notes",
     "tags",
 }
 
