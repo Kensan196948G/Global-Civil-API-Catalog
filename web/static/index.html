@@ -7,67 +7,160 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <div>
-        <h1>Global Civil API Catalog</h1>
-        <p>国内外土木建設API・公開データの接続台帳</p>
-      </div>
-      <nav>
-        <a href="#catalog">Catalog</a>
-        <a href="#verification">Verification</a>
-        <a href="#exports">Exports</a>
-      </nav>
-    </header>
-
-    <main>
-      <section class="metrics" aria-label="summary">
-        <div class="metric"><span id="catalogCount">-</span><small>登録API</small></div>
-        <div class="metric"><span id="verificationCount">-</span><small>検証結果</small></div>
-        <div class="metric"><span id="implementedCount">-</span><small>実装候補</small></div>
-        <div class="metric"><span id="candidateCount">-</span><small>本格利用候補</small></div>
-      </section>
-
-      <section id="catalog" class="panel">
-        <div class="panelHeader">
-          <h2>API Catalog</h2>
-          <div class="controls">
-            <input id="searchInput" type="search" placeholder="キーワード検索" />
-            <select id="categoryFilter"><option value="">全カテゴリ</option></select>
-            <select id="statusFilter"><option value="">全ステータス</option></select>
+    <div class="appShell">
+      <aside class="sidebar" aria-label="primary navigation">
+        <div class="brandBlock">
+          <div class="brandMark">GC</div>
+          <div>
+            <h1>Global Civil API Catalog</h1>
+            <p>土木建設API接続台帳</p>
           </div>
         </div>
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>名称</th>
-                <th>カテゴリ</th>
-                <th>提供元</th>
-                <th>形式</th>
-                <th>キー</th>
-                <th>信頼度</th>
-                <th>優先度</th>
-                <th>状態</th>
-                <th>利用説明</th>
-              </tr>
-            </thead>
-            <tbody id="catalogRows"></tbody>
-          </table>
+        <nav class="sideNav">
+          <a href="#overview">Overview</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#audiences">Users</a>
+          <a href="#catalog">Catalog</a>
+          <a href="#verification">Verification</a>
+          <a href="#exports">Exports</a>
+        </nav>
+        <div class="serviceBox">
+          <span class="statusDot"></span>
+          <div>
+            <strong>Service Active</strong>
+            <small>192.168.0.185:49231</small>
+          </div>
         </div>
-      </section>
+      </aside>
 
-      <section id="verification" class="split">
-        <article class="panel">
-          <h2>Latest Verification</h2>
-          <div id="verificationList" class="list"></div>
-        </article>
-        <article id="exports" class="panel">
-          <h2>Exports</h2>
-          <div id="exportList" class="list"></div>
-        </article>
-      </section>
-    </main>
+      <main>
+        <section id="overview" class="heroBand">
+          <div>
+            <p class="eyebrow">Release Ready Catalog</p>
+            <h2>土木建設で使える公開データを、判断できる台帳へ。</h2>
+            <p>
+              地図、地形、防災、気象、河川、3D都市、海外APIを横断し、
+              利用条件・接続検証・優先度・利用説明を一画面で確認できます。
+            </p>
+          </div>
+          <div class="heroActions">
+            <a href="#catalog">台帳を見る</a>
+            <a href="#exports">成果物を出力</a>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="summary">
+          <div class="metric"><span id="catalogCount">-</span><small>登録API</small></div>
+          <div class="metric"><span id="verificationCount">-</span><small>検証結果</small></div>
+          <div class="metric"><span id="implementedCount">-</span><small>実装候補</small></div>
+          <div class="metric"><span id="candidateCount">-</span><small>本格利用候補</small></div>
+        </section>
+
+        <section id="workflow" class="panel">
+          <div class="panelHeader">
+            <h2>Connection Workflow</h2>
+            <p>公開データを業務利用候補へ進める判断フロー</p>
+          </div>
+          <div class="flowGrid">
+            <div class="flowStep"><span>01</span><strong>公開データ</strong><small>公式URL・提供元を確認</small></div>
+            <div class="flowStep"><span>02</span><strong>台帳登録</strong><small>形式・キー要否・利用条件</small></div>
+            <div class="flowStep"><span>03</span><strong>接続検証</strong><small>HTTP結果・サンプル保存</small></div>
+            <div class="flowStep"><span>04</span><strong>優先度評価</strong><small>信頼度・業務適合度</small></div>
+            <div class="flowStep"><span>05</span><strong>業務利用候補</strong><small>現場・設計・研究・IT運用</small></div>
+          </div>
+        </section>
+
+        <section id="audiences" class="audienceGrid" aria-label="audience guides">
+          <article>
+            <span>🧭</span>
+            <h3>非エンジニア</h3>
+            <p>用途、提供元、信頼度、利用条件から採用候補を確認。</p>
+          </article>
+          <article>
+            <span>👷</span>
+            <h3>現場管理・監督者</h3>
+            <p>気象、河川、防災、地図を施工判断の入口として確認。</p>
+          </article>
+          <article>
+            <span>📐</span>
+            <h3>土木建設技術者</h3>
+            <p>地形、行政区域、リスクレイヤを設計・施工計画に接続。</p>
+          </article>
+          <article>
+            <span>🔬</span>
+            <h3>研究者・IT運用</h3>
+            <p>国内外比較、再現性、API運用リスクを確認。</p>
+          </article>
+        </section>
+
+        <section class="dashboardGrid">
+          <article class="panel">
+            <div class="panelHeader">
+              <h2>Category Distribution</h2>
+              <p>登録カテゴリの偏りを確認</p>
+            </div>
+            <div id="categoryList" class="barList"></div>
+          </article>
+          <article class="panel">
+            <div class="panelHeader">
+              <h2>Status Pipeline</h2>
+              <p>接続状態ごとの進捗</p>
+            </div>
+            <div id="statusList" class="statusList"></div>
+          </article>
+        </section>
+
+        <section id="catalog" class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>API Catalog</h2>
+              <p>利用説明は各行の詳細を開いて確認できます。</p>
+            </div>
+            <div class="controls">
+              <input id="searchInput" type="search" placeholder="キーワード検索" />
+              <select id="categoryFilter"><option value="">全カテゴリ</option></select>
+              <select id="statusFilter"><option value="">全ステータス</option></select>
+            </div>
+          </div>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>名称</th>
+                  <th>カテゴリ</th>
+                  <th>提供元</th>
+                  <th>形式</th>
+                  <th>キー</th>
+                  <th>信頼度</th>
+                  <th>優先度</th>
+                  <th>状態</th>
+                  <th>利用説明</th>
+                </tr>
+              </thead>
+              <tbody id="catalogRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="dashboardGrid lowerGrid">
+          <article id="verification" class="panel">
+            <div class="panelHeader">
+              <h2>Latest Verification</h2>
+              <p>直近の接続検証結果</p>
+            </div>
+            <div id="verificationList" class="list"></div>
+          </article>
+          <article id="exports" class="panel">
+            <div class="panelHeader">
+              <h2>Exports</h2>
+              <p>成果物を開く、またはダウンロード</p>
+            </div>
+            <div id="exportList" class="list"></div>
+          </article>
+        </section>
+      </main>
+    </div>
 
     <script src="/app.js"></script>
   </body>

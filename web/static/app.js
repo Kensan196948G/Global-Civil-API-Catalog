@@ -19,6 +19,23 @@ function badge(value) {
   return `<span class="badge ${klass}">${value}</span>`;
 }
 
+function countBy(items, key) {
+  return items.reduce((acc, item) => {
+    const value = item[key] || "未設定";
+    acc[value] = (acc[value] || 0) + 1;
+    return acc;
+  }, {});
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function renderSummary() {
   byId("catalogCount").textContent = state.summary.catalog_count;
   byId("verificationCount").textContent = state.summary.verification_count;
@@ -31,6 +48,30 @@ function renderSummary() {
   for (const status of state.summary.statuses) {
     byId("statusFilter").insertAdjacentHTML("beforeend", `<option value="${status}">${status}</option>`);
   }
+}
+
+function renderDistribution() {
+  const categoryCounts = countBy(state.catalog, "category");
+  const maxCategory = Math.max(...Object.values(categoryCounts));
+  byId("categoryList").innerHTML = Object.entries(categoryCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([name, count]) => `
+      <div class="barItem">
+        <div><strong>${escapeHtml(name)}</strong><span>${count}件</span></div>
+        <div class="barTrack"><span style="width: ${(count / maxCategory) * 100}%"></span></div>
+      </div>
+    `).join("");
+
+  const statusCounts = countBy(state.catalog, "connection_status");
+  byId("statusList").innerHTML = Object.entries(statusCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => `
+      <div class="statusItem">
+        ${badge(escapeHtml(name))}
+        <strong>${count}</strong>
+      </div>
+    `).join("");
 }
 
 function renderCatalog() {
@@ -54,8 +95,8 @@ function renderCatalog() {
         <td>${badge(item.connection_status)}</td>
         <td>
           <details>
-            <summary>${item.usage_summary || "利用説明を確認"}</summary>
-            <p>${(item.usage_notes || "").replaceAll("\\n", "<br>")}</p>
+            <summary>${escapeHtml(item.usage_summary || "利用説明を確認")}</summary>
+            <p>${escapeHtml(item.usage_notes || "").replaceAll("\n", "<br>")}</p>
           </details>
         </td>
       </tr>
@@ -99,6 +140,7 @@ async function boot() {
     loadJson("/api/export"),
   ]);
   renderSummary();
+  renderDistribution();
   renderCatalog();
   renderVerification();
   renderExports();
