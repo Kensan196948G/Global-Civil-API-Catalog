@@ -1,0 +1,2 @@
+# skipped: API key and usage condition confirmation required before execution
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://www.reinfolib.mlit.go.jp/help/apiManual/"
