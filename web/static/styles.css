@@ -184,6 +184,7 @@ th {
 .listItem {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
@@ -198,6 +199,23 @@ th {
   font-size: 13px;
 }
 
+.exportActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.exportActions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
 @media (max-width: 860px) {
   .topbar,
   .panelHeader {
@@ -208,6 +226,15 @@ th {
   .metrics,
   .split {
     grid-template-columns: 1fr;
+  }
+
+  .listItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .exportActions {
+    justify-content: flex-start;
   }
 
   main {

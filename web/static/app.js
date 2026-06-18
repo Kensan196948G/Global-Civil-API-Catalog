@@ -73,8 +73,14 @@ function renderVerification() {
 function renderExports() {
   byId("exportList").innerHTML = state.exports.map((item) => `
     <div class="listItem">
-      <a href="${item.url}" target="_blank" rel="noreferrer">${item.name}</a>
-      <span>open</span>
+      <div>
+        <strong>${item.name}</strong>
+        <span>成果物ファイル</span>
+      </div>
+      <div class="exportActions">
+        <a href="${item.url}" target="_blank" rel="noreferrer">開く</a>
+        <a href="${item.download_url || `${item.url}?download=1`}" download>ダウンロード</a>
+      </div>
     </div>
   `).join("");
 }
