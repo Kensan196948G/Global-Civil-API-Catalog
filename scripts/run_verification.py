@@ -20,6 +20,9 @@ from scripts.catalog_utils import (  # noqa: E402
 
 
 USER_AGENT = "Global-Civil-API-Catalog/0.1 (+https://github.com/Kensan196948G/Global-Civil-API-Catalog)"
+# Saved response samples are capped at this size. response_size_bytes therefore
+# records the captured (possibly truncated) sample size, not the full response
+# length; samples that hit this cap are flagged as truncated in the note.
 MAX_SAMPLE_BYTES = 64 * 1024
 
 
@@ -89,6 +92,9 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
         result["response_size_bytes"] = len(body)
         result["result"] = "success" if status and 200 <= status < 300 else "failure"
         result["note"] = "live verification executed"
+        if len(body) >= MAX_SAMPLE_BYTES:
+            result["sample_truncated"] = True
+            result["note"] += f"; sample truncated to {MAX_SAMPLE_BYTES // 1024}KB"
         sample_path = Path(result["sample_response_path"])
         sample_path.parent.mkdir(parents=True, exist_ok=True)
         sample_path.write_bytes(body)

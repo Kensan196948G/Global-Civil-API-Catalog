@@ -8,6 +8,6 @@
   "verification_count": 30,
   "merge_policy": "Production bundle fields are authoritative; local enrichment fields such as usage_summary and usage_notes are preserved.",
   "design_html_sha256": "cdeb157d6e6f77832771eec9ed3458bdf752d09c68fb73fb9812a094480998c6",
-  "catalog_sha256": "f32356db192df8f2459269a69cdaf80990bb2bc44e89f97f5fcd887ca0966e36",
-  "verification_sha256": "63eea1a92999f9031c76742e9b88e1a18f30ebd73e28219f4097a02499cd0deb"
+  "catalog_sha256": "2472ff7722b36fa26017ddce5f013a7fdf604ad1fef7e792fd7b2ef80cb51ced",
+  "verification_sha256": "67d0e34453cef032dd1b4f3ed0ec7474d7ce84c6c26386e0b7c2cecc9177d64a"
 }

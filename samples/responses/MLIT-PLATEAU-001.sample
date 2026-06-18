@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
       <meta name="csrf_field_name" content="_csrf_token" />
-      <meta name="_csrf_token" content="IjQ1MWMzNTBiM2JlNjIxY2E2MmI0MDdiN2RiNGJiMTRmOTRmMDU4Yjci.ajPyog.WeS30fz6qkb5jUiL3ZNkGzoNS84" />
+      <meta name="_csrf_token" content="REDACTED_CSRF_TOKEN" />
 
       <meta name="generator" content="ckan 2.11.4" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
