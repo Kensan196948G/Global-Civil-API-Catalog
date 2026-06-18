@@ -1,19 +1,22 @@
 :root {
   color-scheme: light;
-  --bg: #f1ece1;
+  --bg: #f4f2ea;
   --bg-soft: #faf8f2;
-  --sidebar: #0e1c22;
-  --sidebar-2: #16262d;
-  --sidebar-ink: #e8e2d6;
-  --sidebar-muted: #9aa7ab;
+  --sidebar: #f6f3ec;
+  --sidebar-ink: #3c4a52;
+  --sidebar-muted: #9a8f78;
   --panel: #ffffff;
-  --ink: #1b2a32;
+  --ink: #18262e;
+  --head: #1b2a32;
   --ink-2: #3c4a52;
   --muted: #5e6b73;
   --muted-2: #7d8893;
-  --line: #e8e2d6;
-  --line-2: #e4ded2;
-  --gold: #c0820f;
+  --faint: #9a8f78;
+  --line: #e4ded2;
+  --line-2: #e8e2d6;
+  --track: #f0ece2;
+  --chip: #f3efe5;
+  --gold: #c08a2e;
   --gold-deep: #a06a0c;
   --gold-soft: #f3efe5;
   --good: #0b6b61;
@@ -25,8 +28,8 @@
   --serif: "Noto Serif JP", "Hiragino Mincho ProN", serif;
   --sans: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
-  --radius: 12px;
-  --shadow: 0 1px 2px rgba(27, 42, 50, 0.04), 0 10px 26px rgba(27, 42, 50, 0.05);
+  --radius: 7px;
+  --shadow: 0 1px 2px rgba(27, 42, 50, 0.04), 0 8px 22px rgba(27, 42, 50, 0.05);
 }
 
 * {
@@ -90,8 +93,9 @@ small {
   display: flex;
   flex-direction: column;
   gap: 26px;
-  padding: 26px 22px;
-  background: linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-2) 100%);
+  padding: 26px 18px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
   color: var(--sidebar-ink);
 }
 
@@ -99,53 +103,70 @@ small {
   display: flex;
   gap: 13px;
   align-items: center;
+  padding: 0 6px;
 }
 
 .brandMark {
   display: grid;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   place-items: center;
-  border-radius: 10px;
+  border-radius: 9px;
   background: linear-gradient(135deg, var(--gold) 0%, #d9a23e 100%);
-  color: #1b2a32;
+  color: #fff;
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 18px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  font-size: 17px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
 
 .brandBlock h1 {
   font-family: var(--serif);
-  color: #fdfbf6;
+  color: var(--head);
 }
 
 .brandBlock p {
   margin-top: 3px;
   font-size: 12px;
-  color: var(--sidebar-muted);
+  color: var(--faint);
 }
 
 .sideNav {
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
 
 .sideNav a {
   position: relative;
-  padding: 11px 14px;
-  border-radius: 8px;
-  color: #cfd9da;
+  padding: 12px 16px;
+  border-radius: 7px;
+  color: var(--ink-2);
   text-decoration: none;
   font-weight: 500;
   font-size: 14px;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
+.sideNav a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: transparent;
+}
+
 .sideNav a:hover,
 .sideNav a:focus {
-  background: rgba(232, 226, 214, 0.08);
-  color: #fdfbf6;
+  background: rgba(0, 0, 0, 0.045);
+  color: var(--head);
+}
+
+.sideNav a:hover::before,
+.sideNav a:focus::before {
+  background: var(--gold);
 }
 
 .serviceBox {
@@ -154,21 +175,21 @@ small {
   align-items: center;
   margin-top: auto;
   padding: 13px;
-  border: 1px solid rgba(232, 226, 214, 0.16);
-  border-radius: 10px;
-  background: rgba(232, 226, 214, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
 }
 
 .serviceBox strong {
   display: block;
   font-size: 13px;
-  color: #fdfbf6;
+  color: var(--head);
 }
 
 .serviceBox small {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--sidebar-muted);
+  color: var(--faint);
 }
 
 .statusDot {
@@ -278,7 +299,7 @@ main {
 /* ---------- metrics ---------- */
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -292,7 +313,7 @@ main {
 
 .metric {
   position: relative;
-  padding: 20px;
+  padding: 17px 17px 15px;
   overflow: hidden;
 }
 
@@ -300,25 +321,41 @@ main {
   content: "";
   position: absolute;
   left: 0;
-  top: 16px;
-  bottom: 16px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: linear-gradient(180deg, var(--gold) 0%, #d9a23e 100%);
+  top: 0;
+  height: 3px;
+  width: 100%;
+  opacity: 0.85;
+  background: #6a7884;
+}
+
+.metric:nth-child(2)::before { background: #0b8a7c; }
+.metric:nth-child(3)::before { background: #1f9d5e; }
+.metric:nth-child(4)::before { background: #c08a2e; }
+.metric:nth-child(5)::before { background: #3f7fc0; }
+
+.metricLabel {
+  display: block;
+  min-height: 28px;
+  margin-bottom: 11px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted-2);
 }
 
 .metric span {
   display: block;
-  font-family: var(--mono);
-  font-size: 34px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 33px;
+  line-height: 1;
+  color: var(--head);
 }
 
-.metric small {
-  font-size: 12px;
-  color: var(--muted);
+.metricSub {
+  display: block;
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: var(--faint);
 }
 
 /* ---------- panels ---------- */
@@ -503,7 +540,7 @@ details p {
 
 .opsGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 18px;
 }
@@ -557,7 +594,7 @@ details p {
   height: 7px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--gold-soft);
+  background: var(--track);
 }
 
 .barTrack span {

@@ -61,10 +61,11 @@
         </section>
 
         <section class="metrics" aria-label="summary">
-          <div class="metric"><span id="catalogCount">-</span><small>登録API</small></div>
-          <div class="metric"><span id="verificationCount">-</span><small>検証結果</small></div>
-          <div class="metric"><span id="implementedCount">-</span><small>実装候補</small></div>
-          <div class="metric"><span id="candidateCount">-</span><small>本格利用候補</small></div>
+          <div class="metric"><small class="metricLabel">登録データソース</small><span id="catalogCount">-</span><small class="metricSub">API・公開データ</small></div>
+          <div class="metric"><small class="metricLabel">本格利用候補</small><span id="candidateCount">-</span><small class="metricSub">最優先採用</small></div>
+          <div class="metric"><small class="metricLabel">実装・本格候補</small><span id="implementedCount">-</span><small class="metricSub">運用フェーズ</small></div>
+          <div class="metric"><small class="metricLabel">平均 事業適合度</small><span id="avgFit">-</span><small class="metricSub">business_fit</small></div>
+          <div class="metric"><small class="metricLabel">平均 連携実装性</small><span id="avgInt">-</span><small class="metricSub">integration</small></div>
         </section>
 
         <section class="dashboardGrid">
@@ -79,6 +80,7 @@
             <div class="opsGrid">
               <div><strong id="importedAt">-</strong><span>取込日</span></div>
               <div><strong id="sourceName">-</strong><span>取込元</span></div>
+              <div><strong id="verificationCount">-</strong><span>検証件数</span></div>
               <div><strong id="productionCoverage">-</strong><span>Production反映</span></div>
             </div>
             <div id="categoryList" class="barList"></div>

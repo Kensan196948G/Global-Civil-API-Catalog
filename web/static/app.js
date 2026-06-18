@@ -55,11 +55,19 @@ function fillSelect(id, values) {
   select.innerHTML = first + values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
 }
 
+function average(items, key) {
+  const values = items.map((item) => Number(item[key])).filter((value) => !Number.isNaN(value));
+  if (!values.length) return 0;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+}
+
 function renderSummary() {
   byId("catalogCount").textContent = state.summary.catalog_count;
   byId("verificationCount").textContent = state.summary.verification_count;
   byId("implementedCount").textContent = state.summary.implemented_count;
   byId("candidateCount").textContent = state.summary.candidate_count;
+  byId("avgFit").textContent = average(state.catalog, "business_fit_score");
+  byId("avgInt").textContent = average(state.catalog, "integration_score");
   byId("catalogMode").textContent = `${state.metadata.catalog_mode} / ${state.metadata.imported_at}`;
   byId("metadataLine").textContent = `${state.metadata.source_path} から ${state.metadata.record_count}件を本番反映`;
   byId("importedAt").textContent = state.metadata.imported_at;
