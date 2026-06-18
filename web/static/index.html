@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Global Civil API Catalog</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Global Civil API Catalog</h1>
+        <p>国内外土木建設API・公開データの接続台帳</p>
+      </div>
+      <nav>
+        <a href="#catalog">Catalog</a>
+        <a href="#verification">Verification</a>
+        <a href="#exports">Exports</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="metrics" aria-label="summary">
+        <div class="metric"><span id="catalogCount">-</span><small>登録API</small></div>
+        <div class="metric"><span id="verificationCount">-</span><small>検証結果</small></div>
+        <div class="metric"><span id="implementedCount">-</span><small>実装候補</small></div>
+        <div class="metric"><span id="candidateCount">-</span><small>本格利用候補</small></div>
+      </section>
+
+      <section id="catalog" class="panel">
+        <div class="panelHeader">
+          <h2>API Catalog</h2>
+          <div class="controls">
+            <input id="searchInput" type="search" placeholder="キーワード検索" />
+            <select id="categoryFilter"><option value="">全カテゴリ</option></select>
+            <select id="statusFilter"><option value="">全ステータス</option></select>
+          </div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>カテゴリ</th>
+                <th>提供元</th>
+                <th>形式</th>
+                <th>キー</th>
+                <th>信頼度</th>
+                <th>優先度</th>
+                <th>状態</th>
+              </tr>
+            </thead>
+            <tbody id="catalogRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="verification" class="split">
+        <article class="panel">
+          <h2>Latest Verification</h2>
+          <div id="verificationList" class="list"></div>
+        </article>
+        <article id="exports" class="panel">
+          <h2>Exports</h2>
+          <div id="exportList" class="list"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
