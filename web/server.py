@@ -59,6 +59,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/summary":
             self.handle_summary()
             return
+        if parsed.path == "/api/metadata":
+            self.write_json(load_json(DATA_DIR / "catalog_metadata.json"))
+            return
         if parsed.path == "/api/export":
             self.handle_export_index()
             return

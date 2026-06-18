@@ -1,0 +1,13 @@
+{
+  "dataset_name": "Global Civil API Catalog production catalog",
+  "catalog_mode": "production",
+  "source": "claude-design-bundle",
+  "source_path": "web/Global Civil API Catalog.html",
+  "imported_at": "2026-06-18",
+  "record_count": 50,
+  "verification_count": 10,
+  "merge_policy": "Production bundle fields are authoritative; local enrichment fields such as usage_summary and usage_notes are preserved.",
+  "design_html_sha256": "5312a0132e9e6f74896227505fd3b52b6580426110fa856f87a06be35bbf7197",
+  "catalog_sha256": "51c4c9d3b4a34fab31b1bed229ada21bf37211fdfe55526fe9b12480847d35ca",
+  "verification_sha256": "c5e88e56775aca193f2abdee73fdfcb52a4d1b3337270756d988c2a102f6d5dd"
+}
