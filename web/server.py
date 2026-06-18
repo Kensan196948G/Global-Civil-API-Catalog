@@ -25,6 +25,84 @@ def latest_verification(results: list[dict]) -> dict[str, dict]:
     return latest
 
 
+def status_counts(catalog: list[dict]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for item in catalog:
+        status = item.get("connection_status", "未設定")
+        counts[status] = counts.get(status, 0) + 1
+    return counts
+
+
+def category_counts(catalog: list[dict]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for item in catalog:
+        category = item.get("category", "未設定")
+        counts[category] = counts.get(category, 0) + 1
+    return counts
+
+
+def live_map_payload(catalog: list[dict], results: list[dict]) -> dict:
+    latest = latest_verification(results)
+    anchors = {
+        "JP": (36.2, 138.2),
+        "US": (39.5, -98.35),
+        "Global": (8.0, 15.0),
+    }
+    offsets = [
+        (0.0, 0.0),
+        (1.2, 1.1),
+        (-1.0, 1.5),
+        (1.4, -1.1),
+        (-1.3, -1.0),
+        (2.1, 0.4),
+        (-2.0, 0.2),
+    ]
+    features = []
+    layers = []
+    for index, item in enumerate(catalog):
+        lat, lon = anchors.get(item.get("region"), (20.0, 0.0))
+        lat_offset, lon_offset = offsets[index % len(offsets)]
+        verification = latest.get(item["id"], {})
+        features.append(
+            {
+                "id": item["id"],
+                "name": item["name"],
+                "category": item["category"],
+                "provider": item["provider"],
+                "region": item["region"],
+                "lat": round(lat + lat_offset + (index % 5) * 0.08, 5),
+                "lon": round(lon + lon_offset + (index % 6) * 0.08, 5),
+                "connection_status": item["connection_status"],
+                "trust_rank": item["trust_rank"],
+                "connection_priority": item["connection_priority"],
+                "usage_summary": item.get("usage_summary", ""),
+                "latest_verification": verification.get("result", "未検証"),
+                "sample_endpoint": item.get("sample_endpoint", ""),
+                "official_url": item.get("official_url", ""),
+            }
+        )
+        endpoint = item.get("endpoint_template", "")
+        formats = {str(fmt).lower() for fmt in item.get("data_formats", [])}
+        if "{z}" in endpoint and "{x}" in endpoint and "{y}" in endpoint:
+            layers.append(
+                {
+                    "id": item["id"],
+                    "name": item["name"],
+                    "category": item["category"],
+                    "provider": item["provider"],
+                    "tile_url": endpoint,
+                    "attribution": item.get("license_note", ""),
+                    "enabled": item["connection_status"] in {"実装接続済", "本格利用候補", "接続検証済"},
+                    "is_tile": bool(formats & {"xyz tile", "png", "jpeg"}),
+                }
+            )
+    return {
+        "center": {"lat": 36.2, "lon": 138.2, "zoom": 5},
+        "features": features,
+        "layers": layers,
+    }
+
+
 class CatalogHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(STATIC_DIR), **kwargs)
@@ -44,7 +122,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if parsed.path in {"/", "/index.html"} and DESIGN_HTML_PATH.exists():
+        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=True)
             return
         if parsed.path == "/api/health":
@@ -62,6 +140,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/metadata":
             self.write_json(load_json(DATA_DIR / "catalog_metadata.json"))
             return
+        if parsed.path == "/api/live-map":
+            self.handle_live_map()
+            return
         if parsed.path == "/api/export":
             self.handle_export_index()
             return
@@ -72,7 +153,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if parsed.path in {"/", "/index.html"} and DESIGN_HTML_PATH.exists():
+        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=False)
             return
         if parsed.path.startswith("/exports/"):
@@ -127,9 +208,16 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             ),
             "categories": sorted({item["category"] for item in catalog}),
             "statuses": sorted({item["connection_status"] for item in catalog}),
+            "category_counts": category_counts(catalog),
+            "status_counts": status_counts(catalog),
             "latest_verification": latest,
         }
         self.write_json(summary)
+
+    def handle_live_map(self) -> None:
+        catalog = load_json(DATA_DIR / "api_catalog.json")
+        results = load_json(DATA_DIR / "verification_results.json")
+        self.write_json(live_map_payload(catalog, results))
 
     def handle_export_index(self) -> None:
         exports = []
