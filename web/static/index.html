@@ -10,6 +10,12 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap"
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -22,11 +28,12 @@
             <p>本番API・公開データ台帳</p>
           </div>
         </div>
-        <nav class="sideNav">
-          <a href="#dashboard">ダッシュボード</a>
-          <a href="#catalog">API台帳</a>
-          <a href="#live-map">ライブマップ</a>
-          <a href="#exports">成果物エクスポート</a>
+        <nav class="sideNav" id="sideNav">
+          <button type="button" class="navBtn active" data-view="dashboard">ダッシュボード</button>
+          <button type="button" class="navBtn" data-view="catalog">API台帳</button>
+          <button type="button" class="navBtn" data-view="flow">API活用フロー</button>
+          <button type="button" class="navBtn" data-view="map">ライブマップ</button>
+          <button type="button" class="navBtn" data-view="exports">成果物エクスポート</button>
         </nav>
         <div class="serviceBox">
           <span class="statusDot"></span>
@@ -38,128 +45,278 @@
       </aside>
 
       <main>
-        <section id="dashboard" class="heroBand">
-          <div>
-            <p class="eyebrow" id="catalogMode">Production Catalog</p>
-            <h2>土木建設API・公開データを、すぐ使える本番台帳として運用します。</h2>
-            <p>
-              ダッシュボード、API台帳、ライブマップ、成果物エクスポートはすべて
-              サーバーAPIから本番データを取得して表示します。
-            </p>
-          </div>
-          <div class="heroActions">
-            <a href="#catalog">台帳を見る</a>
-            <a href="#live-map">地図で見る</a>
-            <a href="#exports">成果物を取得</a>
-          </div>
-        </section>
+        <header class="viewHead">
+          <p class="eyebrow" id="viewKicker">OVERVIEW</p>
+          <h2 id="viewTitle">ダッシュボード</h2>
+          <p id="viewSub">🏗️ 土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。</p>
+        </header>
 
-        <section class="metrics" aria-label="summary">
-          <div class="metric"><span id="catalogCount">-</span><small>登録API</small></div>
-          <div class="metric"><span id="verificationCount">-</span><small>検証結果</small></div>
-          <div class="metric"><span id="implementedCount">-</span><small>実装候補</small></div>
-          <div class="metric"><span id="candidateCount">-</span><small>本格利用候補</small></div>
-        </section>
+        <!-- ============ Dashboard ============ -->
+        <div class="view" id="dashboard" data-view="dashboard">
+          <section class="metrics" aria-label="summary">
+            <div class="metric"><small class="metricLabel">登録データソース</small><span id="catalogCount">-</span><small class="metricSub">API・公開データ</small></div>
+            <div class="metric"><small class="metricLabel">本格利用候補</small><span id="candidateCount">-</span><small class="metricSub">最優先採用</small></div>
+            <div class="metric"><small class="metricLabel">実装・本格候補</small><span id="implementedCount">-</span><small class="metricSub">運用フェーズ</small></div>
+            <div class="metric"><small class="metricLabel">平均 事業適合度</small><span id="avgFit">-</span><small class="metricSub">business_fit</small></div>
+            <div class="metric"><small class="metricLabel">平均 連携実装性</small><span id="avgInt">-</span><small class="metricSub">integration</small></div>
+          </section>
 
-        <section class="dashboardGrid">
-          <article class="panel">
+          <p class="scoreNote">※ 事業適合度・連携実装性・信頼度・優先度は、台帳の各項目から<strong>算定式で自動計算した評価値</strong>です。算定基準は「API活用フロー」、個別の根拠は「API台帳」の各行詳細で確認できます。</p>
+
+          <section class="dashboardGrid">
+            <article class="panel">
+              <div class="panelHeader">
+                <div>
+                  <h2>カテゴリ分布</h2>
+                  <p id="metadataLine">本番台帳メタデータを確認中</p>
+                </div>
+                <a class="textButton" href="/api/metadata" target="_blank" rel="noreferrer">metadata</a>
+              </div>
+              <div class="opsGrid">
+                <div><strong id="importedAt">-</strong><span>取込日</span></div>
+                <div><strong id="sourceName">-</strong><span>取込元</span></div>
+                <div><strong id="verificationCount">-</strong><span>検証件数</span></div>
+                <div><strong id="productionCoverage">-</strong><span>Production反映</span></div>
+              </div>
+              <div id="categoryList" class="barList"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panelHeader">
+                <div>
+                  <h2>接続状態</h2>
+                  <p>本番利用へ進める優先度と最新の検証結果</p>
+                </div>
+              </div>
+              <div id="statusList" class="statusList"></div>
+              <div id="verificationList" class="list compactList"></div>
+            </article>
+          </section>
+        </div>
+
+        <!-- ============ Catalog ============ -->
+        <div class="view" hidden data-view="catalog">
+          <section id="catalog" class="panel">
             <div class="panelHeader">
               <div>
-                <h2>ダッシュボード</h2>
-                <p id="metadataLine">本番台帳メタデータを確認中</p>
+                <h2>API台帳</h2>
+                <p>検索、絞り込み、詳細確認、公式URL確認まで本番データで実行します。</p>
               </div>
-              <a class="textButton" href="/api/metadata" target="_blank" rel="noreferrer">metadata</a>
+              <div class="controls">
+                <input id="searchInput" type="search" placeholder="キーワード検索" />
+                <select id="categoryFilter"><option value="">全カテゴリ</option></select>
+                <select id="statusFilter"><option value="">全ステータス</option></select>
+                <select id="regionFilter"><option value="">全地域</option></select>
+              </div>
             </div>
-            <div class="opsGrid">
-              <div><strong id="importedAt">-</strong><span>取込日</span></div>
-              <div><strong id="sourceName">-</strong><span>取込元</span></div>
-              <div><strong id="productionCoverage">-</strong><span>Production反映</span></div>
+            <div class="tableToolbar">
+              <strong id="catalogResultCount">0件</strong>
+              <span>信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span>
             </div>
-            <div id="categoryList" class="barList"></div>
-          </article>
+            <div class="tableWrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>カテゴリ</th>
+                    <th>提供元</th>
+                    <th>地域</th>
+                    <th>キー</th>
+                    <th>信頼度</th>
+                    <th>優先度</th>
+                    <th>状態</th>
+                    <th>利用説明・接続情報</th>
+                  </tr>
+                </thead>
+                <tbody id="catalogRows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
 
-          <article class="panel">
+        <!-- ============ API usage flow ============ -->
+        <div class="view" hidden data-view="flow">
+          <section class="panel">
             <div class="panelHeader">
               <div>
-                <h2>接続状態</h2>
-                <p>本番利用へ進める優先度を確認</p>
+                <h2>API活用フロー</h2>
+                <p>はじめての方向け。選定から本番実装までの5ステップです。</p>
               </div>
             </div>
-            <div id="statusList" class="statusList"></div>
-            <div id="verificationList" class="list compactList"></div>
-          </article>
-        </section>
+            <div class="flowGrid">
+              <div class="flowStep">
+                <span>STEP 1</span>
+                <strong>APIを選ぶ</strong>
+                <p>「API台帳」で用途・カテゴリから候補を探し、信頼度ランク・接続優先度・事業適合度で比較して選定します。</p>
+              </div>
+              <div class="flowStep">
+                <span>STEP 2</span>
+                <strong>利用条件を確認</strong>
+                <p>APIキーの要否・認証方式・ライセンス・商用利用可否・最終確認日をチェック。商用は license_note を必読。</p>
+              </div>
+              <div class="flowStep">
+                <span>STEP 3</span>
+                <strong>接続方式を理解</strong>
+                <p>データ形式ごとに呼び出し方が異なります。下の「データ形式別 接続早見表」で方法を確認します。</p>
+              </div>
+              <div class="flowStep">
+                <span>STEP 4</span>
+                <strong>試し接続で検証</strong>
+                <p>サンプルエンドポイントで疎通確認。台帳の検証結果（成功 / 応答時間 / 取得サイズ）も参照できます。</p>
+              </div>
+              <div class="flowStep">
+                <span>STEP 5</span>
+                <strong>アプリに実装</strong>
+                <p>endpoint_template を組み込み、属性表記・利用規約を遵守して本番運用へ。成果物エクスポートも活用できます。</p>
+              </div>
+            </div>
+          </section>
 
-        <section id="catalog" class="panel">
-          <div class="panelHeader">
-            <div>
-              <h2>API台帳</h2>
-              <p>検索、絞り込み、詳細確認、公式URL確認まで本番データで実行します。</p>
+          <section class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>データ形式別 接続早見表</h2>
+                <p>形式に応じた典型的な使い方と、該当する代表的なAPIです。</p>
+              </div>
             </div>
-            <div class="controls">
-              <input id="searchInput" type="search" placeholder="キーワード検索" />
-              <select id="categoryFilter"><option value="">全カテゴリ</option></select>
-              <select id="statusFilter"><option value="">全ステータス</option></select>
-              <select id="regionFilter"><option value="">全地域</option></select>
+            <div class="tableWrap">
+              <table class="refTable">
+                <thead>
+                  <tr><th>データ形式</th><th>典型的な使い方</th><th>代表的なAPI</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>XYZ タイル (PNG/JPG)</strong></td><td>Leaflet / MapLibre にタイルURL <code>{z}/{x}/{y}</code> を登録して地図表示</td><td>地理院 地図・標高・ハザードタイル</td></tr>
+                  <tr><td><strong>ベクトルタイル (PBF)</strong></td><td>MapLibre / Mapbox GL でスタイル定義して参照</td><td>地理院 ベクトルタイル</td></tr>
+                  <tr><td><strong>GeoJSON / JSON</strong></td><td><code>fetch()</code> で取得し属性解析・地図描画</td><td>気象庁 予報・警報, USGS 地震</td></tr>
+                  <tr><td><strong>3D Tiles / CityGML</strong></td><td>CesiumJS など対応ビューア・SDK で読み込み</td><td>PLATEAU 3D都市モデル</td></tr>
+                  <tr><td><strong>Shapefile / GML</strong></td><td>QGIS / GDAL で変換し GIS で利用</td><td>国土数値情報 (KSJ)</td></tr>
+                  <tr><td><strong>CSV / 観測JSON</strong></td><td>ETL・時系列解析で取り込み</td><td>AMeDAS, USGS 水文, OpenAQ</td></tr>
+                </tbody>
+              </table>
             </div>
-          </div>
-          <div class="tableToolbar">
-            <strong id="catalogResultCount">0件</strong>
-            <span>信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span>
-          </div>
-          <div class="tableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>名称</th>
-                  <th>カテゴリ</th>
-                  <th>提供元</th>
-                  <th>地域</th>
-                  <th>キー</th>
-                  <th>信頼度</th>
-                  <th>優先度</th>
-                  <th>状態</th>
-                  <th>利用説明・接続情報</th>
-                </tr>
-              </thead>
-              <tbody id="catalogRows"></tbody>
-            </table>
-          </div>
-        </section>
+            <div class="snippet">
+              <div class="snippetHead">最小実装例（XYZタイルを地図に表示）</div>
+              <pre><code>// Leaflet
+const map = L.map('map').setView([35.68, 139.76], 12);
+L.tileLayer(
+  'https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
+  { attribution: '地理院タイル' }
+).addTo(map);</code></pre>
+            </div>
+          </section>
 
-        <section id="live-map" class="panel mapPanel">
-          <div class="panelHeader">
-            <div>
-              <h2>ライブマップ</h2>
-              <p>本番台帳のAPI・公開データを地図上で確認します。</p>
+          <section class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>スコア算定基準</h2>
+                <p>各スコアは台帳の項目から算定式で自動計算した<strong>評価値</strong>です（実測値ではありません）。個別の内訳は「API台帳」の各行詳細で確認できます。</p>
+              </div>
             </div>
-            <div class="controls">
-              <select id="mapCategoryFilter"><option value="">全カテゴリ</option></select>
-              <select id="mapStatusFilter"><option value="">全ステータス</option></select>
+            <div class="rubricGrid">
+              <div class="rubricCard">
+                <h3>事業適合度 <small>0–100</small></h3>
+                <ul>
+                  <li>提供元種別：公的/国際/公式 +30・財団 +22・企業 +12</li>
+                  <li>商用利用：可 +25・条件付 +12・不明 +8</li>
+                  <li>更新頻度：高頻度 +15・その他 +10</li>
+                  <li>対象案件：1件あたり +7（最大 +20）</li>
+                  <li>接続状態：本格利用候補 +10 … 調査中 +2</li>
+                </ul>
+              </div>
+              <div class="rubricCard">
+                <h3>連携実装性 <small>0–100</small></h3>
+                <ul>
+                  <li>APIキー：不要 +30・不明 +12・必要 +8</li>
+                  <li>認証方式：なし +15・APIキー +8</li>
+                  <li>データ形式：扱いやすい(JSON/タイル) +20・要変換 +10</li>
+                  <li>エンドポイント：具体的 +15・雛形 +8</li>
+                  <li>ドキュメント +10 / 実接続検証 成功 +10</li>
+                </ul>
+              </div>
+              <div class="rubricCard">
+                <h3>信頼度ランク <small>A–E</small></h3>
+                <ul>
+                  <li>公的/国際/公式/財団 +30</li>
+                  <li>公式ドキュメント +20 / ライセンス明記 +20</li>
+                  <li>更新頻度 +10 / データ形式 +10 / 検証成功 +10</li>
+                  <li>合計 90↑=A・70↑=B・50↑=C・30↑=D</li>
+                </ul>
+              </div>
+              <div class="rubricCard">
+                <h3>接続優先度 <small>1–5</small></h3>
+                <ul>
+                  <li>信頼度 × 0.30</li>
+                  <li>事業適合度 × 0.35</li>
+                  <li>連携実装性 × 0.20</li>
+                  <li>対象案件規模 × 0.15</li>
+                  <li>合計 85↑=5・70↑=4・55↑=3・40↑=2</li>
+                </ul>
+              </div>
             </div>
-          </div>
-          <div class="mapLayout">
-            <div id="map" class="mapCanvas" aria-label="API live map"></div>
-            <aside class="mapSide">
-              <h3>表示レイヤ</h3>
-              <div id="layerList" class="layerList"></div>
-              <h3>地図上のAPI</h3>
-              <div id="mapFeatureList" class="list compactList"></div>
-            </aside>
-          </div>
-        </section>
+          </section>
+        </div>
 
-        <section id="exports" class="panel">
-          <div class="panelHeader">
-            <div>
-              <h2>成果物エクスポート</h2>
-              <p>Markdown、CSV、JSON、メタデータを開く・ダウンロードできます。</p>
+        <!-- ============ Live map ============ -->
+        <div class="view" hidden data-view="map">
+          <section id="live-map" class="panel mapPanel">
+            <div class="panelHeader">
+              <div>
+                <h2>ライブマップ</h2>
+                <p>本番台帳のAPI・公開データを地図上で確認します。</p>
+              </div>
+              <div class="controls">
+                <select id="mapCategoryFilter"><option value="">全カテゴリ</option></select>
+                <select id="mapStatusFilter"><option value="">全ステータス</option></select>
+              </div>
             </div>
-            <a class="textButton" href="/api/export" target="_blank" rel="noreferrer">export index</a>
-          </div>
-          <div id="exportList" class="exportGrid"></div>
-        </section>
+            <div class="mapLayout">
+              <div id="map" class="mapCanvas" aria-label="API live map"></div>
+              <aside class="mapSide">
+                <div class="mapSideSection">
+                  <div class="mapSideHead">
+                    <h3>表示レイヤ</h3>
+                    <span class="countPill" id="layerCount">-</span>
+                  </div>
+                  <div id="layerList" class="layerList"></div>
+                </div>
+
+                <div class="mapSideSection">
+                  <h3>凡例（接続状態）</h3>
+                  <ul class="legendList">
+                    <li><span class="legendDot" style="background:#0f6f3c"></span>本格利用候補</li>
+                    <li><span class="legendDot" style="background:#235789"></span>実装接続済</li>
+                    <li><span class="legendDot" style="background:#0b6b61"></span>接続検証済</li>
+                    <li><span class="legendDot" style="background:#9a5b00"></span>保留</li>
+                    <li><span class="legendDot" style="background:#6d7680"></span>その他</li>
+                  </ul>
+                </div>
+
+                <div class="mapSideSection mapFeatures">
+                  <div class="mapSideHead">
+                    <h3>地図上のAPI</h3>
+                    <span class="countPill" id="featureCount">-</span>
+                  </div>
+                  <div id="mapFeatureList" class="list compactList"></div>
+                </div>
+              </aside>
+            </div>
+          </section>
+        </div>
+
+        <!-- ============ Exports ============ -->
+        <div class="view" hidden data-view="exports">
+          <section id="exports" class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>成果物エクスポート</h2>
+                <p>Markdown、CSV、JSON、メタデータを開く・ダウンロードできます。</p>
+              </div>
+              <a class="textButton" href="/api/export" target="_blank" rel="noreferrer">export index</a>
+            </div>
+            <div id="exportList" class="exportGrid"></div>
+          </section>
+        </div>
       </main>
     </div>
 

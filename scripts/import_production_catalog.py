@@ -12,11 +12,10 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.catalog_utils import (
+from scripts.catalog_utils import (  # noqa: E402
     CATALOG_METADATA_PATH,
     CATALOG_PATH,
     ROOT,
-    VERIFICATION_PATH,
     load_catalog,
     load_verification_results,
     write_json,

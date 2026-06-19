@@ -1,1 +1,1 @@
-{"sample_type":"skipped","note":"API key and usage condition confirmation required before storing response sample."}
+{ "statusCode": 401, "message": "Access denied due to missing subscription key. Make sure to include subscription key when making requests to an API." }

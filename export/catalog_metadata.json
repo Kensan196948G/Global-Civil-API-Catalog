@@ -5,9 +5,9 @@
   "source_path": "web/Global Civil API Catalog.html",
   "imported_at": "2026-06-18",
   "record_count": 50,
-  "verification_count": 10,
+  "verification_count": 30,
   "merge_policy": "Production bundle fields are authoritative; local enrichment fields such as usage_summary and usage_notes are preserved.",
-  "design_html_sha256": "5312a0132e9e6f74896227505fd3b52b6580426110fa856f87a06be35bbf7197",
-  "catalog_sha256": "51c4c9d3b4a34fab31b1bed229ada21bf37211fdfe55526fe9b12480847d35ca",
-  "verification_sha256": "c5e88e56775aca193f2abdee73fdfcb52a4d1b3337270756d988c2a102f6d5dd"
+  "design_html_sha256": "cdeb157d6e6f77832771eec9ed3458bdf752d09c68fb73fb9812a094480998c6",
+  "catalog_sha256": "2472ff7722b36fa26017ddce5f013a7fdf604ad1fef7e792fd7b2ef80cb51ced",
+  "verification_sha256": "67d0e34453cef032dd1b4f3ed0ec7474d7ce84c6c26386e0b7c2cecc9177d64a"
 }

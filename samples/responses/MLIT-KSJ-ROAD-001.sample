@@ -1,1 +1,1363 @@
-{"sample_type":"metadata","content_type":"text/html","note":"Road dataset source page confirmed; large distribution files are not committed."}
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="ja">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="">
+  <meta name="keyword" content="">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="../ksj/css/materialize.css" media="screen,projection" rel="stylesheet" type="text/css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js">
+  </script>
+  <link href="../ksj/css/style.css" media="screen,projection" rel="stylesheet" type="text/css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript">
+  </script>
+  <!--20240130_ando slick追加-->
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../ksj/css/slick.css" media="screen,projection">
+  <link rel="stylesheet" type="text/css" href="../ksj/css/slick-theme.css" media="screen,projection">
+
+  <title>国土数値情報ダウンロードサイト</title>
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-KBHCLWJ');</script>
+  <!-- End Google Tag Manager -->
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KBHCLWJ" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <!-- ヘッダー -->
+  
+  <header class="gmenu">
+
+
+    <nav class="nav-extended blue darken-3">
+      <div class="nav-wrapper">
+        <div>
+          <span class="gmenu__logo-M">
+            <img class="img__logo-M" src="/ksj/img/logo.png" alt="国土交通省">
+          </span>
+        </div>
+        <a class="gmenu__title" href="/">国土数値情報ダウンロードサイト</a>
+        <a data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+
+        <ul id="nav-mobile" class="right hide-on-med-and-down gmenu__title-line">
+          <li><a class="nav_padding_10" href="/first.html">初めての方へ</a></li>
+          <li><a class="nav_padding_10" href="/ksj/other/agreement.html">利用規約</a></li>
+          <!-- <li><a class="nav_padding_10" href="https://docs.google.com/forms/d/1VfarNUmLFhKzAVWIQNQbfgAdNs1nT2kqTERdBbwq7eo/viewform" target="_blank">アンケート</a></li> -->
+          <li><a class="nav_padding_10" href="/ksj/other/other.html">その他</a></li>
+          <li><a class="waves-effect waves-light btn nav_padding_10" href="/ksj/inquiry.html">お問合せ</a></li>
+          <!-- 検索窓　
+          <li>
+            <form class="search-form" action="https://www.google.co.jp/cse" name="cse-search-box" target="_blank">
+              <input value="6768d71d594cb4140" name="cx" type="hidden">
+              <input value="UTF-8" name="ie" type="hidden">
+              <input class="search-input" size="16" name="q" type="text" placeholder="サイト内を検索">
+              <button class="search-btn blue darken-3" value="" name="sa"><i class="material-icons">search</i></button>
+            </form>
+          </li>-->
+          <div>
+            <span class="gmenu__logo">
+              <img class="img__logo" src="/ksj/img/logo.png" alt="国土交通省">
+            </span>
+          </div>
+        </ul>
+
+
+      </div>
+    </nav>
+
+
+    <ul class="sidenav collection with-header" id="mobile-demo"> 
+      <li><a href="/ksj/index.html">国土数値情報<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+      <li><a href="/cgi-bin/isj/dls/_choose_method.cgi">位置参照情報<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+      <li><a href="/kokjo/inspect/inspect.html">国土調査<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+      <li><a href="/webmapc/mapmain.html">地図で見る<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+      <li><a class="collection-item" href="/first.html">初めての方へ</a></li>
+      <li><a class="collection-item" href="/ksj/case_studies.html">活用事例</a></li>
+      <li><a class="collection-item" href="https://docs.google.com/forms/d/1VfarNUmLFhKzAVWIQNQbfgAdNs1nT2kqTERdBbwq7eo/viewform" target="_blank">アンケート</a></li>
+      <li><a class="collection-item" href="/ksj/other/other.html">その他</a></li>
+      <li><a class="collection-item" href="/ksj/inquiry.html">お問合せ</a></li>
+    </ul>
+
+    <!-- <script src="https://tebot.jp/api/bot/1274/chat_embed_v8?lang=undefined&open_default=true&code=6eef28be8d4ae2512548634790c3a7c8"></script> -->
+    <!-- <script src="https://tebot.jp/api/bot/1274/chat_embed_v8?lang=undefined&open_default=true&code=6eef28be8d4ae2512548634790c3a7c8"></script> -->
+  </header>
+
+
+<header class="gmenu__contents-line">
+  <!-- mega size menu -->
+  <!--
+  <div>
+    <ul class="main-menu">       
+      <li class="menu__mega">
+        <a href="#con-1" class="init-bottom">国土数値情報</a>
+          <ul class="menu__second-level">
+            <li><a href="#">国土数値情報とは</a></li>
+            <li><a href="#">データダウンロード</a></li>
+            <li><a href="#">新着情報</a></li>
+            <li><a href="#">修正情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__mega">
+        <a href="#con-2" class="init-bottom">位置参照情報</a>
+          <ul class="menu__second-level">
+            <li><a href="#">位置参照情報とは</a></li>
+            <li><a href="#">データダウンロード</a></li>
+            <li><a href="#">新着情報</a></li>
+            <li><a href="#">修正情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__mega">
+        <a href="#con-3" class="init-bottom">国土調査</a>
+          <ul class="menu__second-level">
+            <li><a href="#">国土調査</a></li>
+            <li><a href="#">データダウンロード</a></li>
+            <li><a href="#">新着情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__mega">
+        <a href="#con-4" class="init-bottom">地図で見る</a>
+          <ul class="menu__second-level">
+            <li><a href="#">ウェブマッピングシステムとは</a></li>
+            <li><a href="#">ウェブマッピングシステムを起動</a></li>
+            <li><a href="#">ヘルプ</a></li>
+          </ul>
+      </li>
+    </ul>
+  </div>
+  -->
+
+  <div class="main-menu__L">
+    <ul class="main-menu">
+      <li class="menu__single">
+        <a class="init-bottom">国土数値情報</a>
+          <ul class="menu__second-level">
+            <li><a href="/ksj/index.html">データダウンロード</a></li>  
+            <li><a href="/ksj/gml/gml_datalist.html">JPGIS2.1準拠 整備データ一覧</a></li>            
+            <li><a href="/first.html#about_ksj">国土数値情報とは</a></li>
+            <li><a href="/ksj/other/about_GIS.html">GISとは</a></li>
+            <li><a href="/ksj/ksj_dataformat.html">国土数値情報のデータ形式</a></li>
+            <li><a href="/ksj/case_studies.html">国土数値情報 活用事例</a></li>
+            <li><a href="/ksj_news.html">新着情報</a></li>
+            <li><a href="/ksj_error.html">修正情報</a></li>
+            <li><a href="/ksj/error-report/error-report.html">エラー情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__single">
+        <a class="init-bottom">位置参照情報
+          <a class="init-bottom__l2">ジオコーディング（住所⇔緯度経度）</a>
+        </a>
+          <ul class="menu__second-level">
+            <li><a href="/cgi-bin/isj/dls/_choose_method.cgi">データダウンロード</a></li>  
+            <li><a href="/isj/index.html">位置参照情報とは</a></li>
+            <li><a href="/isj_news.html">新着情報</a></li>
+            <li><a href="/isj_error.html">修正情報</a></li>
+            <li><a href="/isj/error-report/error-report.html">エラー情報</a></li>
+          </ul>
+      </li>
+      
+      <!--
+      <li class="menu__single">
+        <a href="/kokjo_news.html" class="init-bottom">国土調査</a>
+          <ul class="menu__second-level">
+            <li><a href="/kokjo/inspect/inspect.html">データダウンロード</a></li>  
+            <li><a href="/ksj/kokjo.html">国土調査とは</a></li>
+            <li><a href="/kokjo_news.html">新着情報</a></li>
+          </ul>
+      </li>-->
+
+      
+      <li class="menu__multi">
+        <a class="init-bottom">国土調査
+        <a class="init-bottom__l2">土地分類調査・水調査</a>
+        </a>
+        <ul class="menu__second-level">
+          <li><a href="/kokjo/inspect/inspect.html">データダウンロード</a></li>
+          <li><a href="/kokjo/inspect/landclassification/download.html">GISデータのダウンロード</a></li>
+          <li>
+            <a class="init-right">国土調査とは</a>
+            <ul class="menu__third-level">
+                <li><a href="/ksj/kokjo.html">国土調査とは</a></li>
+                <li><a href="/kokjo/inspect/landclassification/index.html">土地分類調査・水調査の概要</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="init-right">土地分類調査</a>
+            <ul class="menu__third-level">
+              <li><a href="/kokjo/inspect/landclassification/land/land_history_2011/index_tile.html">土地履歴調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_5-1.html">5万分の1都道府県土地分類基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_20-1.html">20万分の1土地分類基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_50-1.html">50万分の1土地分類基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_det.html">土地分類調査（細部調査）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_20-1-hozen.html">20万分の1土地保全基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_d.html">災害類型別土地保全調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_v.html">土地分類基本調査（垂直調査）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/chikei_bunrui.html">地形分類図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/saigai_rireki.html">災害履歴図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/tochi_riyou.html">土地利用図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/hyousou_chisitsu.html">表層地質図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/dojyou.html">土壌図から選ぶ</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="init-right">水調査</a>
+            <ul class="menu__third-level">
+              <li><a href="/kokjo/inspect/inspect.html#suikei">表流水</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map.html"> ○主要水系調査（更新調査：2003年～）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_p.html"> ○主要水系調査（1966年～2002年）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_pref.html">○都道府県水調査</a></li>
+              <li><a href="/kokjo/inspect/inspect.html#suikei">地下水</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/f9_exp.html">○全国地下水資料台帳</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_ug.html">○地下水の見える化調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_cw.html">○地下水マップ</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+
+
+      <li class="menu__single">
+        <a class="init-bottom">地図で見る</a>
+          <ul class="menu__second-level">
+            <li><a href="/webmapc/mapmain.html">ウェブマッピングシステムを起動</a></li>
+            <li><a href="/ksj/webgis.html">ウェブマッピングシステムとは</a></li>
+            <li><a href="/webmapc/WMS_manual.pdf">ウェブマッピングシステム 操作方法</a></li>
+          </ul>
+      </li>
+
+
+
+    </ul>
+  </div>
+
+
+</header>
+<!-- モーダル本体 -->
+<div class="modal-container">
+  <div class="modal-body">
+    <!-- 閉じるボタン -->
+    <div class="close_btn_X">×</div>
+    <div class="modal-close btn waves-effect waves-light indigo btn-small">ダウンロードへ進む</div>
+    
+    <!-- モーダル内のコンテンツ -->
+    <div class="modal-content">
+      <iframe src="https://docs.google.com/forms/d/1-J1_3_NPwYy8cpH7yfwRlKa5iYaN9zw6S4ng4e0PuEs/viewform?usp=sf_link" 
+        width="98%" 
+        height="600"
+        frameborder="0" 
+        marginheight="0" 
+        marginwidth="0">
+      </iframe> 
+    </div>
+  </div>
+</div>  <main>
+    <div class="main-visual">
+      <img src="/ksj/img/main-visual.png">
+      <!--<img src="/ksj/img/main_L.jpg">-->
+    </div>
+    <div class="text__main-visual">
+      <a class="black-text">このサイトでは、地形、土地利用、公共施設、交通、災害リスク情報、都市計画、地価などの
+        国土に関する基礎的な情報をGISデータとして整備し、無償で提供しています。</a>
+    </div>
+    <div class="container">
+
+      <!-- カード行 -->
+      <div class="row contents-card__container">
+        <!--<div class="col s6 m6 l2 offset-l3 card_item card_item_width">-->
+        <!-- <div class="col s6 m6 l4 offset-l2"> -->
+        <div class="col s6 m6 l4">
+          <a href="/ksj/case_studies.html">
+            <div class="card hoverable custom-card small">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon card_item_image">
+                <img src="../images/index-image1.png">
+              </div>
+              <div class="card-content ksj-card__icon">
+                <span class="grey-text text-darken-4">国土数値情報の活用事例</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- <div class="col s6 m6 l2 card_item"> -->
+        <div class="col s6 m6 l4">
+          <a href="/ksj/manual/manual.html">
+            <div class="card hoverable custom-card small">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon card_item_image">
+                <img src="../images/index-image2.png">
+              </div>
+              <div class="card-content ksj-card__icon">
+                <span class="grey-text text-darken-4">QGIS/Tableauでの活用マニュアル</span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- <div class="col s6 m6 l2 card_item"> -->
+        <div class="col s6 m6 l4 offset-m3">
+          <a href="/ksj/event/event.html">
+            <div class="card hoverable custom-card small">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon card_item_image">
+                <img src="../images/index-image3.png">
+              </div>
+              <div class="card-content ksj-card__icon small">
+                <span class="grey-text text-darken-4">イベント特集ページ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="bnr-container">
+        <div class="row">
+          <!-- お知らせの行 -->
+          <div class="row">
+            <div class="col s12 m12 l12">
+              <p class="center">
+                地理空間情報課の公式Xを開設しております。 →
+                <a href="https://x.com/GIS_MLIT" target="_blank">@GIS_MLIT</a><br><br>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- サイト内検索▼ -->
+      <div class="search-window_container">
+        <div class="search-window">
+          <script async src="https://cse.google.com/cse.js?cx=ec63825938b5a5e25"></script>
+          <div class="gcse-search"></div>
+        </div>
+      </div>
+      <!-- サイト内検索▲ -->
+
+      <!-- <div class="row contents-card__container"> -->
+      <!-- <div class="col s6 m6 l2 offset-l2">
+          <a href="#contents-tile__all">
+            <div class="card hoverable">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon">
+                <img src="/ksj/img/japan-map.png">-->
+      <!-- <i class="iconset large material-icons ">format_list_bulleted</i>
+              </div>
+              <div class="card-content ksj-card__icon">
+                <span class=" grey-text text-darken-4">データ一覧</span>
+              </div>
+            </div>
+          </a>
+        </div> -->
+      <!-- <div class="col s6 m6 l2">
+          <a href="#contents-tile__new">
+            <div class="card hoverable">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon">
+                <img src="/ksj/img/japan-map.png">-->
+      <!-- <i class="iconset large material-icons">fiber_new</i>
+              </div>
+              <div class="card-content ksj-card__icon">
+                <span class=" grey-text text-darken-4">新着データ</span>
+              </div>
+            </div>
+          </a>
+        </div> -->
+      <!-- <div class="col s6 m6 l2">
+          <a href="#contents-tile__rank">
+            <div class="card hoverable">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon">
+                <img src="/ksj/img/japan-map.png">
+                <i class="iconset large material-icons ">format_list_numbered</i>
+              </div>
+              <div class="card-content ksj-card__icon">
+                <span class=" grey-text text-darken-4">ランキング</span>
+              </div>
+            </div>
+          </a>
+        </div> -->
+      <!-- <div class="col s6 m6 l2">
+          <a href="#contents-tile__category">
+            <div class="card hoverable">
+              <div class="card-image waves-effect waves-block waves-light ksj-card__icon">
+                <img src="/ksj/img/japan-map.png">
+                <i class="iconset large material-icons ">widgets</i>
+              </div>
+              <div class="card-content ksj-card__icon">
+                <span class=" grey-text text-darken-4">カテゴリー</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div> -->
+
+      <div class="card-panel cyan darken-1 contents-card__index">
+        <span class="white-text" id="contents-tile__all">データ一覧</span>
+      </div>
+      <a class="" href="./gml/gml_datalist.html" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;国土数値情報
+        JPGIS2.1準拠（シェープ、xml、GeoJSON）
+        整備データ一覧</a><br>
+      <a class="" href="./gml/datalist/ksjdata_datalist.pdf" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;国土数値情報
+        整備データ一覧表</a>（PDF形式）<img class="" width="20px" height="20px" src="./gml/datalist/img/pdf.gif" /><br>
+      <a class="" href="./gml/codelist/shape_property_table2.xlsx" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;国土数値情報
+        JPGIS2.1準拠（シェープ、xml、GeoJSON） シェープファイル 属性情報一覧</a><br>
+      <a class="" href="./pdf/R8_release.pdf" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;令和8年度
+        国土数値情報の公開・整備予定のお知らせ</a>（PDF形式）<img class="" width="20px" height="20px"
+        src="./gml/datalist/img/pdf.gif" /></a><br>
+      <p>このページに表示している「使用許諾条件」はそのデータの最新版のものとなります。旧版では使用許諾条件が異なることがありますので、必ず使用する版の使用許諾条件をご確認ください。</p>
+
+      <div class="card-panel cyan darken-1 contents-card__index">
+        <span class="white-text" id="contents-tile__new">新着データ（2026年5月時点）</span>
+      </div>
+
+      <div class="row">
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A31a-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">洪水浸水想定区域（河川単位）データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A31b-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">洪水浸水想定区域（1次メッシュ単位）データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A03-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">三大都市圏計画区域データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A45-2024.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">国有林野データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A33-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">土砂災害警戒区域データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A51-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">雨水出水（内水）浸水想定データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A53-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">多段階浸水想定データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-N02-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">鉄道データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-N05-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">鉄道時系列データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-S12-2024.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">駅別乗降客数データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-N06-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">高速道路時系列データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-N03-2026.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">行政区域データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A56-2025.html">
+            <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">宅地造成等工事規制区域・特定盛土等規制区域データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-N13-2024.html">
+            <!-- <span class="new badge red badge__ksj-new"></span> -->
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">道路データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!--
+        <div class="col s6 m4 l2">
+          <a href="../ksj/gml/datalist/KsjTmplt-G09-2026.html">
+           <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">0次谷等AI抽出情報データ</span>
+              </div>
+            </div>
+          </a>
+        </div> -->
+
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-L01-2026.html">
+            <!-- <span class="new badge red badge__ksj-new"></span> -->
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">地価公示データ</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="card-panel cyan darken-1 contents-card__index">
+        <span class="white-text" id="contents-tile__rank">ダウンロード数ランキング（2025年度）</span>
+      </div>
+
+      <div class="row">
+        <div class="row">
+          <div class="col s6 m4 l4">
+            <a href="/ksj/gml/datalist/KsjTmplt-N03-2026.html">
+              <div class="card contents-card_rank hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                </div>
+                <div class="card-content">
+                  <i class="material-icons blue-text darken-1">looks_one</i>
+                  <span class=" grey-text text-darken-4 ksj-card_text">行政区域</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m4 l4 ">
+            <a href="/ksj/gml/datalist/KsjTmplt-L03-b-2021.html">
+              <div class="card contents-card_rank hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                </div>
+                <div class="card-content">
+                  <i class="material-icons purple-text darken-1">looks_two</i>
+                  <span class=" grey-text text-darken-4 ksj-card_text">土地利用細分メッシュ</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m4 l4">
+            <a href="/ksj/gml/datalist/KsjTmplt-L01-2026.html">
+              <div class="card contents-card_rank hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                </div>
+                <div class="card-content">
+                  <i class="material-icons green-text darken-1">looks_3</i>
+                  <span class=" grey-text text-darken-4 ksj-card_text">地価公示<br></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m4 l4 offset-m2 offset-l2">
+            <a href="/ksj/gml/datalist/KsjTmplt-L03-a-2021.html">
+              <div class="card contents-card_rank hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <i class="material-icons amber-text darken-1">looks_4</i>
+                  <span class=" grey-text text-darken-4 ksj-card_text">土地利用3次メッシュ</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m4 l4">
+            <a href="/ksj/gml/datalist/KsjTmplt-L02-2025.html">
+              <div class="card contents-card_rank hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <i class="material-icons deep-orange-text darken-1">looks_5</i>
+                  <span class=" grey-text text-darken-4 ksj-card_text">都道府県地価調査</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-panel cyan darken-1 contents-card__index">
+          <span class="white-text" id="contents-tile__category">カテゴリー</span>
+        </div>
+        <div class="row">
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__suiiki">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">水域</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__chikei">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">地形</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__tochiriyou">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">土地利用<br></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__chika">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">地価</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__gyouseichiiki">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">行政地域</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__toshikeikaku">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">都市計画決定情報</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__daitoshiken">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">大都市圏・条件不利地域</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__saigai">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">災害・防災</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__shisetsu">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">施設</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__chiikisigen">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">地域資源・観光<br></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__hogohozen">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">保護保全</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__koutsuu">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">交通</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__persontrip">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">パーソントリップ</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col s6 m6 l2">
+            <a href="#collapsible-body__toukei">
+              <div class="card contents-card_category hoverable">
+                <div class="card-image waves-effect waves-block waves-light">
+                  <img src="">
+                </div>
+                <div class="card-content">
+                  <span class=" grey-text text-darken-4">各種統計</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+          <div class="col s12">
+            <!-- 1. 国土（水・土地）-->
+            <ul class="collapsible" id="kokudo">
+              <li class="active">
+                <div class="collapsible-header blue darken-4">
+                  <p class="white-text">
+                    1. 国土（水・土地）
+                    <i class="material-icons">
+                      arrow_drop_down
+                    </i>
+                  </p>
+                </div>
+                <div class="collapsible-body">
+                  <div class="row paddingAll">
+                    <div class="card-panel blue lighten-1">
+                      <span class="white-text" id="collapsible-body__suiiki">
+                        水域
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-C23.html">
+                            海岸線（ライン）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-P23.html">
+                            海岸保全施設（ライン）（ポイント）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-W09-2005.html">
+                            湖沼（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-W07.html">
+                            流域メッシュ
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-W01.html">
+                            ダム（ポイント）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-W05.html">
+                            河川（ライン）（ポイント）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="row paddingAll">
+                    <div class="card-panel blue lighten-1">
+                      <span class="white-text" id="collapsible-body__chikei">
+                        地形
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-G04-a.html">
+                            標高・傾斜度3次メッシュ
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-G04-c.html">
+                            標高・傾斜度4次メッシュ
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-G04-d.html">
+                            標高・傾斜度5次メッシュ
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-G08-2015.html">
+                            低位地帯（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A54-2023.html">
+                            大規模盛土造成地（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <!-- <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <span class="new badge red badge__ksj-new"></span>
+                          <a href="./gml/datalist/KsjTmplt-G09-2026.html">
+                            &emsp;&emsp;&emsp;0次谷等AI抽出情報（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div> -->
+                  </div>
+                  <div class="row paddingAll">
+                    <div class="card-panel blue lighten-1">
+                      <span class="white-text" id="collapsible-body__tochiriyou">
+                        土地利用
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-L03-a-2021.html">
+                            土地利用3次メッシュ
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-L03-b-2021.html">
+                            土地利用細分メッシュ
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-L03-b_r.html">
+                            土地利用細分メッシュ（ラスタ版）
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-L03-b-u-2021.html">
+                            都市地域土地利用細分メッシュ
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-L03-b-c-2021.html">
+                            土地利用詳細メッシュ
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A13-2015.html">
+                            森林地域（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons yellow-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0（一部制限）</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <span class="new badge red badge__ksj-new"></span>
+                          <a href="./gml/datalist/KsjTmplt-A45-2024.html">
+                            &emsp;&emsp;&emsp;国有林野（ポリゴン）（ライン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <!-- <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A45.html">
+                            国有林野（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div> -->
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A12.html">
+                            農業地域（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons yellow-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0（一部制限）</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="row paddingAll">
+                    <div class="card-panel blue lighten-1">
+                      <span class="white-text" id="collapsible-body__chika">
+                        地価
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <!-- <span class="new badge red badge__ksj-new"></span> -->
+                          <a href="./gml/datalist/KsjTmplt-L01-2026.html">
+                            地価公示（ポイント）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <!-- <span class="new badge red badge__ksj-new"></span> -->
+                          <a href="./gml/datalist/KsjTmplt-L02-2025.html">
+                            都道府県地価調査（ポイント）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <!-- 2. 政策区域 -->
+            <ul class="collapsible" id="seisaku">
+              <li class="active">
+                <div class="collapsible-header blue darken-4">
+                  <p class="white-text">
+                    2. 政策区域
+                    <i class="material-icons">
+                      arrow_drop_down
+                    </i>
+                  </p>
+                </div>
+                <div class="collapsible-body">
+                  <div class="row paddingAll">
+                    <div class="card-panel blue lighten-1">
+                      <span class="white-text" id="collapsible-body__gyouseichiiki">
+                        行政地域
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <span class="new badge red badge__ksj-new"></span>
+                          <a href="./gml/datalist/KsjTmplt-N03-2026.html">
+                            &emsp;&emsp;&emsp;行政区域（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A16-2020.html">
+                            DID人口集中地区（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons blue-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">商用可</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A32-2023.html">
+                            中学校区（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons yellow-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0（一部制限）</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A27-2023.html">
+                            小学校区（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons yellow-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0（一部制限）</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A38-2020.html">
+                            医療圏（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A35a.html">
+                            景観計画区域（ポリゴン）（ポイント）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A35b.html">
+                            景観地区・準景観地区（ポリゴン）（ポイント）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A35c.html">
+                            景観重要建造物・樹木（ポイント）
+                          </a>
+                          <i class="iconset material-icons red-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_02.html">非商用</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A43.html">
+                            伝統的建造物群保存地区（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <a href="./gml/datalist/KsjTmplt-A44.html">
+                            歴史的風致維持向上計画の重点地区（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col s6">
+                      <ul class="collection">
+                        <li class="collection-item">
+                          <span class="new badge red badge__ksj-new"></span>
+                          <a href="./gml/datalist/KsjTmplt-A56-2025.html">
+                            &emsp;&emsp;&emsp;宅地造成等工事規制区域・特定盛土等規制区域（ポリゴン）
+                          </a>
+                          <i class="iconset material-icons green-text">stop</i>
+                          <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="row paddingAll">
+                    <div class="card-panel blue lighten-1">
+                      <span class="white-text" id="collapsible-body__toshikeikaku">
+                        都市計画決定情報
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <ul class="collection

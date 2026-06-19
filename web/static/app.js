@@ -55,12 +55,19 @@ function fillSelect(id, values) {
   select.innerHTML = first + values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
 }
 
+function average(items, key) {
+  const values = items.map((item) => Number(item[key])).filter((value) => !Number.isNaN(value));
+  if (!values.length) return 0;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+}
+
 function renderSummary() {
   byId("catalogCount").textContent = state.summary.catalog_count;
   byId("verificationCount").textContent = state.summary.verification_count;
   byId("implementedCount").textContent = state.summary.implemented_count;
   byId("candidateCount").textContent = state.summary.candidate_count;
-  byId("catalogMode").textContent = `${state.metadata.catalog_mode} / ${state.metadata.imported_at}`;
+  byId("avgFit").textContent = average(state.catalog, "business_fit_score");
+  byId("avgInt").textContent = average(state.catalog, "integration_score");
   byId("metadataLine").textContent = `${state.metadata.source_path} から ${state.metadata.record_count}件を本番反映`;
   byId("importedAt").textContent = state.metadata.imported_at;
   byId("sourceName").textContent = state.metadata.source;
@@ -114,6 +121,22 @@ function filteredCatalog() {
     .sort((a, b) => b.connection_priority - a.connection_priority || a.id.localeCompare(b.id));
 }
 
+function scoreBreakdownHtml(item) {
+  const sb = item.score_breakdown;
+  if (!sb) return "";
+  const row = (label, value, factors) =>
+    `<div class="sbRow"><b>${escapeHtml(label)} ${escapeHtml(value)}</b><span>${escapeHtml((factors || []).join(" / "))}</span></div>`;
+  return `
+    <div class="scoreBreak">
+      <div class="sbTitle">スコア算定の根拠（評価値）</div>
+      ${row("事業適合度", sb.business_fit.score, sb.business_fit.factors)}
+      ${row("連携実装性", sb.integration.score, sb.integration.factors)}
+      ${row("信頼度", `${sb.trust.rank}（${sb.trust.score}）`, sb.trust.factors)}
+      ${row("優先度", `${sb.priority.rank}（${sb.priority.score}）`, sb.priority.factors)}
+    </div>
+  `;
+}
+
 function renderCatalog() {
   const rows = filteredCatalog();
   byId("catalogResultCount").textContent = `${rows.length}件`;
@@ -138,6 +161,7 @@ function renderCatalog() {
             ${item.sample_endpoint ? `<a href="${escapeHtml(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
           </div>
           <small>形式: ${escapeHtml((item.data_formats || []).join(", "))}</small>
+          ${scoreBreakdownHtml(item)}
         </details>
       </td>
     </tr>
@@ -218,10 +242,15 @@ function renderMapFeatures() {
     `);
     return marker;
   });
-  byId("mapFeatureList").innerHTML = filteredMapFeatures().slice(0, 12).map((feature) => `
+  const features = filteredMapFeatures();
+  byId("featureCount").textContent = `${features.length}件`;
+  byId("mapFeatureList").innerHTML = features.map((feature) => `
     <button class="mapFeatureButton" data-id="${escapeHtml(feature.id)}">
-      <strong>${escapeHtml(feature.name)}</strong>
-      <span>${escapeHtml(feature.category)} / ${escapeHtml(feature.connection_status)}</span>
+      <span class="featureDot" style="background:${markerColor(feature)}"></span>
+      <span class="featureBody">
+        <strong>${escapeHtml(feature.name)}</strong>
+        <span>${escapeHtml(feature.category)} / ${escapeHtml(feature.connection_status)}</span>
+      </span>
     </button>
   `).join("");
   document.querySelectorAll(".mapFeatureButton").forEach((button) => {
@@ -234,7 +263,9 @@ function renderMapFeatures() {
 }
 
 function renderLayerList() {
-  byId("layerList").innerHTML = state.liveMap.layers.slice(0, 10).map((layer, index) => `
+  const layers = state.liveMap.layers.slice(0, 10);
+  byId("layerCount").textContent = `${layers.length}層`;
+  byId("layerList").innerHTML = layers.map((layer, index) => `
     <label class="layerToggle">
       <input type="checkbox" data-layer="${escapeHtml(layer.id)}" ${index === 0 || layer.enabled ? "checked" : ""} />
       <span>${escapeHtml(layer.name)}</span>
@@ -274,6 +305,40 @@ function initMap() {
   renderMapFeatures();
 }
 
+const VIEWS = {
+  dashboard: { kicker: "OVERVIEW", title: "ダッシュボード", sub: "🏗️ 土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。" },
+  catalog: { kicker: "LEDGER", title: "API・公開データ台帳", sub: "検索・絞り込み・スコア比較とAPI詳細を本番データで確認します。" },
+  flow: { kicker: "HOW TO USE", title: "API活用フロー", sub: "選定から本番実装までの5ステップと、データ形式別の接続早見表。" },
+  map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "公開タイルを実接続し、台帳のAPIを地図上で確認します。" },
+  exports: { kicker: "EXPORTS", title: "成果物エクスポート", sub: "台帳データから各種ファイルを生成・出力します。" },
+};
+
+function setView(view) {
+  if (!VIEWS[view]) view = "dashboard";
+  document.querySelectorAll(".view").forEach((el) => {
+    el.hidden = el.dataset.view !== view;
+  });
+  document.querySelectorAll(".navBtn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.view === view);
+  });
+  const meta = VIEWS[view];
+  byId("viewKicker").textContent = meta.kicker;
+  byId("viewTitle").textContent = meta.title;
+  byId("viewSub").textContent = meta.sub;
+  if (view === "map" && state.map) {
+    state.map.invalidateSize();
+    renderMapFeatures();
+  }
+  window.scrollTo(0, 0);
+}
+
+function initNav() {
+  document.querySelectorAll(".navBtn").forEach((btn) => {
+    btn.addEventListener("click", () => setView(btn.dataset.view));
+  });
+  setView("dashboard");
+}
+
 async function boot() {
   [state.summary, state.metadata, state.catalog, state.verification, state.exports, state.liveMap] = await Promise.all([
     loadJson("/api/summary"),
@@ -290,6 +355,7 @@ async function boot() {
   renderVerification();
   renderExports();
   initMap();
+  initNav();
   ["searchInput", "categoryFilter", "statusFilter", "regionFilter"].forEach((id) => {
     byId(id).addEventListener("input", renderCatalog);
     byId(id).addEventListener("change", renderCatalog);

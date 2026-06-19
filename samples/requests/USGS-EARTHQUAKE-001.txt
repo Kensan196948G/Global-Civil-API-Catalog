@@ -1,0 +1,1 @@
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson"

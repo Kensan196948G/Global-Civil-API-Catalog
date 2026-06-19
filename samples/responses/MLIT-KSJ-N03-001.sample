@@ -1,1 +1,1099 @@
-{"sample_type":"metadata","content_type":"text/html","note":"Administrative area distribution page confirmed; select year and prefecture file before download."}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="ja" http-equiv="content-language" />
+    <meta content="width=device-width" name="viewport" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta content="" name="description" />
+    <meta content="" name="keyword" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="../../../ksj/css/materialize.css" media="screen,projection" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js">
+    </script>
+    <link href="../../../ksj/css/style.css" media="screen,projection" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>
+        国土数値情報 | 行政区域データ
+    </title>
+
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-KBHCLWJ');</script>
+    <!-- End Google Tag Manager -->
+
+		<link rel="stylesheet" href="../../../ksj/css/datatables.min.css">
+		<script src="../../../ksj/js/datatables.min.js"></script>
+		<script src="../../../ksj/js/jquery.ex-table-filter.js"></script>
+</head>
+
+
+
+<body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KBHCLWJ" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- ヘッダー -->
+    
+  <header class="gmenu">
+
+
+    <nav class="nav-extended blue darken-3">
+      <div class="nav-wrapper">
+        <div>
+          <span class="gmenu__logo-M">
+            <img class="img__logo-M" src="/ksj/img/logo.png" alt="国土交通省">
+          </span>
+        </div>
+        <a class="gmenu__title" href="/">国土数値情報ダウンロードサイト</a>
+        <a data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+
+        <ul id="nav-mobile" class="right hide-on-med-and-down gmenu__title-line">
+          <li><a class="nav_padding_10" href="/first.html">初めての方へ</a></li>
+          <li><a class="nav_padding_10" href="/ksj/other/agreement.html">利用規約</a></li>
+          <!-- <li><a class="nav_padding_10" href="https://docs.google.com/forms/d/1VfarNUmLFhKzAVWIQNQbfgAdNs1nT2kqTERdBbwq7eo/viewform" target="_blank">アンケート</a></li> -->
+          <li><a class="nav_padding_10" href="/ksj/other/other.html">その他</a></li>
+          <li><a class="waves-effect waves-light btn nav_padding_10" href="/ksj/inquiry.html">お問合せ</a></li>
+          <!-- 検索窓　
+          <li>
+            <form class="search-form" action="https://www.google.co.jp/cse" name="cse-search-box" target="_blank">
+              <input value="6768d71d594cb4140" name="cx" type="hidden">
+              <input value="UTF-8" name="ie" type="hidden">
+              <input class="search-input" size="16" name="q" type="text" placeholder="サイト内を検索">
+              <button class="search-btn blue darken-3" value="" name="sa"><i class="material-icons">search</i></button>
+            </form>
+          </li>-->
+          <div>
+            <span class="gmenu__logo">
+              <img class="img__logo" src="/ksj/img/logo.png" alt="国土交通省">
+            </span>
+          </div>
+        </ul>
+
+
+      </div>
+    </nav>
+
+
+    <ul class="sidenav collection with-header" id="mobile-demo"> 
+    <li><a href="/ksj/index.html">国土数値情報<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+        <li><a href="/cgi-bin/isj/dls/_choose_method.cgi">位置参照情報<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+        <li><a href="/kokjo/inspect/inspect.html">国土調査<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+        <li><a href="/webmapc/mapmain.html">地図で見る<i class="material-icons blue-text text-darken-3 left">widgets</i></a></li>
+        <li><a class="collection-item" href="/first.html">初めての方へ</a></li>
+        <li><a class="collection-item" href="/ksj/case_studies.html">活用事例</a></li>
+        <li><a class="collection-item" href="/ksj/inquiry.html">お問合せ</a></li>
+        <li><a class="collection-item" href="https://docs.google.com/forms/d/1VfarNUmLFhKzAVWIQNQbfgAdNs1nT2kqTERdBbwq7eo/viewform" target="_blank">ご意見ご感想</a></li>
+        <li><a class="collection-item" href="/ksj/other/other.html">その他</a></li>
+    </ul>
+
+    <!-- <script src="https://tebot.jp/api/bot/1274/chat_embed_v8?lang=undefined&open_default=true&code=6eef28be8d4ae2512548634790c3a7c8"></script> -->
+    <!-- <script src="https://tebot.jp/api/bot/1274/chat_embed_v8?lang=undefined&open_default=true&code=6eef28be8d4ae2512548634790c3a7c8"></script> -->
+  </header>
+
+
+<header class="gmenu__contents-line">
+  <!-- mega size menu -->
+  <!--
+  <div>
+    <ul class="main-menu">       
+      <li class="menu__mega">
+        <a href="#con-1" class="init-bottom">国土数値情報</a>
+          <ul class="menu__second-level">
+            <li><a href="#">国土数値情報とは</a></li>
+            <li><a href="#">データダウンロード</a></li>
+            <li><a href="#">新着情報</a></li>
+            <li><a href="#">修正情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__mega">
+        <a href="#con-2" class="init-bottom">位置参照情報</a>
+          <ul class="menu__second-level">
+            <li><a href="#">位置参照情報とは</a></li>
+            <li><a href="#">データダウンロード</a></li>
+            <li><a href="#">新着情報</a></li>
+            <li><a href="#">修正情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__mega">
+        <a href="#con-3" class="init-bottom">国土調査</a>
+          <ul class="menu__second-level">
+            <li><a href="#">国土調査</a></li>
+            <li><a href="#">データダウンロード</a></li>
+            <li><a href="#">新着情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__mega">
+        <a href="#con-4" class="init-bottom">地図で見る</a>
+          <ul class="menu__second-level">
+            <li><a href="#">ウェブマッピングシステムとは</a></li>
+            <li><a href="#">ウェブマッピングシステムを起動</a></li>
+            <li><a href="#">ヘルプ</a></li>
+          </ul>
+      </li>
+    </ul>
+  </div>
+  -->
+
+  <div class="main-menu__L">
+    <ul class="main-menu">
+      <li class="menu__single">
+        <a class="init-bottom">国土数値情報</a>
+        <ul class="menu__second-level">
+            <li><a href="/ksj/index.html">データダウンロード</a></li>  
+            <li><a href="/ksj/gml/gml_datalist.html">JPGIS2.1準拠 整備データ一覧</a></li>            
+            <li><a href="/first.html#about_ksj">国土数値情報とは</a></li>
+            <li><a href="/ksj/other/about_GIS.html">GISとは</a></li>
+            <li><a href="/ksj/ksj_dataformat.html">国土数値情報のデータ形式</a></li>
+            <li><a href="/ksj/case_studies.html">国土数値情報 活用事例</a></li>
+            <li><a href="/ksj_news.html">新着情報</a></li>
+            <li><a href="/ksj_error.html">修正情報</a></li>
+            <li><a href="/ksj/error-report/error-report.html">エラー情報</a></li>
+          </ul>
+      </li>
+
+      <li class="menu__single">
+        <a class="init-bottom">
+          位置参照情報
+          <a class="init-bottom__l2">ジオコーディング（住所⇔緯度経度）</a>
+        </a>
+          <ul class="menu__second-level">
+            <li><a href="/cgi-bin/isj/dls/_choose_method.cgi">データダウンロード</a></li>  
+            <li><a href="/isj/index.html">位置参照情報とは</a></li>
+            <li><a href="/isj_news.html">新着情報</a></li>
+            <li><a href="/isj_error.html">修正情報</a></li>
+            <li><a href="/isj/error-report/error-report.html">エラー情報</a></li>
+          </ul>
+      </li>
+      
+      <!--
+      <li class="menu__single">
+        <a href="/kokjo_news.html" class="init-bottom">国土調査</a>
+          <ul class="menu__second-level">
+            <li><a href="/kokjo/inspect/inspect.html">データダウンロード</a></li>  
+            <li><a href="/ksj/kokjo.html">国土調査とは</a></li>
+            <li><a href="/kokjo_news.html">新着情報</a></li>
+          </ul>
+      </li>-->
+
+      
+      <li class="menu__multi">
+        <a class="init-bottom">国土調査
+        <a class="init-bottom__l2">土地分類調査・水調査</a>
+        </a>
+        <ul class="menu__second-level">
+          <li><a href="/kokjo/inspect/inspect.html">データダウンロード</a></li>
+          <li><a href="/kokjo/inspect/landclassification/download.html">GISデータのダウンロード</a></li>
+          <li>
+            <a class="init-right">国土調査とは</a>
+            <ul class="menu__third-level">
+                <li><a href="/ksj/kokjo.html">国土調査とは</a></li>
+                <li><a href="/kokjo/inspect/landclassification/index.html">土地分類調査・水調査の概要</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="init-right">土地分類調査</a>
+            <ul class="menu__third-level">
+              <li><a href="/kokjo/inspect/landclassification/land/land_history_2011/index_tile.html">土地履歴調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_5-1.html">5万分の1都道府県土地分類基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_20-1.html">20万分の1土地分類基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_50-1.html">50万分の1土地分類基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_det.html">土地分類調査（細部調査）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_20-1-hozen.html">20万分の1土地保全基本調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_d.html">災害類型別土地保全調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/l_national_map_v.html">土地分類基本調査（垂直調査）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/chikei_bunrui.html">地形分類図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/saigai_rireki.html">災害履歴図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/tochi_riyou.html">土地利用図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/hyousou_chisitsu.html">表層地質図から選ぶ</a></li>
+              <li><a href="/kokjo/inspect/landclassification/land/dojyou.html">土壌図から選ぶ</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="init-right">水調査</a>
+            <ul class="menu__third-level">
+              <li><a href="/kokjo/inspect/inspect.html#suikei">表流水</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map.html"> ○主要水系調査（更新調査：2003年～）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_p.html"> ○主要水系調査（1966年～2002年）</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_pref.html">○都道府県水調査</a></li>
+              <li><a href="/kokjo/inspect/inspect.html#suikei">地下水</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/f9_exp.html">○全国地下水資料台帳</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_ug.html">○地下水の見える化調査</a></li>
+              <li><a href="/kokjo/inspect/landclassification/water/w_national_map_cw.html">○地下水マップ</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+
+
+      <li class="menu__single">
+        <a class="init-bottom">地図で見る</a>
+          <ul class="menu__second-level">
+            <li><a href="/webmapc/mapmain.html">ウェブマッピングシステムを起動</a></li>
+            <li><a href="/ksj/webgis.html">ウェブマッピングシステムとは</a></li>
+            <li><a href="/webmapc/WMS_manual.pdf">ウェブマッピングシステム 操作方法</a></li>
+          </ul>
+      </li>
+
+
+
+    </ul>
+  </div>
+
+
+</header>
+<!-- モーダル本体 -->
+<div class="modal-container">
+  <div class="modal-body">
+    <!-- 閉じるボタン -->
+    <div class="close_btn_X">×</div>
+    <div class="modal-close btn waves-effect waves-light indigo btn-small">スキップする</div>
+    <!-- <div class="modal-close btn waves-effect waves-light indigo btn-small">ダウンロードへ進む</div> -->
+    
+    <!-- モーダル内のコンテンツ -->
+    <div class="modal-content">
+      <iframe src="https://docs.google.com/forms/d/1-J1_3_NPwYy8cpH7yfwRlKa5iYaN9zw6S4ng4e0PuEs/viewform?usp=sf_link" 
+        width="98%" 
+        height="600"
+        frameborder="0" 
+        marginheight="0" 
+        marginwidth="0">
+      </iframe> 
+    </div>
+  </div>
+</div>    <main>
+        <div class="container">
+            <div class="breadcrumb-list">
+                <a class="breadcrumb" href="../../../index.html">TOP</a>
+                <a class="breadcrumb" href="../../index.html">国土数値情報</a>
+                <a class="breadcrumb" href="#!">行政区域データ</a>
+            </div>
+            <div class="col s12 center">
+                <p class="left-align light">
+                    選択したデータ項目は、国土数値情報　行政区域データ　です。<br>
+                    最新のデータはデータ基準年 2026年（令和8年）版です。データ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2026.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2025年（令和7年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2025.html"
+                        target="_blank">こちら</a><br>
+					データ基準年：2024年（令和6年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2024.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2023年（令和5年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2023.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2022年（令和4年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2022.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2021年（令和3年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2021.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2020年（令和2年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2020.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2019年（令和元年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2019.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2018年～2016年（平成30年～平成28年）版のデータ詳細は<a href="/ksj/gml/datalist/KsjTmplt-N03-2018.html"
+                        target="_blank">こちら</a><br>
+                    データ基準年：2015年以前（平成27年～18年,12年,7年,昭和60年,55年,50年,45年,40年,35年,30年,25年,大正9年）版のデータ詳細は<a
+                        href="/ksj/gml/datalist/KsjTmplt-N03-2015.html" target="_blank">こちら</a>
+                </p>
+            </div>
+            <ul class="collapsible">
+                <li class="active">
+                    <div class="collapsible-header blue darken-4">
+                        <p class="white-text">
+                            行政区域　2025年（令和7年）版
+                            <i class="material-icons">
+                                arrow_drop_down
+                            </i>
+                        </p>
+                    </div>
+                    <div class="collapsible-body">
+                        <table class="tablelist responsive-table">
+                            <tbody>
+                                <tr>
+                                    <th>更新履歴</th>
+                                    <td>2025年6月：2025年（令和7年）版に更新しました。<br>
+                                        2024年3月：2024年（令和6年）版に更新しました。<br>
+                                        2023年5月：2023年（令和5年）版に更新しました。<br>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>内容</th>
+                                    <td>全国の行政界について、都道府県名、北海道の振興局名、郡名、市区町村名、政令指定都市の行政区名、全国地方公共団体コードをGISデータとして整備したものです。
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>データ基準年月日</th>
+                                    <td>2025年（令和7年）1月1日時点</td>
+                                </tr>
+                                <tr>
+                                    <th>関連する法律</th>
+                                    <td>－</td>
+                                </tr>
+                                <tr>
+                                    <th>原典資料</th>
+                                    <td>（2025年（令和7年））<br>
+                                        国土地理院「数値地図（国土基本情報）」<br>
+                                        国土地理院「地理院タイル」<br>
+                                        総務省「全国地方公共団体コード一覧」</td>
+                                </tr>
+                                <tr>
+                                    <th>作成方法<br>（原典表示）</th>
+                                    <td>
+                                        <p>
+                                            （2025年（令和7年）1月1日時点）<br>
+                                            「数値地図（国土基本情報）」の行政区画データから整備しました。必要に応じて、国土地理院の「地理院タイル」及び総務省の「全国地方公共団体コード一覧」を参照しました。<br>
+                                            <br>
+											「測量法に基づく国土地理院長承認（複製）R 6JHf 503」<br>
+											「本製品を複製する場合には、国土地理院の長の承認を得なければなりません。」
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><a href="/ksj/other/agreement_01.html" target="_blank">このデータの使用許諾条件</a>
+                                    </th>
+                                    <td>
+                                        オープンデータ（CC_BY_4.0）<br>
+                                        ※本データを二次利用する場合には、国土地理院に申請等必要な場合があります。
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>座標系</th>
+                                    <td>世界測地系（JGD2011 ）/ （B, L）</td>
+                                </tr>
+                                <tr>
+                                    <th>データ形状</th>
+                                    <td>面</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row rowReset">
+                            <div class="col s6 colReset">
+                                <table class="responsive-table">
+                                    <tbody>
+                                        <tr>
+                                            <th>データ構造</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a href="./img/N03_v4_0_DataStructure.png" target="_blank" title="拡大表示">
+                                                    <img alt="データ構造" class="responsive-img"
+                                                        src="./img/N03_v4_0_DataStructure.png" width="600" /></a>
+                                                <br>《拡大表示するには図をクリックしてください》
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col s6">
+                                <table class="responsive-table">
+                                    <tbody>
+                                        <tr>
+                                            <th>イメージ</th>
+                                        </tr>
+                                        <tr>
+                                            <td><img alt="イメージ" class="responsive-img"
+                                                    src="./img/N03_v4_0_DataImage.png" />
+                                                ※細い線は市区町村による境界、太い線は都道府県による境界を示します。<br>
+                                                （背景は国土地理院「地理院タイル（淡色地図）」）</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <table class="tablelist responsive-table">
+                            <tbody>
+                                <tr>
+                                    <th rowspan="2">地物情報</th>
+                                    <th>地物名</th>
+                                    <th colspan="2">説明</th>
+                                </tr>
+                                <tr>
+                                    <td>行政区域</td>
+                                    <td colspan="2">2025年（令和7年）1月1日時点の行政界及び海岸線で囲まれる区域</td>
+                                </tr>
+                                <tr>
+                                    <th rowspan="8">属性情報</th>
+                                    <th>属性名<br>（括弧内はshpの属性名）</th>
+                                    <th>説明</th>
+                                    <th>属性の型</th>
+                                </tr>
+                                <tr>
+                                    <td>範囲</td>
+                                    <td>行政区域の範囲</td>
+                                    <td>曲型（GM_Surface）</td>
+                                </tr>
+                                <tr>
+                                    <td>都道府県名<br>（N03_001）</td>
+                                    <td>当該区域における地方自治法第2条第5項で定義される市町村を包括する広域の地方公共団体である都道府県の名称</td>
+                                    <td>文字列型（CharacterString）</td>
+                                </tr>
+                                <tr>
+                                    <td>北海道の振興局名<br>（N03_002）</td>
+                                    <td>当該区域における地方自治法第155条第1項で定義される支庁のうち都道府県が「北海道」である場合の振興局名の名称</td>
+                                    <td>文字列型（CharacterString）</td>
+                                </tr>
+                                <tr>
+                                    <td>郡名<br>（N03_003）</td>
+                                    <td>当該区域における地方自治法第259条で定義される1つ以上の町村から構成される範囲の名称</td>
+                                    <td>文字列型（CharacterString）</td>
+                                </tr>
+                                <tr>
+                                    <td>市区町村名<br>（N03_004）</td>
+                                    <td>当該区域における地方自治法第2条第3項（市町村）及び地方自治法第281条の2第2項（都の特別区）で定義される基礎的な地方公共団体である市町村及び都の特別区名
+                                    </td>
+                                    <td>文字列型（CharacterString）</td>
+                                </tr>
+                                <tr>
+                                    <td>政令指定都市の行政区名<br>（N03_005）</td>
+                                    <td>当該区域における地方自治法第252条の20で定義される政令指定都市内に設置される行政区名</td>
+                                    <td>文字列型（CharacterString）</td>
+                                </tr>
+                                <tr>
+                                    <td>全国地方公共団体コード<br>（N03_007）</td>
+                                    <td>JIS X 0401で定められている都道府県コード2桁と、JIS X 0402で定められている市区町村コード3桁から構成される5桁の数字で表現されたコード
+                                    </td>
+                                    <td>コードリスト「<a href="/ksj/gml/codelist/AdminiBoundary_CD.xlsx"
+                                            target="_blank">行政区域コード</a>」</td>
+                                </tr>
+                                <tr>
+                                    <th>主な品質情報</th>
+                                    <td colspan="3">
+                                        ■ 完全性/過剰・漏れ：全数検査、過剰漏れデータの割合0%
+                                        <br>
+                                        ■ 論理一貫性/概念一貫性・定義域一貫性・位相一貫性：全数検査、エラーの割合0%
+                                        <br>
+                                        ■ 位置正確度/絶対正確度：全数検査、エラーの割合0%
+                                        <br>
+                                        ■ 主題正確度/分類の正しさ・非定量的主題属性の正しさ：全数検査、エラーの割合0%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        データフォーマット（符号化）
+                                    </th>
+                                    <td colspan="3">
+                                        ・GML形式（JPGIS2014準拠）：詳細は
+                                        <a href="/ksj/gml/product_spec/KS-PS-N03-v4_0.pdf" target="_blank">
+                                            製品仕様書
+                                        </a>
+                                        内の符号化規則を参照してください。<br>
+                                        ・シェープファイル形式：詳細は
+                                        <a href="/ksj/gml/codelist/shape_property_table2.xlsx" target="_blank">
+                                            シェープファイルの属性について
+                                        </a>
+										を参照してください。<br>
+                                        ・GeoJSON形式
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>国土情報ウェブマッピングシステムへの登録</th>
+                                    <td colspan="3"><a href="https://nlftp.mlit.go.jp/webmapc/mapmain.html"
+                                            target="_blank">登録あり</a>：<a href="/ksj/gml/datalist/KsjTmplt-N03-2020.html"
+                                            target="_blank">2020年（令和2年）版</a>のデータです。
+                                    </td>
+                                </tr>
+                                <tr>
+									<th>地図上でデータ閲覧できるサイト</th>
+									<td colspan="4">
+										<a href="https://eadas.env.go.jp/eiadb/ebidbs/" target="_blank">環境アセスメントデータベース EADAS（環境省）</a>（データ年度はサイト中の出典情報をご確認ください。）
+									</td>
+								</tr>
+                                <tr>
+                                    <th>識別子</th>
+                                    <td colspan="3">N03</td>
+                                </tr>
+                                <tr>
+                                    <th>その他の情報</th>
+                                    <td colspan="3">
+                                        ・本データのメタデータは、ダウンロードしたファイルに添付されています。<br>
+                                        ・一部の市区町村において境界が未確定の地域がありますが、これは原典資料に由来するものであり、境界線を暫定的に設定しているものですので、ご利用時はご注意ください。
+                                        未確定地域の詳細については該当の市区町村にお問い合わせください。<br>
+                                        ・東京都千代田区・中央区・港区の境界及び東京都中央防波堤埋立地については修正を行っております。修正内容については<a
+                                            href="/ksj/gml/datalist/N03-20240101_13_CorrectInformation.pdf"
+                                            target="_blank">こちら</a>をご覧ください。<br>
+                                        <!-- ・一部の市区町村において境界が未確定の地域があり、データの仕様上、機械的に境界線を設定しています。詳細については該当の市区町村にお問い合わせください。<br> -->
+                                        <!-- ・一部の市区町村において境界が未確定の地域がありますが、これは原典資料に由来するものであり、境界線を暫定的に設定しているものです。これに伴い、東京都千代田区・中央区・港区の境界など、一部に正確でない境界線が設定されていますので、ご利用時はご注意ください。<br>
+                                        　現在修正について検討中ですが、未確定地域の詳細については該当の市区町村にお問い合わせください。<br> -->
+                                        ・暫定境界線一覧は<a href="/ksj/gml/datalist/N03_Boundary_undetermined.pdf"
+                                            target="_blank">こちら</a>をご覧ください。
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+            <!-- DW日本地図 -->
+            <ul class="collapsible" id="Jmap">
+                <li class="active">
+                    <div class="collapsible-header blue darken-4">
+                        <p class="white-text">
+                            ダウンロードするデータの選択（ダウンロードしたい県をクリックしてください）
+                            <i class="material-icons">
+                                arrow_drop_down
+                            </i>
+                        </p>
+                    </div>
+                    <div class="collapsible-body">
+                        <table class="mapjpn1 mb15 responsive-table">
+							<tbody>
+								<tr>
+									<th class="bgc0">全国</th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="全国" value="全国"
+												name="pref" /><span class="black-text">全国</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc1">北海道</th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="北海道" value="北海道"
+												name="pref" /><span class="black-text">北海道</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc2"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="東北" value="東北地方"
+												name="pref" /><span class="black-text">東北</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="青森県" value="青森"
+												name="pref" /><span class="black-text">青森県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="岩手県" value="岩手"
+												name="pref" /><span class="black-text">岩手県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="宮城県" value="宮城"
+												name="pref" /><span class="black-text">宮城県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="秋田県" value="秋田"
+												name="pref" /><span class="black-text">秋田県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="山形県" value="山形"
+												name="pref" /><span class="black-text">山形県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="福島県" value="福島"
+												name="pref" /><span class="black-text">福島県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc3"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="関東" value="関東地方"
+												name="pref" /><span class="black-text">関東</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="茨城県" value="茨城"
+												name="pref" /><span class="black-text">茨城県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="栃木県" value="栃木"
+												name="pref" /><span class="black-text">栃木県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="群馬県" value="群馬"
+												name="pref" /><span class="black-text">群馬県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="埼玉県" value="埼玉"
+												name="pref" /><span class="black-text">埼玉県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="千葉県" value="千葉"
+												name="pref" /><span class="black-text">千葉県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="東京都" value="東京"
+												name="pref" /><span class="black-text">東京都</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="神奈川県" value="神奈川"
+												name="pref" /><span class="black-text">神奈川県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc4"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="甲信越・北陸" value="甲信越・北陸地方"
+												name="pref" /><span class="black-text">甲信越・北陸</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="新潟県" value="新潟"
+												name="pref" /><span class="black-text">新潟県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="富山県" value="富山"
+												name="pref" /><span class="black-text">富山県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="石川県" value="石川"
+												name="pref" /><span class="black-text">石川県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="福井県" value="福井"
+												name="pref" /><span class="black-text">福井県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="山梨県" value="山梨"
+												name="pref" /><span class="black-text">山梨県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="長野県" value="長野"
+												name="pref" /><span class="black-text">長野県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc5"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="東海" value="東海地方"
+												name="pref" /><span class="black-text">東海</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="岐阜県" value="岐阜"
+												name="pref" /><span class="black-text">岐阜県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="静岡県" value="静岡"
+												name="pref" /><span class="black-text">静岡県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="愛知県" value="愛知"
+												name="pref" /><span class="black-text">愛知県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="三重県" value="三重"
+												name="pref" /><span class="black-text">三重県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc6"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="近畿" value="近畿地方"
+												name="pref" /><span class="black-text">近畿</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="滋賀県" value="滋賀"
+												name="pref" /><span class="black-text">滋賀県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="京都府" value="京都"
+												name="pref" /><span class="black-text">京都府</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="大阪府" value="大阪"
+												name="pref" /><span class="black-text">大阪府</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="兵庫県" value="兵庫"
+												name="pref" /><span class="black-text">兵庫県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="奈良県" value="奈良"
+												name="pref" /><span class="black-text">奈良県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="和歌山県" value="和歌山"
+												name="pref" /><span class="black-text">和歌山県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc7"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="中国" value="中国地方"
+												name="pref" /><span class="black-text">中国</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="鳥取県" value="鳥取"
+												name="pref" /><span class="black-text">鳥取県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="島根県" value="島根"
+												name="pref" /><span class="black-text">島根県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="岡山県" value="岡山"
+												name="pref" /><span class="black-text">岡山県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="広島県" value="広島"
+												name="pref" /><span class="black-text">広島県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="山口県" value="山口"
+												name="pref" /><span class="black-text">山口県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc8"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="四国" value="四国地方"
+												name="pref" /><span class="black-text">四国</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="徳島県" value="徳島"
+												name="pref" /><span class="black-text">徳島県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="香川県" value="香川"
+												name="pref" /><span class="black-text">香川県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="愛媛県" value="愛媛"
+												name="pref" /><span class="black-text">愛媛県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="高知県" value="高知"
+												name="pref" /><span class="black-text">高知県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc9"><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="九州" value="九州地方"
+												name="pref" /><span class="black-text">九州</span></label></th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="福岡県" value="福岡"
+												name="pref" /><span class="black-text">福岡県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="佐賀県" value="佐賀"
+												name="pref" /><span class="black-text">佐賀県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="長崎県" value="長崎"
+												name="pref" /><span class="black-text">長崎県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="熊本県" value="熊本"
+												name="pref" /><span class="black-text">熊本県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="大分県" value="大分"
+												name="pref" /><span class="black-text">大分県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="宮崎県" value="宮崎"
+												name="pref" /><span class="black-text">宮崎県</span></label></td>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="鹿児島県" value="鹿児島"
+												name="pref" /><span class="black-text">鹿児島県</span></label></td>
+								</tr>
+								<tr>
+									<th class="bgc10">沖縄</th>
+									<td><label><input type="checkbox" class="pref_chk filled-in ex-tf_p" id="沖縄県" value="沖縄"
+												name="pref" /><span class="black-text">沖縄県</span></label></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<table class="mb15 responsive-table ex-tf_container">
+							<tbody>
+								<th class="card-content blue lighten-1 ex-tf_th">年度で絞り込み</th>
+								<td>
+									<div class="ex-tf_y input-field"></div>
+								</td>
+							</tbody>
+						</table>
+                    </div>
+                </li>
+            </ul>
+            <!-- //DW日本地図 -->
+            <!-- DW都道府県 -->
+            <div class="card blue mt15">
+                <div class="card-content blue lighten-1">
+                    <p class="white-text">
+                        国土数値情報ダウンロードサービス　（JPGIS2014（GML）準拠及びSHAPE形式データ）　データのダウンロード
+                    </p>
+                </div>
+            </div>
+            <div class="card mt15">
+                <div class="card-content">
+                    <p>
+                        選択したデータ項目は、国土数値情報　行政区域データ　です。
+                    </p>
+                </div>
+            </div>
+            <table class="mb30 responsive-table dataTables">
+                <thead>
+                    <tr>
+                        <th class="txtCenter">地域</th>
+                        <th class="txtCenter">測地系</th>
+                        <th class="txtCenter">年</th>
+                        <th class="txtCenter">ファイル容量</th>
+                        <th class="txtCenter">ファイル名</th>
+                        <th class="txtCenter">ダウンロード</th>
+                        <th class="txtCenter  style=" width:fit-content""="">一括DL
+                            <a class="Select_part tooltipped" style="cursor:pointer;position:relative" data-position="top" data-tooltip="全てのデータを選択">
+                                <label class="chkLabel-front">
+                                    <input type="checkbox" class="filled-in select center-align" disabled="disabled" checked="checked">
+                                    <span></span>
+                                </label>
+                                <label class="chkLabel-front chkLabel-back">
+                                    <input type="checkbox" class="filled-in blank center-align" disabled="disabled" checked="checked">
+                                    <span></span>
+                                </label>
+                            </a>
+                            <a class="Clear_part tooltipped" style="cursor:pointer;position:relative;margin-left: 8px;" data-position="top" data-tooltip="全ての選択を解除">
+                                <label class="chkLabel-front">
+                                    <input type="checkbox" class="filled-in blank center-align" disabled="disabled">
+                                    <span></span>
+                                </label>
+                                <label class="chkLabel-fornt chkLabel-back">
+                                    <input type="checkbox" class="filled-in blank-back center-align" disabled="disabled">
+                                    <span></span>
+                                </label>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2025年（令和7年）</td>
+					   <td class="txtCenter">603.03MB</td>
+					   <td class="txtCenter">N03-20250101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('603.03MB','N03-20250101_GML.zip','../data/N03/N03-2025/N03-20250101_GML.zip' ,this);">
+					         <span id="N03-20250101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20250101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2024年（令和6年）</td>
+					   <td class="txtCenter">583MB</td>
+					   <td class="txtCenter">N03-20240101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('583MB','N03-20240101_GML.zip','../data/N03/N03-2024/N03-20240101_GML.zip' ,this);">
+					         <span id="N03-20240101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20240101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2023年（令和5年）</td>
+					   <td class="txtCenter">427MB</td>
+					   <td class="txtCenter">N03-20230101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('427MB','N03-20230101_GML.zip','../data/N03/N03-2023/N03-20230101_GML.zip' ,this);">
+					         <span id="N03-20230101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20230101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2022年（令和4年）</td>
+					   <td class="txtCenter">727.76MB</td>
+					   <td class="txtCenter">N03-20220101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('727.76MB','N03-20220101_GML.zip','../data/N03/N03-2022/N03-20220101_GML.zip' ,this);">
+					         <span id="N03-20220101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20220101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2021年（令和3年）</td>
+					   <td class="txtCenter">476.89MB</td>
+					   <td class="txtCenter">N03-20210101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('476.89MB','N03-20210101_GML.zip','../data/N03/N03-2021/N03-20210101_GML.zip' ,this);">
+					         <span id="N03-20210101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20210101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2020年（令和2年）</td>
+					   <td class="txtCenter">465.89MB</td>
+					   <td class="txtCenter">N03-20200101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('465.89MB','N03-20200101_GML.zip','../data/N03/N03-2020/N03-20200101_GML.zip' ,this);">
+					         <span id="N03-20200101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20200101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2019年（平成31年）</td>
+					   <td class="txtCenter">396.68MB</td>
+					   <td class="txtCenter">N03-190101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('396.68MB','N03-190101_GML.zip','../data/N03/N03-2019/N03-190101_GML.zip' ,this);">
+					         <span id="N03-190101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-190101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2018年（平成30年）</td>
+					   <td class="txtCenter">391.13MB</td>
+					   <td class="txtCenter">N03-180101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('391.13MB','N03-180101_GML.zip','../data/N03/N03-2018/N03-180101_GML.zip' ,this);">
+					         <span id="N03-180101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-180101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2017年（平成29年）</td>
+					   <td class="txtCenter">230.00MB</td>
+					   <td class="txtCenter">N03-170101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('230.00MB','N03-170101_GML.zip','../data/N03/N03-2017/N03-170101_GML.zip' ,this);">
+					         <span id="N03-170101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-170101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2016年（平成28年）</td>
+					   <td class="txtCenter">227.74MB</td>
+					   <td class="txtCenter">N03-160101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('227.74MB','N03-160101_GML.zip','../data/N03/N03-2016/N03-160101_GML.zip' ,this);">
+					         <span id="N03-160101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-160101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2015年（平成27年）</td>
+					   <td class="txtCenter">249.78MB</td>
+					   <td class="txtCenter">N03-150101_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('249.78MB','N03-150101_GML.zip','../data/N03/N03-2015/N03-150101_GML.zip' ,this);">
+					         <span id="N03-150101_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-150101_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc0" id="prefecture00">全国</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2014年（平成26年）</td>
+					   <td class="txtCenter">98.00MB</td>
+					   <td class="txtCenter">N03-140401_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('98.00MB','N03-140401_GML.zip','../data/N03/N03-2014/N03-140401_GML.zip' ,this);">
+					         <span id="N03-140401_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-140401_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc1" id="prefecture01">北海道</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2025年（令和7年）</td>
+					   <td class="txtCenter">54.71MB</td>
+					   <td class="txtCenter">N03-20250101_01_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('54.71MB','N03-20250101_01_GML.zip','../data/N03/N03-2025/N03-20250101_01_GML.zip' ,this);">
+					         <span id="N03-20250101_01_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20250101_01_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc1" id="prefecture01">北海道</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2024年（令和6年）</td>
+					   <td class="txtCenter">53.4MB</td>
+					   <td class="txtCenter">N03-20240101_01_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('53.4MB','N03-20240101_01_GML.zip','../data/N03/N03-2024/N03-20240101_01_GML.zip' ,this);">
+					         <span id="N03-20240101_01_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20240101_01_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc1" id="prefecture01">北海道</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2023年（令和5年）</td>
+					   <td class="txtCenter">41.5MB</td>
+					   <td class="txtCenter">N03-20230101_01_GML.zip</td>
+					   <td class="txtCenter">
+					      <a class="waves-effect waves-light btn indigo btn_padding" id="menu-button" onclick="javascript:DownLd('41.5MB','N03-20230101_01_GML.zip','../data/N03/N03-2023/N03-20230101_01_GML.zip' ,this);">
+					         <span id="N03-20230101_01_GML.zip-open" style="display: block">
+					            <i class="material-icons">file_download</i>
+					         </span>
+					         <span id="N03-20230101_01_GML.zip-close" style="display: none">
+					            <i class="material-icons">star</i>
+					         </span>
+					      </a>
+					   </td>
+					   <td class="txtCenter">
+					      <label class="chkLabel">
+					         <input type="checkbox" class="filled-in dlFileList center-align">
+					             <span></span>
+					      </label>
+					   </td>
+					</tr>
+					<tr>
+					   <td class="bgc

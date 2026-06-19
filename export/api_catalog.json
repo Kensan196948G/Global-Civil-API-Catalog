@@ -24,8 +24,8 @@
     "connection_status": "本格利用候補",
     "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 98,
-    "integration_score": 95,
+    "business_fit_score": 100,
+    "integration_score": 100,
     "risk_note": "個別タイルごとの出典条件を確認する。",
     "target_projects": [
       "Open Civil Site Risk Checker",
@@ -43,7 +43,52 @@
     "usage_notes": "出典表記を必ず付けます。タイルURLはズーム・x・yを指定して利用します。\n地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n個別タイルごとの出典条件を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 100,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 3件 +20",
+          "接続状態(本格利用候補) +10"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 96.2,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 100×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 75×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-TILE-PALE-001",
@@ -69,9 +114,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "接続検証済",
     "trust_rank": "A",
-    "connection_priority": 5,
-    "business_fit_score": 90,
-    "integration_score": 95,
+    "connection_priority": 4,
+    "business_fit_score": 84,
+    "integration_score": 100,
     "risk_note": "背景図用途では視認性評価が必要。",
     "target_projects": [
       "Public Infrastructure Maintenance Map"
@@ -86,7 +131,52 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n背景図用途では視認性評価が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 84,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続検証済) +7"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 83.2,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 84×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-TILE-PHOTO-001",
@@ -114,7 +204,7 @@
     "trust_rank": "A",
     "connection_priority": 4,
     "business_fit_score": 84,
-    "integration_score": 90,
+    "integration_score": 100,
     "risk_note": "撮影時期の差異に注意。",
     "target_projects": [
       "Open Civil Site Risk Checker"
@@ -129,7 +219,52 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n撮影時期の差異に注意。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 84,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続検証済) +7"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 83.2,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 84×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-ELEVATION-001",
@@ -157,8 +292,8 @@
     "connection_status": "実装接続済",
     "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 95,
-    "integration_score": 88,
+    "business_fit_score": 93,
+    "integration_score": 100,
     "risk_note": "測地成果と欠損値の扱いを明示する。",
     "target_projects": [
       "Open Civil Site Risk Checker",
@@ -174,7 +309,52 @@
     "usage_notes": "欠損値、解像度、測地成果の扱いを確認します。精密設計では測量成果や詳細DEMと照合します。\n地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n測地成果と欠損値の扱いを明示する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 93,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 2件 +14",
+          "接続状態(実装接続済) +9"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 90.0,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 93×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-VECTOR-001",
@@ -201,8 +381,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 82,
-    "integration_score": 72,
+    "business_fit_score": 81,
+    "integration_score": 100,
     "risk_note": "実験的提供範囲の確認が必要。",
     "target_projects": [
       "Public Infrastructure Maintenance Map"
@@ -216,7 +396,52 @@
     "usage_notes": "ベクトルタイルなどで使う圧縮バイナリ形式です。対応ライブラリが必要です。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n実験的提供範囲の確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 82.1,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-N03-001",
@@ -244,8 +469,8 @@
     "connection_status": "本格利用候補",
     "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 96,
-    "integration_score": 82,
+    "business_fit_score": 95,
+    "integration_score": 100,
     "risk_note": "年度、測地系、属性定義の差分管理が必要。",
     "target_projects": [
       "Open Civil Site Risk Checker",
@@ -263,7 +488,52 @@
     "usage_notes": "年度版の差分、測地系、属性定義を確認してから後続システムへ取り込みます。\nGISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n年度、測地系、属性定義の差分管理が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 95,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(年次) +10",
+          "対象案件 3件 +20",
+          "接続状態(本格利用候補) +10"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 94.5,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 95×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 75×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-L03-001",
@@ -290,8 +560,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 84,
-    "integration_score": 78,
+    "business_fit_score": 76,
+    "integration_score": 97,
     "risk_note": "最新版と過年度の比較条件を確認する。",
     "target_projects": [
       "Open Civil Site Risk Checker"
@@ -305,7 +575,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n最新版と過年度の比較条件を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 76,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(数年) +10",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 79.8,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 76×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-A09-001",
@@ -332,8 +647,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 83,
-    "integration_score": 78,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "都市計画の詳細制限は別資料確認が必要。",
     "target_projects": [
       "Open Civil Site Risk Checker"
@@ -347,7 +662,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n都市計画の詳細制限は別資料確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-ROAD-001",
@@ -372,10 +732,10 @@
     "update_frequency": "年次/随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 72,
-    "integration_score": 75,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "搬入ルート評価には道路幅員等の補助データが必要。",
     "target_projects": [
       "Construction Logistics Route Planner"
@@ -389,7 +749,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n搬入ルート評価には道路幅員等の補助データが必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(年次/随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-RAIL-001",
@@ -414,10 +819,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 70,
-    "integration_score": 76,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "近接施工判定には詳細な権利範囲確認が必要。",
     "target_projects": [
       "Construction Logistics Route Planner"
@@ -431,7 +836,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n近接施工判定には詳細な権利範囲確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-PORT-001",
@@ -458,8 +908,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 80,
-    "integration_score": 76,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "港湾区域の定義差分を確認する。",
     "target_projects": [
       "Construction Logistics Route Planner"
@@ -473,7 +923,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n港湾区域の定義差分を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-AIRPORT-001",
@@ -498,10 +993,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 68,
-    "integration_score": 76,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "高さ制限等は別資料が必要。",
     "target_projects": [
       "Construction Logistics Route Planner"
@@ -515,7 +1010,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n高さ制限等は別資料が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-FLOOD-001",
@@ -542,8 +1082,8 @@
     "connection_status": "接続検証済",
     "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 95,
-    "integration_score": 78,
+    "business_fit_score": 91,
+    "integration_score": 97,
     "risk_note": "河川管理者ごとの差分と想定規模を明示する。",
     "target_projects": [
       "Open Civil Site Risk Checker",
@@ -558,7 +1098,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n河川管理者ごとの差分と想定規模を明示する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 91,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 2件 +14",
+          "接続状態(接続検証済) +7"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 88.8,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 91×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-LANDSLIDE-001",
@@ -585,8 +1170,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 92,
-    "integration_score": 78,
+    "business_fit_score": 88,
+    "integration_score": 97,
     "risk_note": "自治体更新とのタイムラグに注意。",
     "target_projects": [
       "Open Civil Site Risk Checker",
@@ -601,7 +1186,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n自治体更新とのタイムラグに注意。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 88,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 2件 +14",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 87.7,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 88×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-TSUNAMI-001",
@@ -628,8 +1258,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 86,
-    "integration_score": 78,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "対象地域と想定条件を明記する。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -643,7 +1273,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n対象地域と想定条件を明記する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-KSJ-STORM-SURGE-001",
@@ -670,8 +1345,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 85,
-    "integration_score": 78,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "沿岸・港湾案件で優先確認する。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -685,7 +1360,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n沿岸・港湾案件で優先確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-HAZARD-FLOOD-001",
@@ -712,8 +1432,8 @@
     "connection_status": "実装接続済",
     "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 94,
-    "integration_score": 86,
+    "business_fit_score": 93,
+    "integration_score": 100,
     "risk_note": "タイルなしの404を正常扱いする場合がある。",
     "target_projects": [
       "Open Civil Site Risk Checker",
@@ -728,7 +1448,52 @@
     "usage_notes": "タイルが存在しない地点では404が正常な場合があります。想定規模と出典を明示してください。\n地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nタイルなしの404を正常扱いする場合がある。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 93,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 2件 +14",
+          "接続状態(実装接続済) +9"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 90.0,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 93×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-HAZARD-LANDSLIDE-001",
@@ -754,8 +1519,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 90,
-    "integration_score": 82,
+    "business_fit_score": 81,
+    "integration_score": 100,
     "risk_note": "正式レイヤIDの確認が必要。",
     "target_projects": [
       "Open Civil Site Risk Checker"
@@ -769,7 +1534,53 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/05_kyukeishakeikaikuiki/10/909/403.png",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 82.1,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-HAZARD-TSUNAMI-001",
@@ -795,8 +1606,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 84,
-    "integration_score": 82,
+    "business_fit_score": 81,
+    "integration_score": 100,
     "risk_note": "正式レイヤIDの確認が必要。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -810,7 +1621,53 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/04_tsunami_newlegend_data/10/909/403.png",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 82.1,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "GSI-HAZARD-STORM-SURGE-001",
@@ -836,8 +1693,8 @@
     "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 83,
-    "integration_score": 82,
+    "business_fit_score": 81,
+    "integration_score": 100,
     "risk_note": "正式レイヤIDの確認が必要。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -851,7 +1708,53 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n正式レイヤIDの確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://disaportaldata.gsi.go.jp/raster/03_hightide_l2_shinsuishin_data/10/909/403.png",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 82.1,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-REINFOLIB-LANDPRICE-001",
@@ -869,17 +1772,17 @@
       "GeoJSON",
       "PBF"
     ],
-    "api_key_required": "unknown",
-    "auth_type": "unknown",
+    "api_key_required": "required",
+    "auth_type": "api_key",
     "license_note": "不動産情報ライブラリのAPI利用条件を確認する。",
     "commercial_use": "unknown",
     "update_frequency": "年次",
     "last_checked_at": "2026-06-18",
-    "connection_status": "接続検証済",
-    "trust_rank": "A",
-    "connection_priority": 4,
-    "business_fit_score": 80,
-    "integration_score": 62,
+    "connection_status": "調査中",
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 57,
+    "integration_score": 58,
     "risk_note": "APIキー要否と商用利用条件の確定が必要。",
     "target_projects": [
       "Open Civil Site Risk Checker"
@@ -893,7 +1796,49 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPIキー要否と商用利用条件の確定が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 57,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(年次) +10",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 58,
+        "factors": [
+          "APIキー(required) +8",
+          "認証方式(api_key) +8",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 56.3,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 57×0.35",
+          "連携実装性 58×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-REINFOLIB-LANDPRICE-LOCAL-001",
@@ -918,9 +1863,9 @@
     "update_frequency": "年次",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "A",
+    "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 76,
+    "business_fit_score": 57,
     "integration_score": 60,
     "risk_note": "認証方式と利用制限を確認する。",
     "target_projects": [
@@ -935,7 +1880,49 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n認証方式と利用制限を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 57,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(年次) +10",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 56.7,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 57×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-REINFOLIB-TRADE-001",
@@ -961,7 +1948,7 @@
     "connection_status": "調査中",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 72,
+    "business_fit_score": 57,
     "integration_score": 60,
     "risk_note": "用途により個別地点情報の扱いに注意。",
     "target_projects": [
@@ -976,7 +1963,49 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n用途により個別地点情報の扱いに注意。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 57,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(四半期等) +10",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 56.7,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 57×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-REINFOLIB-CITYPLAN-001",
@@ -1001,9 +2030,9 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "A",
-    "connection_priority": 4,
-    "business_fit_score": 84,
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 62,
     "integration_score": 60,
     "risk_note": "規制確認には公式都市計画図との照合が必要。",
     "target_projects": [
@@ -1018,7 +2047,49 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n規制確認には公式都市計画図との照合が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 58.5,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-REINFOLIB-SCHOOL-001",
@@ -1043,9 +2114,9 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "C",
+    "trust_rank": "B",
     "connection_priority": 2,
-    "business_fit_score": 50,
+    "business_fit_score": 55,
     "integration_score": 60,
     "risk_note": "土木建設主要用途では優先度低。",
     "target_projects": [],
@@ -1058,7 +2129,48 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n土木建設主要用途では優先度低。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 55,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(随時) +15",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 52.2,
+        "rank": 2,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 55×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 0×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-REINFOLIB-MEDICAL-001",
@@ -1083,9 +2195,9 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "C",
+    "trust_rank": "B",
     "connection_priority": 2,
-    "business_fit_score": 52,
+    "business_fit_score": 55,
     "integration_score": 60,
     "risk_note": "土木建設主要用途では優先度低。",
     "target_projects": [],
@@ -1098,7 +2210,48 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n土木建設主要用途では優先度低。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 55,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(随時) +15",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 52.2,
+        "rank": 2,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 55×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 0×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-PLATEAU-001",
@@ -1124,9 +2277,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "接続検証済",
     "trust_rank": "A",
-    "connection_priority": 4,
-    "business_fit_score": 82,
-    "integration_score": 62,
+    "connection_priority": 5,
+    "business_fit_score": 91,
+    "integration_score": 97,
     "risk_note": "ファイルサイズが大きいためメタデータ優先で扱う。",
     "target_projects": [
       "Open BIM/CIM Dictionary Assistant",
@@ -1141,7 +2294,52 @@
     "usage_notes": "データ容量が大きいため、対象都市・範囲・LODを絞って利用します。\n3D都市モデル向けの詳細形式です。大容量になりやすいため範囲指定が重要です。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nファイルサイズが大きいためメタデータ優先で扱う。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 91,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(年次/随時) +15",
+          "対象案件 2件 +14",
+          "接続状態(接続検証済) +7"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 88.8,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 91×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-PLATEAU-SDK-001",
@@ -1165,10 +2363,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 70,
-    "integration_score": 58,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 81,
+    "integration_score": 87,
     "risk_note": "SDKバージョンとの互換性を確認する。",
     "target_projects": [
       "Open BIM/CIM Dictionary Assistant"
@@ -1182,7 +2380,52 @@
     "usage_notes": "APIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nSDKバージョンとの互換性を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 87,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 79.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 87×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "JMA-FORECAST-001",
@@ -1206,10 +2449,10 @@
     "update_frequency": "定時",
     "last_checked_at": "2026-06-18",
     "connection_status": "本格利用候補",
-    "trust_rank": "B",
+    "trust_rank": "A",
     "connection_priority": 5,
-    "business_fit_score": 93,
-    "integration_score": 88,
+    "business_fit_score": 94,
+    "integration_score": 100,
     "risk_note": "公式API仕様ではない可能性があるため仕様変更リスクを明記する。",
     "target_projects": [
       "Construction Weather & Water Decision Support",
@@ -1225,7 +2468,52 @@
     "usage_notes": "便利なJSONですが、仕様変更リスクがあります。重要判断では気象庁公式画面や警報情報も併用します。\n機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n公式API仕様ではない可能性があるため仕様変更リスクを明記する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 94,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(定時) +15",
+          "対象案件 2件 +14",
+          "接続状態(本格利用候補) +10"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 90.4,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 94×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "JMA-AMEDAS-001",
@@ -1248,10 +2536,10 @@
     "update_frequency": "短周期",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
+    "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 88,
-    "integration_score": 72,
+    "business_fit_score": 81,
+    "integration_score": 100,
     "risk_note": "URL時刻生成と仕様変更リスクに注意。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
@@ -1265,7 +2553,53 @@
     "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nURL時刻生成と仕様変更リスクに注意。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://www.jma.go.jp/bosai/amedas/data/latest_time.txt",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(短周期) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 82.1,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "JMA-WARNING-001",
@@ -1288,10 +2622,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
-    "connection_priority": 4,
-    "business_fit_score": 90,
-    "integration_score": 72,
+    "trust_rank": "A",
+    "connection_priority": 5,
+    "business_fit_score": 88,
+    "integration_score": 100,
     "risk_note": "防災用途では最新性と責任範囲を明記する。",
     "target_projects": [
       "Construction Weather & Water Decision Support",
@@ -1306,7 +2640,53 @@
     "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n防災用途では最新性と責任範囲を明記する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://www.jma.go.jp/bosai/warning/data/warning/130000.json",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 88,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 2件 +14",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 88.3,
+        "rank": 5,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 88×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 50×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "JMA-EARTHQUAKE-001",
@@ -1330,10 +2710,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 75,
-    "integration_score": 58,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 79,
+    "integration_score": 77,
     "risk_note": "機械取得方法と再配信条件を確認する。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -1346,7 +2726,50 @@
     "usage_notes": "構造化データですが、パース処理が必要です。スキーマと項目定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n機械取得方法と再配信条件を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 79,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 90,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 73.8,
+        "rank": 4,
+        "factors": [
+          "信頼度 90×0.30",
+          "事業適合度 79×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "JMA-TYPHOON-001",
@@ -1370,10 +2793,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 78,
-    "integration_score": 58,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 79,
+    "integration_score": 77,
     "risk_note": "海上工事用途では公式警報との照合が必要。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
@@ -1386,7 +2809,50 @@
     "usage_notes": "APIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n海上工事用途では公式警報との照合が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 79,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 90,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 73.8,
+        "rank": 4,
+        "factors": [
+          "信頼度 90×0.30",
+          "事業適合度 79×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-WATER-RAIN-001",
@@ -1412,8 +2878,8 @@
     "connection_status": "調査中",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 82,
-    "integration_score": 52,
+    "business_fit_score": 62,
+    "integration_score": 77,
     "risk_note": "公式API形式と取得条件の確認が必要。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
@@ -1427,7 +2893,49 @@
     "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n公式API形式と取得条件の確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(観測周期) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 61.9,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-WATER-LEVEL-001",
@@ -1453,8 +2961,8 @@
     "connection_status": "調査中",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 84,
-    "integration_score": 52,
+    "business_fit_score": 62,
+    "integration_score": 77,
     "risk_note": "公式API形式と取得条件の確認が必要。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
@@ -1468,7 +2976,49 @@
     "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n公式API形式と取得条件の確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(観測周期) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 61.9,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-WATER-FLOW-001",
@@ -1492,10 +3042,10 @@
     "update_frequency": "観測周期",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "C",
-    "connection_priority": 2,
-    "business_fit_score": 70,
-    "integration_score": 48,
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 62,
+    "integration_score": 77,
     "risk_note": "取得容易性が未確認。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
@@ -1509,7 +3059,49 @@
     "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n取得容易性が未確認。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(観測周期) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 61.9,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MLIT-RIVER-DISASTER-001",
@@ -1535,8 +3127,8 @@
     "connection_status": "調査中",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 82,
-    "integration_score": 45,
+    "business_fit_score": 62,
+    "integration_score": 77,
     "risk_note": "スクレイピング前提にしない。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -1550,7 +3142,49 @@
     "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nスクレイピング前提にしない。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(リアルタイム) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 61.9,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "JCG-UMISHIRU-001",
@@ -1575,9 +3209,9 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "A",
+    "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 78,
+    "business_fit_score": 62,
     "integration_score": 50,
     "risk_note": "API提供範囲と利用条件の確認が必要。",
     "target_projects": [
@@ -1591,7 +3225,49 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPI提供範囲と利用条件の確認が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 50,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 56.5,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 50×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "NOWPHAS-WAVE-001",
@@ -1615,10 +3291,10 @@
     "update_frequency": "観測周期",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "A",
+    "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 78,
-    "integration_score": 48,
+    "business_fit_score": 62,
+    "integration_score": 50,
     "risk_note": "機械取得方法と再利用条件を確認する。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
@@ -1632,7 +3308,49 @@
     "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\n機械取得方法と再利用条件を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(official) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(観測周期) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 50,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 56.5,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 50×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "MOE-AIR-POLLUTION-001",
@@ -1657,9 +3375,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
     "trust_rank": "B",
-    "connection_priority": 2,
-    "business_fit_score": 58,
-    "integration_score": 45,
+    "connection_priority": 3,
+    "business_fit_score": 62,
+    "integration_score": 77,
     "risk_note": "機械取得方法を確認する。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1673,7 +3391,49 @@
     "usage_notes": "閲覧用ページが中心です。無断スクレイピングを前提にしないでください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n機械取得方法を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(時間) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 61.9,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "OSM-OVERPASS-001",
@@ -1698,10 +3458,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 72,
-    "integration_score": 70,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 73,
+    "integration_score": 100,
     "risk_note": "高頻度アクセスは禁止。キャッシュと利用制限を守る。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1715,7 +3475,53 @@
     "usage_notes": "機械処理しやすい形式です。仕様変更、項目名、更新頻度を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n高頻度アクセスは禁止。キャッシュと利用制限を守る。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "sample_endpoint": "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3Bnode(35.68,139.76,35.69,139.77)%3Bout%201%3B",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 73,
+        "factors": [
+          "提供元種別(foundation) +22",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 79.3,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 73×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "OSM-TILE-001",
@@ -1739,10 +3545,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "B",
-    "connection_priority": 2,
-    "business_fit_score": 60,
-    "integration_score": 72,
+    "trust_rank": "A",
+    "connection_priority": 3,
+    "business_fit_score": 58,
+    "integration_score": 83,
     "risk_note": "本番用途では独自タイルまたは商用プロバイダ検討。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1756,7 +3562,50 @@
     "usage_notes": "地図画面に重ねて表示しやすい形式です。ズーム、タイル座標、出典表記を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n本番用途では独自タイルまたは商用プロバイダ検討。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 58,
+        "factors": [
+          "提供元種別(foundation) +22",
+          "商用利用(restricted) +12",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 83,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "エンドポイント雛形 +8",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 90,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 67.7,
+        "rank": 3,
+        "factors": [
+          "信頼度 90×0.30",
+          "事業適合度 58×0.35",
+          "連携実装性 83×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "OPENTOPOGRAPHY-API-001",
@@ -1781,9 +3630,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
     "trust_rank": "B",
-    "connection_priority": 2,
-    "business_fit_score": 60,
-    "integration_score": 48,
+    "connection_priority": 3,
+    "business_fit_score": 62,
+    "integration_score": 60,
     "risk_note": "APIキー要否とデータセット別条件を確認する。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1797,7 +3646,49 @@
     "usage_notes": "システム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPIキー要否とデータセット別条件を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(official) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 58.5,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "OVERTURE-MAPS-001",
@@ -1821,10 +3712,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 68,
-    "integration_score": 50,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 71,
+    "integration_score": 77,
     "risk_note": "データ容量が大きいため抽出設計が必要。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1838,7 +3729,50 @@
     "usage_notes": "分析向けの列指向形式です。抽出範囲と処理環境を設計してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nデータ容量が大きいため抽出設計が必要。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 71,
+        "factors": [
+          "提供元種別(foundation) +22",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 77,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "要変換の形式 +10",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 90,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 71.0,
+        "rank": 4,
+        "factors": [
+          "信頼度 90×0.30",
+          "事業適合度 71×0.35",
+          "連携実装性 77×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "NOAA-NWS-001",
@@ -1863,10 +3797,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "接続検証済",
-    "trust_rank": "B",
-    "connection_priority": 3,
-    "business_fit_score": 62,
-    "integration_score": 82,
+    "trust_rank": "A",
+    "connection_priority": 4,
+    "business_fit_score": 84,
+    "integration_score": 100,
     "risk_note": "User-Agentに連絡先を含める運用を検討する。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1880,7 +3814,52 @@
     "usage_notes": "User-Agent要件を守り、米国内地点を対象に利用します。\nシステム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\nUser-Agentに連絡先を含める運用を検討する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 84,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続検証済) +7"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 83.2,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 84×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "NOAA-CDO-001",
@@ -1904,10 +3883,10 @@
     "update_frequency": "日次等",
     "last_checked_at": "2026-06-18",
     "connection_status": "保留",
-    "trust_rank": "C",
-    "connection_priority": 2,
-    "business_fit_score": 55,
-    "integration_score": 42,
+    "trust_rank": "A",
+    "connection_priority": 3,
+    "business_fit_score": 77,
+    "integration_score": 58,
     "risk_note": "APIキーが必要なためCIではskipped扱い。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1921,7 +3900,49 @@
     "usage_notes": "システム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキーが必要です。キーは環境変数やシークレット管理で扱い、台帳には保存しません。\nAPIキーが必要なためCIではskipped扱い。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 77,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(日次等) +15",
+          "対象案件 1件 +7"
+        ]
+      },
+      "integration": {
+        "score": 58,
+        "factors": [
+          "APIキー(required) +8",
+          "認証方式(api_key) +8",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 90,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 69.3,
+        "rank": 3,
+        "factors": [
+          "信頼度 90×0.30",
+          "事業適合度 77×0.35",
+          "連携実装性 58×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "USGS-WATER-001",
@@ -1948,8 +3969,8 @@
     "connection_status": "接続検証済",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 74,
-    "integration_score": 85,
+    "business_fit_score": 84,
+    "integration_score": 100,
     "risk_note": "米国向け比較データとして利用する。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -1963,7 +3984,52 @@
     "usage_notes": "観測所IDとパラメータコードを正しく指定します。国内河川判断には国内公式情報を優先します。\nシステム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n米国向け比較データとして利用する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 84,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(短周期/日次) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続検証済) +7"
+        ]
+      },
+      "integration": {
+        "score": 100,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 83.2,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 84×0.35",
+          "連携実装性 100×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "USGS-EARTHQUAKE-001",
@@ -1987,9 +4053,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "接続候補",
     "trust_rank": "A",
-    "connection_priority": 3,
-    "business_fit_score": 66,
-    "integration_score": 82,
+    "connection_priority": 4,
+    "business_fit_score": 81,
+    "integration_score": 97,
     "risk_note": "国内地震情報とは用途を分ける。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -2003,7 +4069,52 @@
     "usage_notes": "GISやWeb地図で扱いやすいベクトル形式です。座標系と属性定義を確認してください。\nAPIキーなしで利用できる想定ですが、利用規約と出典表記は必ず確認します。\n国内地震情報とは用途を分ける。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 81,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(allowed) +25",
+          "更新頻度(リアルタイム) +15",
+          "対象案件 1件 +7",
+          "接続状態(接続候補) +4"
+        ]
+      },
+      "integration": {
+        "score": 97,
+        "factors": [
+          "APIキー(not_required) +30",
+          "認証方式(none) +15",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "trust": {
+        "score": 100,
+        "rank": "A",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "ライセンス明記 +20",
+          "更新頻度あり +10",
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
+        ]
+      },
+      "priority": {
+        "score": 81.5,
+        "rank": 4,
+        "factors": [
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 97×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "OPENAQ-API-001",
@@ -2028,9 +4139,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "調査中",
     "trust_rank": "B",
-    "connection_priority": 2,
-    "business_fit_score": 52,
-    "integration_score": 58,
+    "connection_priority": 3,
+    "business_fit_score": 62,
+    "integration_score": 60,
     "risk_note": "APIバージョンと認証要件を確認する。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -2044,7 +4155,49 @@
     "usage_notes": "システム接続しやすいAPI形式です。レート制限とUser-Agent要件を確認してください。\nAPIキー要否が未確定です。接続前に公式ドキュメントで確認してください。\nAPIバージョンと認証要件を確認する。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 62,
+        "factors": [
+          "提供元種別(official) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(時間) +15",
+          "対象案件 1件 +7",
+          "接続状態(調査中) +2"
+        ]
+      },
+      "integration": {
+        "score": 60,
+        "factors": [
+          "APIキー(unknown) +12",
+          "認証方式(unknown) +6",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 58.5,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 62×0.35",
+          "連携実装性 60×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   },
   {
     "id": "NASA-FIRMS-001",
@@ -2069,10 +4222,10 @@
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
     "connection_status": "保留",
-    "trust_rank": "C",
-    "connection_priority": 2,
-    "business_fit_score": 58,
-    "integration_score": 40,
+    "trust_rank": "B",
+    "connection_priority": 3,
+    "business_fit_score": 60,
+    "integration_score": 58,
     "risk_note": "APIキーが必要なため初期CIでは検証しない。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
@@ -2086,6 +4239,47 @@
     "usage_notes": "API仕様、認証、利用規約を確認してから接続してください。\nAPIキーが必要です。キーは環境変数やシークレット管理で扱い、台帳には保存しません。\nAPIキーが必要なため初期CIでは検証しない。",
     "catalog_mode": "production",
     "production_source": "claude-design-bundle",
-    "production_imported_at": "2026-06-18"
+    "production_imported_at": "2026-06-18",
+    "score_breakdown": {
+      "business_fit": {
+        "score": 60,
+        "factors": [
+          "提供元種別(government) +30",
+          "商用利用(unknown) +8",
+          "更新頻度(随時) +15",
+          "対象案件 1件 +7"
+        ]
+      },
+      "integration": {
+        "score": 58,
+        "factors": [
+          "APIキー(required) +8",
+          "認証方式(api_key) +8",
+          "扱いやすい形式(JSON/タイル等) +20",
+          "具体的エンドポイント +12",
+          "公式ドキュメントあり +10"
+        ]
+      },
+      "trust": {
+        "score": 70,
+        "rank": "B",
+        "factors": [
+          "公的/国際/公式/財団 提供元 +30",
+          "公式ドキュメントあり +20",
+          "更新頻度あり +10",
+          "データ形式あり +10"
+        ]
+      },
+      "priority": {
+        "score": 57.4,
+        "rank": 3,
+        "factors": [
+          "信頼度 70×0.30",
+          "事業適合度 60×0.35",
+          "連携実装性 58×0.20",
+          "対象案件 25×0.15"
+        ]
+      }
+    }
   }
 ]
