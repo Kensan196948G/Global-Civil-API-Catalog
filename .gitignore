@@ -3,3 +3,18 @@ __pycache__/
 .hypothesis/
 .venv/
 *.pyc
+
+# Windows
+Thumbs.db
+Desktop.ini
+*.lnk
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Editor
+.vscode/settings.json
+*.swp
+*.swo

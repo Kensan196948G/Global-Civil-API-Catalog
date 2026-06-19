@@ -1,0 +1,32 @@
+# Normalize line endings for cross-platform compatibility (Linux <-> Windows 11)
+* text=auto
+
+# Python sources must always use LF; CRLF causes SyntaxWarning on import
+*.py    eol=lf
+*.pyi   eol=lf
+
+# Web assets
+*.html  eol=lf
+*.js    eol=lf
+*.css   eol=lf
+
+# Config / data
+*.json  eol=lf
+*.yml   eol=lf
+*.yaml  eol=lf
+*.toml  eol=lf
+*.md    eol=lf
+*.txt   eol=lf
+*.csv   eol=lf
+*.env   eol=lf
+
+# Windows scripts should be CRLF so CMD/PowerShell reads them correctly
+*.bat   eol=crlf
+*.ps1   eol=crlf
+
+# Binaries — no conversion
+*.sample binary
+*.pyc    binary
+*.png    binary
+*.jpg    binary
+*.ico    binary
