@@ -289,6 +289,9 @@ CTO は固定ループで動作しない。以下の優先順位で現状を評�
 | ReleaseManager | リリース管理、マージ判断 |
 | CMDB-Agent | 構成アイテム台帳・依存関係マップ・変更影響分析 |
 | Audit-Agent | 変更証跡収集・ISO/J-SOX 規格準拠確認・監査レポート |
+| e2e-runner | E2E テスト実行・シナリオ検証（Verify フェーズで条件付き起動） |
+| security-reviewer | セキュリティ専門レビュー・CVE 確認（Verify フェーズで条件付き起動） |
+| PerformanceReviewer | 性能観点レビュー・ボトルネック分析（Verify フェーズで条件付き起動） |
 
 ### 6.2 Agent Teams パターン（v9.0）
 
