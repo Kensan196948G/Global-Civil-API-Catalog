@@ -111,7 +111,7 @@ flowchart LR
 
 ### 🖥️ 社内IT部門・システム運用管理者向け
 
-このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。Web UIはDockerで常時起動しています。
+このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。Web UIはDockerコンテナで起動します（Linux では `loginctl enable-linger` で常駐、Windows では Docker Desktop 自動起動）。
 
 **Linux（現行本番環境）**
 
@@ -133,7 +133,7 @@ flowchart LR
 .\make.ps1 check
 ```
 
-ダッシュボード: `http://localhost:49231`  
+ダッシュボード: `http://localhost:49231`（同一端末から）/ `http://192.168.0.185:49231`（別端末から）  
 詳細: [運用メモ](docs/operations.md)
 
 ```mermaid
