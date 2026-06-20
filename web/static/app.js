@@ -81,6 +81,7 @@ function renderFilters() {
   fillSelect("categoryFilter", categories);
   fillSelect("statusFilter", statuses);
   fillSelect("regionFilter", uniqueValues("region"));
+  fillSelect("trustRankFilter", uniqueValues("trust_rank"));
   fillSelect("mapCategoryFilter", categories);
   fillSelect("mapStatusFilter", statuses);
 }
@@ -113,11 +114,15 @@ function filteredCatalog() {
   const category = byId("categoryFilter").value;
   const status = byId("statusFilter").value;
   const region = byId("regionFilter").value;
+  const trustRank = byId("trustRankFilter").value;
+  const minPriority = byId("minPriorityFilter").value;
   return state.catalog
     .filter((item) => !q || JSON.stringify(item).toLowerCase().includes(q))
     .filter((item) => !category || item.category === category)
     .filter((item) => !status || item.connection_status === status)
     .filter((item) => !region || item.region === region)
+    .filter((item) => !trustRank || item.trust_rank === trustRank)
+    .filter((item) => !minPriority || item.connection_priority >= Number(minPriority))
     .sort((a, b) => b.connection_priority - a.connection_priority || a.id.localeCompare(b.id));
 }
 
@@ -356,7 +361,7 @@ async function boot() {
   renderExports();
   initMap();
   initNav();
-  ["searchInput", "categoryFilter", "statusFilter", "regionFilter"].forEach((id) => {
+  ["searchInput", "categoryFilter", "statusFilter", "regionFilter", "trustRankFilter", "minPriorityFilter"].forEach((id) => {
     byId(id).addEventListener("input", renderCatalog);
     byId(id).addEventListener("change", renderCatalog);
   });
