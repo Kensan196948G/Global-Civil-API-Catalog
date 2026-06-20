@@ -111,21 +111,39 @@ flowchart LR
 
 ### 🖥️ 社内IT部門・システム運用管理者向け
 
-このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。Web UIはDockerとsystemdユーザーサービスで常時起動しています。
+このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。Web UIはDockerコンテナで起動します（Linux では `loginctl enable-linger` で常駐、Windows では Docker Desktop 自動起動）。
 
-運用確認:
+**Linux（現行本番環境）**
+
 - 稼働URL: `http://192.168.0.185:49231`
-- サービス名: `global-civil-api-catalog-web.service`
+- 起動方式: systemd ユーザーサービス (`global-civil-api-catalog-web.service`)
 - コンテナ名: `global-civil-api-catalog-web`
-- ヘルスチェック: `http://192.168.0.185:49231/api/health`
+- ヘルスチェック: `curl http://127.0.0.1:49231/api/health`
+
+**Windows 11（Docker Desktop WSL2）**
+
+```powershell
+# 起動
+.\deploy\start.ps1
+
+# 停止
+.\deploy\start.ps1 -Stop
+
+# 開発コマンド（Makefile代替）
+.\make.ps1 check
+```
+
+ダッシュボード: `http://localhost:49231`（同一端末から）/ `http://192.168.0.185:49231`（別端末から）  
+詳細: [運用メモ](docs/operations.md)
 
 ```mermaid
 flowchart TD
-  A["systemd user service"] --> B["Docker container"]
-  B --> C["Web UI"]
-  B --> D["JSON API"]
-  C --> E["利用者"]
-  D --> F["後続システム"]
+  A["Linux: systemd user service"] --> C["Docker container"]
+  B["Windows 11: Docker Desktop WSL2"] --> C
+  C --> D["Web UI :49231"]
+  C --> E["JSON API"]
+  D --> F["利用者"]
+  E --> G["後続システム"]
 ```
 
 ## 現在の登録状況
