@@ -1778,10 +1778,10 @@
     "commercial_use": "unknown",
     "update_frequency": "年次",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 57,
+    "business_fit_score": 55,
     "integration_score": 58,
     "risk_note": "APIキー要否と商用利用条件の確定が必要。",
     "target_projects": [
@@ -1799,13 +1799,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 57,
+        "score": 55,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(年次) +10",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -1829,11 +1828,11 @@
         ]
       },
       "priority": {
-        "score": 56.3,
+        "score": 55.6,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 57×0.35",
+          "事業適合度 55×0.35",
           "連携実装性 58×0.20",
           "対象案件 25×0.15"
         ]
@@ -1862,10 +1861,10 @@
     "commercial_use": "unknown",
     "update_frequency": "年次",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 57,
+    "business_fit_score": 55,
     "integration_score": 60,
     "risk_note": "認証方式と利用制限を確認する。",
     "target_projects": [
@@ -1883,13 +1882,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 57,
+        "score": 55,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(年次) +10",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -1913,11 +1911,11 @@
         ]
       },
       "priority": {
-        "score": 56.7,
+        "score": 56.0,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 57×0.35",
+          "事業適合度 55×0.35",
           "連携実装性 60×0.20",
           "対象案件 25×0.15"
         ]
@@ -1945,10 +1943,10 @@
     "commercial_use": "unknown",
     "update_frequency": "四半期等",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 57,
+    "business_fit_score": 55,
     "integration_score": 60,
     "risk_note": "用途により個別地点情報の扱いに注意。",
     "target_projects": [
@@ -1966,13 +1964,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 57,
+        "score": 55,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(四半期等) +10",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -1996,11 +1993,11 @@
         ]
       },
       "priority": {
-        "score": 56.7,
+        "score": 56.0,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 57×0.35",
+          "事業適合度 55×0.35",
           "連携実装性 60×0.20",
           "対象案件 25×0.15"
         ]
@@ -2029,10 +2026,10 @@
     "commercial_use": "unknown",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 60,
     "risk_note": "規制確認には公式都市計画図との照合が必要。",
     "target_projects": [
@@ -2050,13 +2047,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(随時) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -2080,11 +2076,11 @@
         ]
       },
       "priority": {
-        "score": 58.5,
+        "score": 57.8,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 60×0.20",
           "対象案件 25×0.15"
         ]
@@ -2113,10 +2109,10 @@
     "commercial_use": "unknown",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 2,
-    "business_fit_score": 55,
+    "business_fit_score": 53,
     "integration_score": 60,
     "risk_note": "土木建設主要用途では優先度低。",
     "target_projects": [],
@@ -2132,12 +2128,11 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 55,
+        "score": 53,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
-          "更新頻度(随時) +15",
-          "接続状態(調査中) +2"
+          "更新頻度(随時) +15"
         ]
       },
       "integration": {
@@ -2161,11 +2156,11 @@
         ]
       },
       "priority": {
-        "score": 52.2,
+        "score": 51.5,
         "rank": 2,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 55×0.35",
+          "事業適合度 53×0.35",
           "連携実装性 60×0.20",
           "対象案件 0×0.15"
         ]
@@ -2194,10 +2189,10 @@
     "commercial_use": "unknown",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 2,
-    "business_fit_score": 55,
+    "business_fit_score": 53,
     "integration_score": 60,
     "risk_note": "土木建設主要用途では優先度低。",
     "target_projects": [],
@@ -2213,12 +2208,11 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 55,
+        "score": 53,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
-          "更新頻度(随時) +15",
-          "接続状態(調査中) +2"
+          "更新頻度(随時) +15"
         ]
       },
       "integration": {
@@ -2242,11 +2236,11 @@
         ]
       },
       "priority": {
-        "score": 52.2,
+        "score": 51.5,
         "rank": 2,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 55×0.35",
+          "事業適合度 53×0.35",
           "連携実装性 60×0.20",
           "対象案件 0×0.15"
         ]
@@ -2698,7 +2692,7 @@
     "region": "JP",
     "official_url": "https://www.jma.go.jp/",
     "document_url": "https://www.jma.go.jp/bosai/map.html#contents=earthquake_map",
-    "endpoint_template": "https://www.jma.go.jp/",
+    "endpoint_template": "https://www.jma.go.jp/bosai/quake/data/list.json",
     "data_formats": [
       "XML",
       "JSON相当"
@@ -2709,12 +2703,12 @@
     "commercial_use": "allowed",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 79,
-    "integration_score": 77,
-    "risk_note": "機械取得方法と再配信条件を確認する。",
+    "business_fit_score": 81,
+    "integration_score": 90,
+    "risk_note": "機械取得は可能。再配信時は出典表記が必要（気象業務法）。",
     "target_projects": [
       "Civil Disaster Early Insight Map"
     ],
@@ -2729,47 +2723,50 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 79,
+        "score": 81,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(allowed) +25",
           "更新頻度(随時) +15",
           "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "接続状態(接続候補) +4"
         ]
       },
       "integration": {
-        "score": 77,
+        "score": 90,
         "factors": [
           "APIキー(not_required) +30",
           "認証方式(none) +15",
           "要変換の形式 +10",
-          "具体的エンドポイント +12",
-          "公式ドキュメントあり +10"
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
         ]
       },
       "trust": {
-        "score": 90,
+        "score": 100,
         "rank": "A",
         "factors": [
           "公的/国際/公式/財団 提供元 +30",
           "公式ドキュメントあり +20",
           "ライセンス明記 +20",
           "更新頻度あり +10",
-          "データ形式あり +10"
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
         ]
       },
       "priority": {
-        "score": 73.8,
+        "score": 80.1,
         "rank": 4,
         "factors": [
-          "信頼度 90×0.30",
-          "事業適合度 79×0.35",
-          "連携実装性 77×0.20",
+          "信頼度 100×0.30",
+          "事業適合度 81×0.35",
+          "連携実装性 90×0.20",
           "対象案件 25×0.15"
         ]
       }
-    }
+    },
+    "sample_endpoint": "https://www.jma.go.jp/bosai/quake/data/list.json"
   },
   {
     "id": "JMA-TYPHOON-001",
@@ -2781,7 +2778,7 @@
     "region": "JP",
     "official_url": "https://www.jma.go.jp/",
     "document_url": "https://www.jma.go.jp/bosai/map.html#contents=typhoon",
-    "endpoint_template": "https://www.jma.go.jp/",
+    "endpoint_template": "https://www.jma.go.jp/bosai/typhoon/data/nowcast.json",
     "data_formats": [
       "JSON相当",
       "XML相当"
@@ -2792,12 +2789,12 @@
     "commercial_use": "allowed",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "接続候補",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 79,
-    "integration_score": 77,
-    "risk_note": "海上工事用途では公式警報との照合が必要。",
+    "business_fit_score": 81,
+    "integration_score": 80,
+    "risk_note": "台風発生期以外はエンドポイントが404を返す（正常動作）。再配信時は出典表記が必要（気象業務法）。",
     "target_projects": [
       "Construction Weather & Water Decision Support"
     ],
@@ -2812,22 +2809,22 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 79,
+        "score": 81,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(allowed) +25",
           "更新頻度(随時) +15",
           "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "接続状態(接続候補) +4"
         ]
       },
       "integration": {
-        "score": 77,
+        "score": 80,
         "factors": [
           "APIキー(not_required) +30",
           "認証方式(none) +15",
           "要変換の形式 +10",
-          "具体的エンドポイント +12",
+          "具体的サンプルエンドポイント +15",
           "公式ドキュメントあり +10"
         ]
       },
@@ -2843,16 +2840,17 @@
         ]
       },
       "priority": {
-        "score": 73.8,
+        "score": 75.1,
         "rank": 4,
         "factors": [
           "信頼度 90×0.30",
-          "事業適合度 79×0.35",
-          "連携実装性 77×0.20",
+          "事業適合度 81×0.35",
+          "連携実装性 80×0.20",
           "対象案件 25×0.15"
         ]
       }
-    }
+    },
+    "sample_endpoint": "https://www.jma.go.jp/bosai/typhoon/data/nowcast.json"
   },
   {
     "id": "MLIT-WATER-RAIN-001",
@@ -2875,10 +2873,10 @@
     "commercial_use": "unknown",
     "update_frequency": "観測周期",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 77,
     "risk_note": "公式API形式と取得条件の確認が必要。",
     "target_projects": [
@@ -2896,13 +2894,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(観測周期) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -2926,11 +2923,11 @@
         ]
       },
       "priority": {
-        "score": 61.9,
+        "score": 61.1,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 77×0.20",
           "対象案件 25×0.15"
         ]
@@ -2958,10 +2955,10 @@
     "commercial_use": "unknown",
     "update_frequency": "観測周期",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 77,
     "risk_note": "公式API形式と取得条件の確認が必要。",
     "target_projects": [
@@ -2979,13 +2976,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(観測周期) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3009,11 +3005,11 @@
         ]
       },
       "priority": {
-        "score": 61.9,
+        "score": 61.1,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 77×0.20",
           "対象案件 25×0.15"
         ]
@@ -3041,10 +3037,10 @@
     "commercial_use": "unknown",
     "update_frequency": "観測周期",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 77,
     "risk_note": "取得容易性が未確認。",
     "target_projects": [
@@ -3062,13 +3058,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(観測周期) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3092,11 +3087,11 @@
         ]
       },
       "priority": {
-        "score": 61.9,
+        "score": 61.1,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 77×0.20",
           "対象案件 25×0.15"
         ]
@@ -3124,10 +3119,10 @@
     "commercial_use": "unknown",
     "update_frequency": "リアルタイム",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 77,
     "risk_note": "スクレイピング前提にしない。",
     "target_projects": [
@@ -3145,13 +3140,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(リアルタイム) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3175,11 +3169,11 @@
         ]
       },
       "priority": {
-        "score": 61.9,
+        "score": 61.1,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 77×0.20",
           "対象案件 25×0.15"
         ]
@@ -3208,10 +3202,10 @@
     "commercial_use": "unknown",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 50,
     "risk_note": "API提供範囲と利用条件の確認が必要。",
     "target_projects": [
@@ -3228,13 +3222,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(随時) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3258,11 +3251,11 @@
         ]
       },
       "priority": {
-        "score": 56.5,
+        "score": 55.8,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 50×0.20",
           "対象案件 25×0.15"
         ]
@@ -3290,10 +3283,10 @@
     "commercial_use": "unknown",
     "update_frequency": "観測周期",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 50,
     "risk_note": "機械取得方法と再利用条件を確認する。",
     "target_projects": [
@@ -3311,13 +3304,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(official) +30",
           "商用利用(unknown) +8",
           "更新頻度(観測周期) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3341,11 +3333,11 @@
         ]
       },
       "priority": {
-        "score": 56.5,
+        "score": 55.8,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 50×0.20",
           "対象案件 25×0.15"
         ]
@@ -3373,10 +3365,10 @@
     "commercial_use": "unknown",
     "update_frequency": "時間",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 77,
     "risk_note": "機械取得方法を確認する。",
     "target_projects": [
@@ -3394,13 +3386,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(時間) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3424,11 +3415,11 @@
         ]
       },
       "priority": {
-        "score": 61.9,
+        "score": 61.1,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 77×0.20",
           "対象案件 25×0.15"
         ]
@@ -3544,12 +3535,12 @@
     "commercial_use": "restricted",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "接続候補",
     "trust_rank": "A",
-    "connection_priority": 3,
-    "business_fit_score": 58,
-    "integration_score": 83,
-    "risk_note": "本番用途では独自タイルまたは商用プロバイダ検討。",
+    "connection_priority": 4,
+    "business_fit_score": 60,
+    "integration_score": 100,
+    "risk_note": "大量リクエストは利用規約違反。本番は独自タイルまたは商用CDNを検討。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
     ],
@@ -3565,47 +3556,50 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 58,
+        "score": 60,
         "factors": [
           "提供元種別(foundation) +22",
           "商用利用(restricted) +12",
           "更新頻度(随時) +15",
           "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "接続状態(接続候補) +4"
         ]
       },
       "integration": {
-        "score": 83,
+        "score": 100,
         "factors": [
           "APIキー(not_required) +30",
           "認証方式(none) +15",
           "扱いやすい形式(JSON/タイル等) +20",
-          "エンドポイント雛形 +8",
-          "公式ドキュメントあり +10"
+          "具体的サンプルエンドポイント +15",
+          "公式ドキュメントあり +10",
+          "実接続検証 成功 +10"
         ]
       },
       "trust": {
-        "score": 90,
+        "score": 100,
         "rank": "A",
         "factors": [
           "公的/国際/公式/財団 提供元 +30",
           "公式ドキュメントあり +20",
           "ライセンス明記 +20",
           "更新頻度あり +10",
-          "データ形式あり +10"
+          "データ形式あり +10",
+          "実接続検証 成功 +10"
         ]
       },
       "priority": {
-        "score": 67.7,
-        "rank": 3,
+        "score": 74.8,
+        "rank": 4,
         "factors": [
-          "信頼度 90×0.30",
-          "事業適合度 58×0.35",
-          "連携実装性 83×0.20",
+          "信頼度 100×0.30",
+          "事業適合度 60×0.35",
+          "連携実装性 100×0.20",
           "対象案件 25×0.15"
         ]
       }
-    }
+    },
+    "sample_endpoint": "https://tile.openstreetmap.org/9/449/200.png"
   },
   {
     "id": "OPENTOPOGRAPHY-API-001",
@@ -3628,10 +3622,10 @@
     "commercial_use": "unknown",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 60,
     "risk_note": "APIキー要否とデータセット別条件を確認する。",
     "target_projects": [
@@ -3649,13 +3643,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(official) +30",
           "商用利用(unknown) +8",
           "更新頻度(随時) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3679,11 +3672,11 @@
         ]
       },
       "priority": {
-        "score": 58.5,
+        "score": 57.8,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 60×0.20",
           "対象案件 25×0.15"
         ]
@@ -3711,10 +3704,10 @@
     "commercial_use": "allowed",
     "update_frequency": "随時",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "A",
     "connection_priority": 4,
-    "business_fit_score": 71,
+    "business_fit_score": 69,
     "integration_score": 77,
     "risk_note": "データ容量が大きいため抽出設計が必要。",
     "target_projects": [
@@ -3732,13 +3725,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 71,
+        "score": 69,
         "factors": [
           "提供元種別(foundation) +22",
           "商用利用(allowed) +25",
           "更新頻度(随時) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -3763,11 +3755,11 @@
         ]
       },
       "priority": {
-        "score": 71.0,
+        "score": 70.3,
         "rank": 4,
         "factors": [
           "信頼度 90×0.30",
-          "事業適合度 71×0.35",
+          "事業適合度 69×0.35",
           "連携実装性 77×0.20",
           "対象案件 25×0.15"
         ]
@@ -4137,10 +4129,10 @@
     "commercial_use": "unknown",
     "update_frequency": "時間",
     "last_checked_at": "2026-06-18",
-    "connection_status": "調査中",
+    "connection_status": "保留",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 60,
     "integration_score": 60,
     "risk_note": "APIバージョンと認証要件を確認する。",
     "target_projects": [
@@ -4158,13 +4150,12 @@
     "production_imported_at": "2026-06-18",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 60,
         "factors": [
           "提供元種別(official) +30",
           "商用利用(unknown) +8",
           "更新頻度(時間) +15",
-          "対象案件 1件 +7",
-          "接続状態(調査中) +2"
+          "対象案件 1件 +7"
         ]
       },
       "integration": {
@@ -4188,11 +4179,11 @@
         ]
       },
       "priority": {
-        "score": 58.5,
+        "score": 57.8,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 60×0.35",
           "連携実装性 60×0.20",
           "対象案件 25×0.15"
         ]

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="Author" content="気象庁 Japan Meteorological Agency"/>
+    <style type="text/css">
+      body {background-color: #FFFFFF;}
+      
+      :host,html {
+          line-height: 1.5;
+          font-family: ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+          font-feature-settings: normal;
+      }
+      
+      a { text-decoration-line: underline; }
+      a { color: black;}
+      
+      p {font-size: 20px; color: black;}
+      
+      .flex {display: flex; }
+      .items-center {align-items: center;}
+      .h-20 {height: 5rem;}
+      .px-6 {padding-left: 1.5rem;padding-right: 1.5rem;}
+      .px-10 {padding-left: 2.5rem;padding-right: 2.5rem;}
+      .pb-10 {padding-bottom
