@@ -9,7 +9,7 @@ Goal→CTO→Workflow Engine→Agent Teams→SubAgents→Monitor→Development�
 Workflow & Agents
 全作業は Workflow 起点。Workflow 作成/分割/統合/並列実行、Dynamic Workflow/AgentTeams/SubAgents/Hooks/Auto Mode を必要に応じて活用する。
 Session Limit
-1 セッション最大 5時間（Linux Cron 自動実行）/ ユーザー主導セッションは状況に応じて判断。到達時は終了処理を完遂して停止する。
+1 セッション最大 3時間 を厳守し、到達時は終了処理を完遂して停止する。
 Development Loop
 Monitor: 現状/Issue/技術負債/リスク分析
 Development: 設計/実装/テスト/ドキュメント

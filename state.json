@@ -1,0 +1,44 @@
+{
+  "project": {
+    "name": "Global-Civil-API-Catalog",
+    "start_date": "2026-06-18",
+    "release_deadline": "2026-12-18",
+    "phase_mode": "maintenance"
+  },
+  "goal": "COMPLETED: catalog improvements P1-P4 PR#10 merged 2026-06-20",
+  "phase": "Maintenance",
+  "kpi": {
+    "success_rate_target": 0.9,
+    "ci_success_rate": 1.0,
+    "test_pass_rate": 1.0,
+    "security_critical": 0,
+    "blocker_count": 0
+  },
+  "execution": {
+    "max_duration_minutes": 180,
+    "repair_count": 0,
+    "max_repair": 3,
+    "same_error_limit": 2
+  },
+  "automation": {
+    "auto_issue_generation": true,
+    "self_evolution": true
+  },
+  "completed_issues": [
+    "PR#7: catalog quality & score transparency (merged 2026-06-19)",
+    "PR#9: Windows 11 compatibility + Claude/CodeRabbit config (merged 2026-06-20, sha=8be6223)",
+    "PR#10: catalog improvements P1-P4 — live verify, scheduled CI, classification, UI filters (merged 2026-06-20, sha=61000c3)"
+  ],
+  "blocked_issues": [],
+  "learning": {
+    "failure_patterns": [],
+    "success_patterns": [
+      "Windows互換性: .gitattributes で * text=auto + *.bat/ps1 eol=crlf 上書きが効果的",
+      "pytest SIGBUS (exit 144) はClaude Code sandbox環境での既知問題。CIでは正常動作",
+      "CodeRabbit mergeStateStatus:UNSTABLE は name:null check の GitHub App artifact。レビューコメント本体で Critical/High=0 確認済みであれば merge 可",
+      "CodeRabbit Quick win (末尾改行・URL統一) は merge 前に同ブランチで即修正してから merge するのが効率的",
+      "新ワークフローファイルを含む PR は pull_request: synchronize が発火しない場合がある。空コミット push で回避可",
+      "scheduled-verify.yml: [skip ci] をコミットメッセージに入れることで週次検証の結果コミットが再度 CI を発火しないよう防止できる"
+    ]
+  }
+}
