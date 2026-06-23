@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
@@ -12,10 +13,56 @@ DESIGN_HTML_PATH = Path(__file__).resolve().parent / "Global Civil API Catalog.h
 DATA_DIR = ROOT / "data"
 EXPORT_DIR = ROOT / "export"
 
+# CSP allows Leaflet (unpkg.com), Google Fonts, and HTTPS tile images for the map UI.
+_CSP = (
+    "default-src 'self'; "
+    "script-src 'self' https://unpkg.com; "
+    "style-src 'self' https://unpkg.com https://fonts.googleapis.com; "
+    "font-src 'self' https://fonts.gstatic.com; "
+    "img-src 'self' data: https:; "
+    "connect-src 'self'"
+)
 
-def load_json(path: Path):
+_json_cache: dict[str, tuple[float, object]] = {}
+_cache_lock = threading.Lock()
+
+
+def load_json(path: Path) -> object:
     with path.open(encoding="utf-8") as file:
         return json.load(file)
+
+
+def load_json_cached(path: Path) -> object:
+    """Return parsed JSON, re-reading only when the file's mtime changes."""
+    key = str(path)
+    mtime = path.stat().st_mtime
+    with _cache_lock:
+        if key in _json_cache and _json_cache[key][0] == mtime:
+            return _json_cache[key][1]
+    data = load_json(path)
+    with _cache_lock:
+        _json_cache[key] = (mtime, data)
+    return data
+
+
+def filter_catalog(
+    catalog: list[dict],
+    keyword: str = "",
+    category: str = "",
+    status: str = "",
+) -> list[dict]:
+    """Return catalog items matching all supplied filters."""
+    if keyword:
+        catalog = [
+            item
+            for item in catalog
+            if keyword in json.dumps(item, ensure_ascii=False).lower()
+        ]
+    if category:
+        catalog = [item for item in catalog if item["category"] == category]
+    if status:
+        catalog = [item for item in catalog if item["connection_status"] == status]
+    return catalog
 
 
 def latest_verification(results: list[dict]) -> dict[str, dict]:
@@ -110,6 +157,8 @@ class CatalogHandler(SimpleHTTPRequestHandler):
     def end_headers(self) -> None:
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Content-Security-Policy", _CSP)
         super().end_headers()
 
     def write_json(self, payload, status: int = 200) -> None:
@@ -132,13 +181,13 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.handle_catalog(parse_qs(parsed.query))
             return
         if parsed.path == "/api/verification":
-            self.write_json(load_json(DATA_DIR / "verification_results.json"))
+            self.write_json(load_json_cached(DATA_DIR / "verification_results.json"))
             return
         if parsed.path == "/api/summary":
             self.handle_summary()
             return
         if parsed.path == "/api/metadata":
-            self.write_json(load_json(DATA_DIR / "catalog_metadata.json"))
+            self.write_json(load_json_cached(DATA_DIR / "catalog_metadata.json"))
             return
         if parsed.path == "/api/live-map":
             self.handle_live_map()
@@ -174,27 +223,15 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.wfile.write(data)
 
     def handle_catalog(self, query: dict[str, list[str]]) -> None:
-        catalog = load_json(DATA_DIR / "api_catalog.json")
+        catalog = load_json_cached(DATA_DIR / "api_catalog.json")
         keyword = (query.get("q", [""])[0] or "").lower()
         category = query.get("category", [""])[0]
         status = query.get("status", [""])[0]
-
-        if keyword:
-            catalog = [
-                item
-                for item in catalog
-                if keyword in json.dumps(item, ensure_ascii=False).lower()
-            ]
-        if category:
-            catalog = [item for item in catalog if item["category"] == category]
-        if status:
-            catalog = [item for item in catalog if item["connection_status"] == status]
-
-        self.write_json(catalog)
+        self.write_json(filter_catalog(catalog, keyword=keyword, category=category, status=status))
 
     def handle_summary(self) -> None:
-        catalog = load_json(DATA_DIR / "api_catalog.json")
-        results = load_json(DATA_DIR / "verification_results.json")
+        catalog = load_json_cached(DATA_DIR / "api_catalog.json")
+        results = load_json_cached(DATA_DIR / "verification_results.json")
         latest = latest_verification(results)
         summary = {
             "catalog_count": len(catalog),
@@ -218,8 +255,8 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         self.write_json(summary)
 
     def handle_live_map(self) -> None:
-        catalog = load_json(DATA_DIR / "api_catalog.json")
-        results = load_json(DATA_DIR / "verification_results.json")
+        catalog = load_json_cached(DATA_DIR / "api_catalog.json")
+        results = load_json_cached(DATA_DIR / "verification_results.json")
         self.write_json(live_map_payload(catalog, results))
 
     def handle_export_index(self) -> None:
@@ -241,7 +278,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         # relying on its embedded copies.
         filename = unquote(request_path.removeprefix("/data/"))
         path = (DATA_DIR / filename).resolve()
-        if not str(path).startswith(str(DATA_DIR.resolve())) or not path.exists():
+        if not path.is_relative_to(DATA_DIR.resolve()) or not path.exists():
             self.send_error(404)
             return
         data = path.read_bytes()
@@ -259,7 +296,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
     ) -> None:
         filename = unquote(request_path.removeprefix("/exports/"))
         path = (EXPORT_DIR / filename).resolve()
-        if not str(path).startswith(str(EXPORT_DIR.resolve())) or not path.exists():
+        if not path.is_relative_to(EXPORT_DIR.resolve()) or not path.exists():
             self.send_error(404)
             return
         content_type = "text/markdown; charset=utf-8" if path.suffix == ".md" else "text/plain; charset=utf-8"
