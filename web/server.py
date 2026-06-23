@@ -181,13 +181,13 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.handle_catalog(parse_qs(parsed.query))
             return
         if parsed.path == "/api/verification":
-            self.write_json(load_json(DATA_DIR / "verification_results.json"))
+            self.write_json(load_json_cached(DATA_DIR / "verification_results.json"))
             return
         if parsed.path == "/api/summary":
             self.handle_summary()
             return
         if parsed.path == "/api/metadata":
-            self.write_json(load_json(DATA_DIR / "catalog_metadata.json"))
+            self.write_json(load_json_cached(DATA_DIR / "catalog_metadata.json"))
             return
         if parsed.path == "/api/live-map":
             self.handle_live_map()
