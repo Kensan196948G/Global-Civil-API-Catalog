@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
       <meta name="csrf_field_name" content="_csrf_token" />
-      <meta name="_csrf_token" content="ImI3NmVmNDg3Y2M4ZDE0YjYxZWRmMzA2OWRiM2IwZmVlMjdmMWJmYWEi.ajil6A.iNByUl6S1MGofILz-8L6eB9zS0E" />
+      <meta name="_csrf_token" content="ImVkMGMzNWVlNGNjMTI0MTc3MDE3MjUyZTI1YWY4OWIzODNmYjViMmQi.akHgPw.FbA8Uewpna1w6NMydgFDw6qDNuU" />
 
       <meta name="generator" content="ckan 2.11.4" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -836,7 +836,7 @@ https://www.geospatial.jp/ckan/dataset/plateau-usecase-portal",
   
     <p class="description">
       
-        2026-05-25 17:48:27.099922
+        2026-06-27 01:03:39.822808
       
     </p>
   
@@ -941,8 +941,8 @@ https://www.geospatial.jp/ckan/dataset/plateau-usecase-portal",
             <th scope="row" class="dataset-label">最終更新</th>
             <td class="dataset-details">
                 
-<span class="automatic-local-datetime" data-datetime="2026-06-16T16:03:43+0000">
-    6月 16, 2026, 16:03 (UTC)
+<span class="automatic-local-datetime" data-datetime="2026-06-26T16:03:39+0000">
+    6月 26, 2026, 16:03 (UTC)
 </span>
             </td>
           </tr>

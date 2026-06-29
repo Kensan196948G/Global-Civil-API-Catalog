@@ -69,8 +69,8 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    -77.017229,
-                    38.904103
+                    -77.0165243,
+                    38.9042429
                 ]
             },
             "properties": {
@@ -78,11 +78,11 @@
                 "state": "DC",
                 "distance": {
                     "unitCode": "wmoUnit:m",
-                    "value": 2256.4628420106
+                    "value": 0
                 },
                 "bearing": {
                     "unitCode": "wmoUnit:degree_(angle)",
-                    "value": 223
+                    "value": 0
                 }
             }
         },
@@ -92,15 +92,15 @@
         "timeZone": "America/New_York",
         "radarStation": "KLWX",
         "astronomicalData": {
-            "sunrise": "2026-06-21T05:41:34-04:00",
-            "sunset": "2026-06-21T20:38:27-04:00",
-            "transit": "2026-06-21T13:10:00-04:00",
-            "civilTwilightBegin": "2026-06-21T05:11:04-04:00",
-            "civilTwilightEnd": "2026-06-21T21:08:57-04:00",
-            "nauticalTwilightBegin": "2026-06-21T04:30:37-04:00",
-            "nauticalTwilightEnd": "2026-06-21T21:49:24-04:00",
-            "astronomicalTwilightBegin": "2026-06-21T03:44:06-04:00",
-            "astronomicalTwilightEnd": "2026-06-21T22:35:55-04:00"
+            "sunrise": "2026-06-28T05:43:49-04:00",
+            "sunset": "2026-06-28T20:39:10-04:00",
+            "transit": "2026-06-28T13:11:29-04:00",
+            "civilTwilightBegin": "2026-06-28T05:13:25-04:00",
+            "civilTwilightEnd": "2026-06-28T21:09:34-04:00",
+            "nauticalTwilightBegin": "2026-06-28T04:33:09-04:00",
+            "nauticalTwilightEnd": "2026-06-28T21:49:50-04:00",
+            "astronomicalTwilightBegin": "2026-06-28T03:46:57-04:00",
+            "astronomicalTwilightEnd": "2026-06-28T22:36:02-04:00"
         },
         "nwr": {
             "transmitter": "WNG736",
