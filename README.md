@@ -121,7 +121,34 @@ flowchart LR
 - コンテナ名: `global-civil-api-catalog-web`
 - ヘルスチェック: `curl http://127.0.0.1:49231/api/health`
 
-**Windows 11（Docker Desktop WSL2）**
+**Windows 11（ネイティブ Python + 自動起動 / 推奨）**
+
+Docker 不要。OS 起動時に自動でWeb UIが立ち上がります。ポートは既定 `49231`、競合時は空きポートへ自動移行し `deploy/PORT.lock` に記録されます。
+
+```powershell
+# 起動サービス登録（OS起動時に自動起動）
+.\deploy\register-windows-service.ps1 -Register
+
+# 状態・アクセスURL確認
+.\deploy\register-windows-service.ps1 -Status
+
+# 登録解除
+.\deploy\register-windows-service.ps1 -Unregister
+```
+
+```mermaid
+flowchart LR
+  A["🖥️ OS 起動"] --> B["🗓️ Task Scheduler"]
+  B --> C["🐍 python web/server.py --auto-port"]
+  C --> D{"🔌 49231 空き?"}
+  D -- はい --> E["49231 で待受"]
+  D -- いいえ --> F["空きポートへ自動移行"]
+  E --> G["📄 PORT.lock 更新"]
+  F --> G
+  G --> H["🌐 http://<自動割当IP>:<ポート>"]
+```
+
+**Windows 11（Docker Desktop WSL2 / 代替）**
 
 ```powershell
 # 起動
@@ -196,7 +223,16 @@ flowchart LR
 
 Web UIの `Exports` では、各成果物を画面で開くか、ファイルとしてダウンロードできます。
 
-## 関連ドキュメント
+## ⚠️ 既知の制約
+
+| 区分 | 内容 |
+|---|---|
+| 📚 台帳カバレッジ | 登録50件のうち接続検証済は10件、本格利用候補は3件のみ。多くのデータは今後の検証待ち |
+| 🔑 認証・アクセス制御 | Web UI に認証機構は無し。社内LAN限定公開（固定IP `192.168.0.185:49231`）を前提とした設計であり、外部公開する場合はリバースプロキシ等でのアクセス制御が別途必要 |
+| 🧪 テスト網羅性 | `scripts/connectors/*.py` の個別コネクタは共通テストファイルでまとめて検証しており、コネクタ単位のカバレッジは限定的 |
+| 🔍 静的解析 | CI に lint (ruff) と依存関係セキュリティスキャン (pip-audit) を追加済みだが、型チェック (mypy 等) は未導入 |
+
+## 📌 関連ドキュメント
 
 | リンク | 読む人 | 内容 |
 |---|---|---|

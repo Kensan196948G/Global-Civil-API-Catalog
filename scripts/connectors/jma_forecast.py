@@ -13,4 +13,6 @@ def is_forecast_json(payload: bytes) -> bool:
         data: Any = json.loads(payload.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError):
         return False
-    return isinstance(data, list) and all("publishingOffice" in item for item in data if isinstance(item, dict))
+    return isinstance(data, list) and all(
+        "publishingOffice" in item for item in data if isinstance(item, dict)
+    )

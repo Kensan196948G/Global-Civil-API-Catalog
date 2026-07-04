@@ -18,8 +18,9 @@ from scripts.catalog_utils import (  # noqa: E402
     write_json,
 )
 
-
-USER_AGENT = "Global-Civil-API-Catalog/0.1 (+https://github.com/Kensan196948G/Global-Civil-API-Catalog)"
+USER_AGENT = (
+    "Global-Civil-API-Catalog/0.1 (+https://github.com/Kensan196948G/Global-Civil-API-Catalog)"
+)
 # Saved response samples are capped at this size. response_size_bytes therefore
 # records the captured (possibly truncated) sample size, not the full response
 # length; samples that hit this cap are flagged as truncated in the note.
@@ -110,11 +111,14 @@ def main() -> int:
     parser.add_argument("--live", action="store_true", help="execute real HTTP requests")
     parser.add_argument("--limit", type=int, default=10, help="maximum records to verify")
     parser.add_argument("--timeout", type=int, default=10, help="HTTP timeout seconds")
-    parser.add_argument("--write", action="store_true", help="write results to data/verification_results.json")
+    parser.add_argument(
+        "--write", action="store_true", help="write results to data/verification_results.json"
+    )
     args = parser.parse_args()
 
     catalog = load_catalog(CATALOG_PATH)
-    candidates = [item for item in catalog if item["connection_status"] in {"接続候補", "接続検証済", "実装接続済", "本格利用候補"}]
+    accepted_statuses = {"接続候補", "接続検証済", "実装接続済", "本格利用候補"}
+    candidates = [item for item in catalog if item["connection_status"] in accepted_statuses]
     results = [build_result(item, args.live, args.timeout) for item in candidates[: args.limit]]
 
     print(json.dumps(results, ensure_ascii=False, indent=2))

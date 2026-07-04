@@ -23,7 +23,6 @@ from scripts.catalog_utils import (  # noqa: E402
     write_json,
 )
 
-
 DESIGN_HTML_PATH = ROOT / "web" / "Global Civil API Catalog.html"
 PRODUCTION_SOURCE = "claude-design-bundle"
 
