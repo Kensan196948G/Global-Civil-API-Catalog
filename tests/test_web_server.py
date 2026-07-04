@@ -67,6 +67,15 @@ def test_dashboard_has_fitness_map_and_osm_base_variants() -> None:
         assert catalog_id in js
 
 
+def test_catalog_links_are_scheme_validated() -> None:
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert "function safeUrl" in js
+    # Every dynamic href must go through safeUrl, not bare escapeHtml.
+    assert 'href="${escapeHtml(' not in js
+    assert 'href="${item.' not in js
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {

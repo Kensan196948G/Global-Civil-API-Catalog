@@ -28,6 +28,20 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+// href values need scheme validation on top of HTML escaping: catalog data
+// could otherwise smuggle javascript: or other dangerous schemes into links.
+function safeUrl(value) {
+  const url = String(value || "").trim();
+  if (url.startsWith("/")) return escapeHtml(url);
+  try {
+    const protocol = new URL(url).protocol;
+    if (protocol === "http:" || protocol === "https:") return escapeHtml(url);
+  } catch {
+    // fall through: not a parseable absolute URL
+  }
+  return "#";
+}
+
 function badge(value) {
   const text = escapeHtml(value || "-");
   const klass = value === "success" || value === "A" || value === "本格利用候補" || value === "production"
@@ -191,9 +205,9 @@ function renderCatalog() {
           <summary>${escapeHtml(item.usage_summary || "利用説明を確認")}</summary>
           <p>${escapeHtml(item.usage_notes || "").replaceAll("\n", "<br>")}</p>
           <div class="detailLinks">
-            <a href="${escapeHtml(item.official_url)}" target="_blank" rel="noreferrer">公式</a>
-            <a href="${escapeHtml(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
-            ${item.sample_endpoint ? `<a href="${escapeHtml(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
+            <a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer">公式</a>
+            <a href="${safeUrl(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
+            ${item.sample_endpoint ? `<a href="${safeUrl(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
           </div>
           <small>形式: ${escapeHtml((item.data_formats || []).join(", "))}</small>
           ${scoreBreakdownHtml(item)}
@@ -233,8 +247,8 @@ function renderExports() {
         <span>${exportKind(item.name)} / 本番データ成果物</span>
       </div>
       <div class="exportActions">
-        <a href="${item.url}" target="_blank" rel="noreferrer">開く</a>
-        <a href="${item.download_url || `${item.url}?download=1`}" download>ダウンロード</a>
+        <a href="${safeUrl(item.url)}" target="_blank" rel="noreferrer">開く</a>
+        <a href="${safeUrl(item.download_url || `${item.url}?download=1`)}" download>ダウンロード</a>
       </div>
     </article>
   `).join("");
