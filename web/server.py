@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import argparse
 import json
+import os
+import socket
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -139,7 +142,8 @@ def live_map_payload(catalog: list[dict], results: list[dict]) -> dict:
                     "provider": item["provider"],
                     "tile_url": endpoint,
                     "attribution": item.get("license_note", ""),
-                    "enabled": item["connection_status"] in {"実装接続済", "本格利用候補", "接続検証済"},
+                    "enabled": item["connection_status"]
+                    in {"実装接続済", "本格利用候補", "接続検証済"},
                     "is_tile": bool(formats & {"xyz tile", "png", "jpeg"}),
                 }
             )
@@ -171,7 +175,10 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
+        if (
+            parsed.path in {"/design.html", "/claude-design.html"}
+            and DESIGN_HTML_PATH.exists()
+        ):
             self.handle_design_html(include_body=True)
             return
         if parsed.path == "/api/health":
@@ -196,7 +203,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.handle_export_index()
             return
         if parsed.path.startswith("/exports/"):
-            self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=True)
+            self.handle_export_file(
+                parsed.path, parse_qs(parsed.query), include_body=True
+            )
             return
         if parsed.path.startswith("/data/"):
             self.handle_data_file(parsed.path)
@@ -205,11 +214,16 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
+        if (
+            parsed.path in {"/design.html", "/claude-design.html"}
+            and DESIGN_HTML_PATH.exists()
+        ):
             self.handle_design_html(include_body=False)
             return
         if parsed.path.startswith("/exports/"):
-            self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=False)
+            self.handle_export_file(
+                parsed.path, parse_qs(parsed.query), include_body=False
+            )
             return
         super().do_HEAD()
 
@@ -227,7 +241,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         keyword = (query.get("q", [""])[0] or "").lower()
         category = query.get("category", [""])[0]
         status = query.get("status", [""])[0]
-        self.write_json(filter_catalog(catalog, keyword=keyword, category=category, status=status))
+        self.write_json(
+            filter_catalog(catalog, keyword=keyword, category=category, status=status)
+        )
 
     def handle_summary(self) -> None:
         catalog = load_json_cached(DATA_DIR / "api_catalog.json")
@@ -237,7 +253,11 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             "catalog_count": len(catalog),
             "verification_count": len(results),
             "candidate_count": len(
-                [item for item in catalog if item["connection_status"] == "本格利用候補"]
+                [
+                    item
+                    for item in catalog
+                    if item["connection_status"] == "本格利用候補"
+                ]
             ),
             "implemented_count": len(
                 [
@@ -299,7 +319,11 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         if not path.is_relative_to(EXPORT_DIR.resolve()) or not path.exists():
             self.send_error(404)
             return
-        content_type = "text/markdown; charset=utf-8" if path.suffix == ".md" else "text/plain; charset=utf-8"
+        content_type = (
+            "text/markdown; charset=utf-8"
+            if path.suffix == ".md"
+            else "text/plain; charset=utf-8"
+        )
         if path.suffix == ".json":
             content_type = "application/json; charset=utf-8"
         if path.suffix == ".csv":
@@ -319,9 +343,86 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.wfile.write(data)
 
 
-def main() -> int:
-    server = ThreadingHTTPServer(("0.0.0.0", 8080), CatalogHandler)
-    print("Global Civil API Catalog WebUI listening on 0.0.0.0:8080", flush=True)
+def find_free_port(host: str) -> int:
+    """Return an OS-assigned free port by binding to port 0."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.bind((host, 0))
+        return probe.getsockname()[1]
+
+
+def resolve_port(host: str, port: int, auto_port: bool) -> int:
+    """Return a usable port for host.
+
+    Binds to the requested port (without SO_REUSEADDR, for an accurate check).
+    When the port is free it is returned as-is. When it is in use and
+    auto_port is True a free port is returned instead; otherwise the OSError
+    from the failed bind is propagated.
+    """
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+            probe.bind((host, port))
+        return port
+    except OSError:
+        if auto_port:
+            return find_free_port(host)
+        raise
+
+
+def detect_lan_ip() -> str:
+    """Return the primary LAN IP address, or 127.0.0.1 when unavailable."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+            probe.connect(("8.8.8.8", 80))
+            return probe.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
+
+
+def write_port_lock(path: str, port: int) -> None:
+    """Write the resolved port number to path as a single line of text."""
+    Path(path).write_text(f"{port}\n", encoding="utf-8")
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Global Civil API Catalog WebUI server"
+    )
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("CATALOG_HOST", "0.0.0.0"),
+        help="host interface to bind (default: env CATALOG_HOST or 0.0.0.0)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("CATALOG_PORT", "8080")),
+        help="port to listen on (default: env CATALOG_PORT or 8080)",
+    )
+    parser.add_argument(
+        "--auto-port",
+        action="store_true",
+        help="fall back to a free port when the requested port is in use",
+    )
+    parser.add_argument(
+        "--port-lock-file",
+        default=None,
+        help="path to write the resolved port number to",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    port = resolve_port(args.host, args.port, args.auto_port)
+    if args.port_lock_file:
+        write_port_lock(args.port_lock_file, port)
+    server = ThreadingHTTPServer((args.host, port), CatalogHandler)
+    lan_ip = detect_lan_ip()
+    print(
+        f"Global Civil API Catalog WebUI listening on {args.host}:{port} "
+        f"(LAN: http://{lan_ip}:{port})",
+        flush=True,
+    )
     server.serve_forever()
     return 0
 

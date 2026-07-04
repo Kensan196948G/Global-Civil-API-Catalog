@@ -120,7 +120,34 @@ flowchart LR
 - コンテナ名: `global-civil-api-catalog-web`
 - ヘルスチェック: `curl http://127.0.0.1:49231/api/health`
 
-**Windows 11（Docker Desktop WSL2）**
+**Windows 11（ネイティブ Python + 自動起動 / 推奨）**
+
+Docker 不要。OS 起動時に自動でWeb UIが立ち上がります。ポートは既定 `49231`、競合時は空きポートへ自動移行し `deploy/PORT.lock` に記録されます。
+
+```powershell
+# 起動サービス登録（OS起動時に自動起動）
+.\deploy\register-windows-service.ps1 -Register
+
+# 状態・アクセスURL確認
+.\deploy\register-windows-service.ps1 -Status
+
+# 登録解除
+.\deploy\register-windows-service.ps1 -Unregister
+```
+
+```mermaid
+flowchart LR
+  A["🖥️ OS 起動"] --> B["🗓️ Task Scheduler"]
+  B --> C["🐍 python web/server.py --auto-port"]
+  C --> D{"🔌 49231 空き?"}
+  D -- はい --> E["49231 で待受"]
+  D -- いいえ --> F["空きポートへ自動移行"]
+  E --> G["📄 PORT.lock 更新"]
+  F --> G
+  G --> H["🌐 http://<自動割当IP>:<ポート>"]
+```
+
+**Windows 11（Docker Desktop WSL2 / 代替）**
 
 ```powershell
 # 起動

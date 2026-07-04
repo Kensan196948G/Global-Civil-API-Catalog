@@ -1,20 +1,35 @@
+import socket
 from pathlib import Path
+
+import pytest
 
 from web.server import (
     DESIGN_HTML_PATH,
     ROOT,
     category_counts,
+    detect_lan_ip,
     filter_catalog,
+    find_free_port,
     latest_verification,
     live_map_payload,
+    resolve_port,
     status_counts,
+    write_port_lock,
 )
 
 
 def test_latest_verification_prefers_newer_record() -> None:
     results = [
-        {"api_id": "A", "verified_at": "2026-01-01T00:00:00+09:00", "result": "failure"},
-        {"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"},
+        {
+            "api_id": "A",
+            "verified_at": "2026-01-01T00:00:00+09:00",
+            "result": "failure",
+        },
+        {
+            "api_id": "A",
+            "verified_at": "2026-06-18T00:00:00+09:00",
+            "result": "success",
+        },
     ]
 
     assert latest_verification(results)["A"]["result"] == "success"
@@ -55,7 +70,9 @@ def test_live_map_payload_uses_catalog_data() -> None:
             "license_note": "attribution",
         }
     ]
-    results = [{"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"}]
+    results = [
+        {"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"}
+    ]
 
     payload = live_map_payload(catalog, results)
 
@@ -134,3 +151,48 @@ def test_category_counts_aggregates_correctly() -> None:
     counts = category_counts(catalog)
     assert counts["地図"] == 2
     assert counts["防災"] == 1
+
+
+def test_find_free_port_returns_high_int() -> None:
+    port = find_free_port("127.0.0.1")
+    assert isinstance(port, int)
+    assert port >= 1024
+
+
+def test_resolve_port_returns_free_port_unchanged() -> None:
+    free = find_free_port("127.0.0.1")
+    assert resolve_port("127.0.0.1", free, auto_port=False) == free
+
+
+def test_resolve_port_falls_back_when_in_use() -> None:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as occupied:
+        occupied.bind(("127.0.0.1", 0))
+        occupied.listen()
+        busy_port = occupied.getsockname()[1]
+
+        resolved = resolve_port("127.0.0.1", busy_port, auto_port=True)
+
+    assert resolved != busy_port
+    assert resolved >= 1024
+
+
+def test_resolve_port_raises_when_in_use_without_auto() -> None:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as occupied:
+        occupied.bind(("127.0.0.1", 0))
+        occupied.listen()
+        busy_port = occupied.getsockname()[1]
+
+        with pytest.raises(OSError):
+            resolve_port("127.0.0.1", busy_port, auto_port=False)
+
+
+def test_detect_lan_ip_returns_dotted_string() -> None:
+    ip = detect_lan_ip()
+    assert isinstance(ip, str)
+    assert "." in ip
+
+
+def test_write_port_lock_writes_port_number(tmp_path: Path) -> None:
+    lock = tmp_path / "port.lock"
+    write_port_lock(str(lock), 12345)
+    assert lock.read_text(encoding="utf-8") == "12345\n"
