@@ -6,7 +6,6 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
-
 ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 DESIGN_HTML_PATH = Path(__file__).resolve().parent / "Global Civil API Catalog.html"
@@ -54,9 +53,7 @@ def filter_catalog(
     """Return catalog items matching all supplied filters."""
     if keyword:
         catalog = [
-            item
-            for item in catalog
-            if keyword in json.dumps(item, ensure_ascii=False).lower()
+            item for item in catalog if keyword in json.dumps(item, ensure_ascii=False).lower()
         ]
     if category:
         catalog = [item for item in catalog if item["category"] == category]
@@ -139,7 +136,8 @@ def live_map_payload(catalog: list[dict], results: list[dict]) -> dict:
                     "provider": item["provider"],
                     "tile_url": endpoint,
                     "attribution": item.get("license_note", ""),
-                    "enabled": item["connection_status"] in {"実装接続済", "本格利用候補", "接続検証済"},
+                    "enabled": item["connection_status"]
+                    in {"実装接続済", "本格利用候補", "接続検証済"},
                     "is_tile": bool(formats & {"xyz tile", "png", "jpeg"}),
                 }
             )
@@ -299,7 +297,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         if not path.is_relative_to(EXPORT_DIR.resolve()) or not path.exists():
             self.send_error(404)
             return
-        content_type = "text/markdown; charset=utf-8" if path.suffix == ".md" else "text/plain; charset=utf-8"
+        content_type = (
+            "text/markdown; charset=utf-8" if path.suffix == ".md" else "text/plain; charset=utf-8"
+        )
         if path.suffix == ".json":
             content_type = "application/json; charset=utf-8"
         if path.suffix == ".csv":
