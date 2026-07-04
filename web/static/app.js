@@ -6,6 +6,7 @@ const state = {
   exports: [],
   liveMap: null,
   map: null,
+  baseLayer: null,
   markers: [],
   tileLayers: new Map(),
 };
@@ -94,9 +95,13 @@ function renderDistribution() {
     .map(([name, count]) => `
       <div class="barItem">
         <div><strong>${escapeHtml(name)}</strong><span>${count}件</span></div>
-        <div class="barTrack"><span style="width: ${(count / maxCategory) * 100}%"></span></div>
+        <div class="barTrack"><span data-ratio="${(count / maxCategory) * 100}"></span></div>
       </div>
     `).join("");
+  // CSP blocks style attributes in generated HTML; CSSOM assignment is allowed.
+  document.querySelectorAll("#categoryList .barTrack span").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
 
   const statusCounts = countBy(state.catalog, "connection_status");
   byId("statusList").innerHTML = Object.entries(statusCounts)
@@ -210,18 +215,20 @@ function renderExports() {
   `).join("");
 }
 
-function markerColor(feature) {
-  if (feature.connection_status === "本格利用候補") return "#0f6f3c";
-  if (feature.connection_status === "実装接続済") return "#235789";
-  if (feature.connection_status === "接続検証済") return "#0b6b61";
-  if (feature.connection_status === "保留") return "#9a5b00";
-  return "#6d7680";
+// CSP blocks style attributes in generated HTML, so status colors are
+// applied through CSS classes (see .statusColor-* in styles.css).
+function statusColorClass(feature) {
+  if (feature.connection_status === "本格利用候補") return "statusColor-full";
+  if (feature.connection_status === "実装接続済") return "statusColor-impl";
+  if (feature.connection_status === "接続検証済") return "statusColor-verified";
+  if (feature.connection_status === "保留") return "statusColor-hold";
+  return "statusColor-other";
 }
 
 function markerIcon(feature) {
   return L.divIcon({
     className: "catalogMarker",
-    html: `<span style="background:${markerColor(feature)}">${escapeHtml(feature.connection_priority)}</span>`,
+    html: `<span class="${statusColorClass(feature)}">${escapeHtml(feature.connection_priority)}</span>`,
     iconSize: [28, 28],
     iconAnchor: [14, 14],
   });
@@ -251,7 +258,7 @@ function renderMapFeatures() {
   byId("featureCount").textContent = `${features.length}件`;
   byId("mapFeatureList").innerHTML = features.map((feature) => `
     <button class="mapFeatureButton" data-id="${escapeHtml(feature.id)}">
-      <span class="featureDot" style="background:${markerColor(feature)}"></span>
+      <span class="featureDot ${statusColorClass(feature)}"></span>
       <span class="featureBody">
         <strong>${escapeHtml(feature.name)}</strong>
         <span>${escapeHtml(feature.category)} / ${escapeHtml(feature.connection_status)}</span>
@@ -272,7 +279,7 @@ function renderLayerList() {
   byId("layerCount").textContent = `${layers.length}層`;
   byId("layerList").innerHTML = layers.map((layer, index) => `
     <label class="layerToggle">
-      <input type="checkbox" data-layer="${escapeHtml(layer.id)}" ${index === 0 || layer.enabled ? "checked" : ""} />
+      <input type="checkbox" data-layer="${escapeHtml(layer.id)}" />
       <span>${escapeHtml(layer.name)}</span>
     </label>
   `).join("");
@@ -286,6 +293,58 @@ function renderLayerList() {
   });
 }
 
+const BASE_MAPS = [
+  {
+    id: "gsi_pale",
+    name: "地理院 淡色地図",
+    url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+    maxZoom: 18,
+    attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
+  },
+  {
+    id: "osm",
+    name: "OpenStreetMap",
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors",
+  },
+  {
+    id: "gsi_std",
+    name: "地理院 標準地図",
+    url: "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+    maxZoom: 18,
+    attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
+  },
+];
+
+function setBaseMap(id) {
+  const entry = BASE_MAPS.find((base) => base.id === id) || BASE_MAPS[0];
+  if (state.baseLayer) state.baseLayer.remove();
+  state.baseLayer = L.tileLayer(entry.url, {
+    maxZoom: entry.maxZoom,
+    attribution: entry.attribution,
+  }).addTo(state.map);
+}
+
+function renderBaseMapList() {
+  byId("baseMapList").innerHTML = BASE_MAPS.map((base, index) => `
+    <label class="layerToggle">
+      <input type="radio" name="baseMap" value="${escapeHtml(base.id)}" ${index === 0 ? "checked" : ""} />
+      <span>${escapeHtml(base.name)}</span>
+    </label>
+  `).join("");
+  document.querySelectorAll('input[name="baseMap"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) setBaseMap(input.value);
+    });
+  });
+}
+
+function overlayOpacity() {
+  const slider = byId("overlayOpacity");
+  return slider ? Number(slider.value) / 100 : 0.55;
+}
+
 function initMap() {
   if (!window.L) {
     byId("map").innerHTML = "<p>地図ライブラリを読み込めませんでした。ネットワーク接続を確認してください。</p>";
@@ -293,19 +352,23 @@ function initMap() {
   }
   const { center } = state.liveMap;
   state.map = L.map("map", { scrollWheelZoom: true }).setView([center.lat, center.lon], center.zoom);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors",
-  }).addTo(state.map);
-  state.liveMap.layers.slice(0, 10).forEach((layer, index) => {
+  setBaseMap(BASE_MAPS[0].id);
+  // Catalog tiles are overlays only: none is shown by default so the base
+  // map stays readable; users opt in per layer from the sidebar.
+  state.liveMap.layers.slice(0, 10).forEach((layer) => {
     const tileLayer = L.tileLayer(layer.tile_url, {
       maxZoom: 18,
-      opacity: 0.55,
+      opacity: overlayOpacity(),
       attribution: escapeHtml(layer.attribution || layer.provider),
     });
     state.tileLayers.set(layer.id, tileLayer);
-    if (index === 0 || layer.enabled) tileLayer.addTo(state.map);
   });
+  byId("overlayOpacity").addEventListener("input", () => {
+    const value = overlayOpacity();
+    byId("overlayOpacityValue").textContent = `${Math.round(value * 100)}%`;
+    state.tileLayers.forEach((layer) => layer.setOpacity(value));
+  });
+  renderBaseMapList();
   renderLayerList();
   renderMapFeatures();
 }

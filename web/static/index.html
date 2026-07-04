@@ -282,21 +282,30 @@ L.tileLayer(
               <div id="map" class="mapCanvas" aria-label="API live map"></div>
               <aside class="mapSide">
                 <div class="mapSideSection">
+                  <h3>ベースマップ</h3>
+                  <div id="baseMapList" class="layerList"></div>
+                </div>
+
+                <div class="mapSideSection">
                   <div class="mapSideHead">
-                    <h3>表示レイヤ</h3>
+                    <h3>重ね合わせレイヤ</h3>
                     <span class="countPill" id="layerCount">-</span>
                   </div>
                   <div id="layerList" class="layerList"></div>
+                  <label class="opacityControl">
+                    <span>透過度 <strong id="overlayOpacityValue">55%</strong></span>
+                    <input type="range" id="overlayOpacity" min="10" max="100" value="55" />
+                  </label>
                 </div>
 
                 <div class="mapSideSection">
                   <h3>凡例（接続状態）</h3>
                   <ul class="legendList">
-                    <li><span class="legendDot" style="background:#0f6f3c"></span>本格利用候補</li>
-                    <li><span class="legendDot" style="background:#235789"></span>実装接続済</li>
-                    <li><span class="legendDot" style="background:#0b6b61"></span>接続検証済</li>
-                    <li><span class="legendDot" style="background:#9a5b00"></span>保留</li>
-                    <li><span class="legendDot" style="background:#6d7680"></span>その他</li>
+                    <li><span class="legendDot statusColor-full"></span>本格利用候補</li>
+                    <li><span class="legendDot statusColor-impl"></span>実装接続済</li>
+                    <li><span class="legendDot statusColor-verified"></span>接続検証済</li>
+                    <li><span class="legendDot statusColor-hold"></span>保留</li>
+                    <li><span class="legendDot statusColor-other"></span>その他</li>
                   </ul>
                 </div>
 

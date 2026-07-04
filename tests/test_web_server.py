@@ -51,6 +51,17 @@ def test_production_ui_sections_are_available() -> None:
     assert 'id="exports"' in text
 
 
+def test_live_map_ui_has_base_map_and_opacity_controls() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="baseMapList"' in html
+    assert 'id="overlayOpacity"' in html
+    # Overlays must not be stacked on the base map by default.
+    assert "setBaseMap" in js
+    assert "tileLayer.addTo(state.map)" not in js
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {
