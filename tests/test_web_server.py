@@ -55,6 +55,18 @@ def test_live_map_ui_has_base_map_and_opacity_controls() -> None:
     assert "tileLayer.addTo(state.map)" not in js
 
 
+def test_dashboard_has_fitness_map_and_osm_base_variants() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="fitnessMap"' in html
+    assert "renderFitnessMap" in js
+    assert "採用ダッシュボード" in js
+    # OSM live-connection base map variants from the design bundle.
+    for catalog_id in ("OSM-TILE-001", "OSM-HOT", "OSM-CYCLOSM"):
+        assert catalog_id in js
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {

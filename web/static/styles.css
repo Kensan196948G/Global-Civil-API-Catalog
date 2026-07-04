@@ -1005,6 +1005,62 @@ details p {
   accent-color: var(--gold);
 }
 
+.layerSubId {
+  display: block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.fitnessWrap {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 6px;
+  padding: 12px 8px 4px 4px;
+}
+
+.fitnessAxisY {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 11px;
+  color: var(--muted);
+  align-self: center;
+}
+
+.fitnessAxisX {
+  grid-column: 2;
+  justify-self: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.fitnessMap {
+  position: relative;
+  height: 340px;
+  border-left: 1.5px solid var(--line);
+  border-bottom: 1.5px solid var(--line);
+  background:
+    linear-gradient(to right, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to top, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+  overflow: hidden;
+}
+
+.fitnessDot {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.78;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: help;
+}
+
+.fitnessDot:hover {
+  opacity: 1;
+  z-index: 5;
+}
+
 .mapFeatures #mapFeatureList {
   gap: 0;
   overflow-y: auto;

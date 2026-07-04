@@ -92,6 +92,21 @@
               <div id="verificationList" class="list compactList"></div>
             </article>
           </section>
+
+          <section class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>採用適合度マップ</h2>
+                <p>横軸=事業適合度（business_fit）／縦軸=連携実装容易性（integration）／点サイズ=接続優先度</p>
+              </div>
+              <span class="countPill" id="fitnessCount">-</span>
+            </div>
+            <div class="fitnessWrap">
+              <span class="fitnessAxisY">連携実装容易性 →</span>
+              <div id="fitnessMap" class="fitnessMap" aria-label="採用適合度 散布図"></div>
+              <span class="fitnessAxisX">事業適合度 →</span>
+            </div>
+          </section>
         </div>
 
         <!-- ============ Catalog ============ -->

@@ -114,6 +114,31 @@ function renderDistribution() {
     `).join("");
 }
 
+function renderFitnessMap() {
+  const container = byId("fitnessMap");
+  const items = state.catalog.filter(
+    (item) => Number.isFinite(item.business_fit_score) && Number.isFinite(item.integration_score),
+  );
+  byId("fitnessCount").textContent = `N=${items.length}`;
+  container.innerHTML = items.map((item) => `
+    <span class="fitnessDot ${statusColorClass(item)}"
+      data-x="${item.business_fit_score}" data-y="${item.integration_score}"
+      data-size="${8 + Number(item.connection_priority || 2) * 3}"
+      title="${escapeHtml(item.name)}｜事業適合度 ${item.business_fit_score}／連携実装性 ${item.integration_score}／優先度 ${escapeHtml(String(item.connection_priority))}"></span>
+  `).join("");
+  // Position via CSSOM because the CSP blocks style attributes in generated HTML.
+  container.querySelectorAll(".fitnessDot").forEach((dot) => {
+    const size = Number(dot.dataset.size);
+    // Squeeze the 0-100 scale into 3%..97% so edge dots are not clipped.
+    const x = 3 + Number(dot.dataset.x) * 0.94;
+    const y = 3 + Number(dot.dataset.y) * 0.94;
+    dot.style.width = `${size}px`;
+    dot.style.height = `${size}px`;
+    dot.style.left = `calc(${x}% - ${size / 2}px)`;
+    dot.style.bottom = `calc(${y}% - ${size / 2}px)`;
+  });
+}
+
 function filteredCatalog() {
   const q = byId("searchInput").value.trim().toLowerCase();
   const category = byId("categoryFilter").value;
@@ -295,22 +320,43 @@ function renderLayerList() {
 
 const BASE_MAPS = [
   {
-    id: "gsi_pale",
-    name: "地理院 淡色地図",
-    url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
-    maxZoom: 18,
-    attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
-  },
-  {
     id: "osm",
-    name: "OpenStreetMap",
+    name: "OSM 標準",
+    catalogId: "OSM-TILE-001",
     url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors",
   },
   {
+    id: "osm_hot",
+    name: "Humanitarian (HOT)",
+    catalogId: "OSM-HOT",
+    url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    subdomains: "abc",
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors, Tiles style by HOT",
+  },
+  {
+    id: "osm_cyclosm",
+    name: "CyclOSM",
+    catalogId: "OSM-CYCLOSM",
+    url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
+    subdomains: "abc",
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors, Tiles style by CyclOSM",
+  },
+  {
+    id: "gsi_pale",
+    name: "地理院 淡色地図",
+    catalogId: "GSI-PALE",
+    url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+    maxZoom: 18,
+    attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
+  },
+  {
     id: "gsi_std",
     name: "地理院 標準地図",
+    catalogId: "GSI-STD",
     url: "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
     maxZoom: 18,
     attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
@@ -320,17 +366,16 @@ const BASE_MAPS = [
 function setBaseMap(id) {
   const entry = BASE_MAPS.find((base) => base.id === id) || BASE_MAPS[0];
   if (state.baseLayer) state.baseLayer.remove();
-  state.baseLayer = L.tileLayer(entry.url, {
-    maxZoom: entry.maxZoom,
-    attribution: entry.attribution,
-  }).addTo(state.map);
+  const options = { maxZoom: entry.maxZoom, attribution: entry.attribution };
+  if (entry.subdomains) options.subdomains = entry.subdomains;
+  state.baseLayer = L.tileLayer(entry.url, options).addTo(state.map);
 }
 
 function renderBaseMapList() {
   byId("baseMapList").innerHTML = BASE_MAPS.map((base, index) => `
     <label class="layerToggle">
       <input type="radio" name="baseMap" value="${escapeHtml(base.id)}" ${index === 0 ? "checked" : ""} />
-      <span>${escapeHtml(base.name)}</span>
+      <span>${escapeHtml(base.name)}<small class="layerSubId">${escapeHtml(base.catalogId)}</small></span>
     </label>
   `).join("");
   document.querySelectorAll('input[name="baseMap"]').forEach((input) => {
@@ -374,10 +419,10 @@ function initMap() {
 }
 
 const VIEWS = {
-  dashboard: { kicker: "OVERVIEW", title: "ダッシュボード", sub: "🏗️ 土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。" },
+  dashboard: { kicker: "OVERVIEW", title: "採用ダッシュボード", sub: "スコア・接続ステータス・優先度の全体像" },
   catalog: { kicker: "LEDGER", title: "API・公開データ台帳", sub: "検索・絞り込み・スコア比較とAPI詳細を本番データで確認します。" },
   flow: { kicker: "HOW TO USE", title: "API活用フロー", sub: "選定から本番実装までの5ステップと、データ形式別の接続早見表。" },
-  map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "公開タイルを実接続し、台帳のAPIを地図上で確認します。" },
+  map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "OpenStreetMap のタイルを実接続して表示します。" },
   exports: { kicker: "EXPORTS", title: "成果物エクスポート", sub: "台帳データから各種ファイルを生成・出力します。" },
 };
 
@@ -419,6 +464,7 @@ async function boot() {
   renderSummary();
   renderFilters();
   renderDistribution();
+  renderFitnessMap();
   renderCatalog();
   renderVerification();
   renderExports();
