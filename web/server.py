@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import argparse
 import json
+import os
+import socket
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -319,9 +322,86 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.wfile.write(data)
 
 
-def main() -> int:
-    server = ThreadingHTTPServer(("0.0.0.0", 8080), CatalogHandler)
-    print("Global Civil API Catalog WebUI listening on 0.0.0.0:8080", flush=True)
+def find_free_port(host: str) -> int:
+    """Return an OS-assigned free port by binding to port 0."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.bind((host, 0))
+        return probe.getsockname()[1]
+
+
+def resolve_port(host: str, port: int, auto_port: bool) -> int:
+    """Return a usable port for host.
+
+    Binds to the requested port (without SO_REUSEADDR, for an accurate check).
+    When the port is free it is returned as-is. When it is in use and
+    auto_port is True a free port is returned instead; otherwise the OSError
+    from the failed bind is propagated.
+    """
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+            probe.bind((host, port))
+        return port
+    except OSError:
+        if auto_port:
+            return find_free_port(host)
+        raise
+
+
+def detect_lan_ip() -> str:
+    """Return the primary LAN IP address, or 127.0.0.1 when unavailable."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+            probe.connect(("8.8.8.8", 80))
+            return probe.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
+
+
+def write_port_lock(path: str, port: int) -> None:
+    """Write the resolved port number to path as a single line of text."""
+    Path(path).write_text(f"{port}\n", encoding="utf-8")
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Global Civil API Catalog WebUI server")
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("CATALOG_HOST", "0.0.0.0"),
+        help="host interface to bind (default: env CATALOG_HOST or 0.0.0.0)",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("CATALOG_PORT", "8080")),
+        help="port to listen on (default: env CATALOG_PORT or 8080)",
+    )
+    parser.add_argument(
+        "--auto-port",
+        action="store_true",
+        help="fall back to a free port when the requested port is in use",
+    )
+    parser.add_argument(
+        "--port-lock-file",
+        default=None,
+        help="path to write the resolved port number to",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    port = resolve_port(args.host, args.port, args.auto_port)
+    server = ThreadingHTTPServer((args.host, port), CatalogHandler)
+    # Written only after the server actually holds the port, so the lock
+    # file can never advertise a port the server failed to bind.
+    if args.port_lock_file:
+        write_port_lock(args.port_lock_file, port)
+    lan_ip = detect_lan_ip()
+    print(
+        f"Global Civil API Catalog WebUI listening on {args.host}:{port} "
+        f"(LAN: http://{lan_ip}:{port})",
+        flush=True,
+    )
     server.serve_forever()
     return 0
 
