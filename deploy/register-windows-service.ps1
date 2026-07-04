@@ -118,11 +118,10 @@ function Invoke-Register {
     Write-Host "   📁 WorkingDir  : $ProjectRoot" -ForegroundColor Gray
     Write-Host "   🔌 Port        : $Port" -ForegroundColor Gray
 
-    # 既存タスクがあれば一旦削除して再登録
+    # -Force で上書き登録する（先に削除すると登録失敗時に既存設定を失うため）
     $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "⚠️ 既存タスクを検出しました。再登録します。" -ForegroundColor Yellow
-        Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+        Write-Host "⚠️ 既存タスクを検出しました。上書き登録します。" -ForegroundColor Yellow
     }
 
     $argLine = ('"{0}" --port {1} --auto-port --port-lock-file "{2}"' -f `
@@ -146,7 +145,7 @@ function Invoke-Register {
             -Trigger $startupTrigger `
             -Settings $settings `
             -Description 'Global Civil API Catalog Web UI (native Python) auto-start at OS boot' `
-            -ErrorAction Stop | Out-Null
+            -Force -ErrorAction Stop | Out-Null
         Write-Host "✅ 登録完了 (トリガー: OS 起動時 / AtStartup)" -ForegroundColor Green
     } catch {
         Write-Host "⚠️ AtStartup 登録に失敗しました (管理者権限が必要な可能性)。" -ForegroundColor Yellow
@@ -160,7 +159,7 @@ function Invoke-Register {
                 -Trigger $logonTrigger `
                 -Settings $settings `
                 -Description 'Global Civil API Catalog Web UI (native Python) auto-start at user logon' `
-                -ErrorAction Stop | Out-Null
+                -Force -ErrorAction Stop | Out-Null
             Write-Host "✅ 登録完了 (トリガー: ログオン時 / AtLogOn / $env:USERNAME)" -ForegroundColor Green
         } catch {
             Write-Host "❌ タスク登録に失敗しました: $($_.Exception.Message)" -ForegroundColor Red

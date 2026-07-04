@@ -414,9 +414,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     port = resolve_port(args.host, args.port, args.auto_port)
+    server = ThreadingHTTPServer((args.host, port), CatalogHandler)
+    # Written only after the server actually holds the port, so the lock
+    # file can never advertise a port the server failed to bind.
     if args.port_lock_file:
         write_port_lock(args.port_lock_file, port)
-    server = ThreadingHTTPServer((args.host, port), CatalogHandler)
     lan_ip = detect_lan_ip()
     print(
         f"Global Civil API Catalog WebUI listening on {args.host}:{port} "
