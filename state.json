@@ -5,8 +5,8 @@
     "release_deadline": "2026-12-18",
     "phase_mode": "maintenance"
   },
-  "goal": "COMPLETED: catalog improvements P1-P4 PR#10 merged 2026-06-20",
-  "phase": "Maintenance",
+  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — PR#13 open, awaiting human merge decision",
+  "phase": "Verify",
   "kpi": {
     "success_rate_target": 0.9,
     "ci_success_rate": 1.0,
@@ -30,6 +30,9 @@
     "PR#10: catalog improvements P1-P4 — live verify, scheduled CI, classification, UI filters (merged 2026-06-20, sha=61000c3)"
   ],
   "blocked_issues": [],
+  "pending_human_decision": [
+    "PR#13: chore CI lint/pip-audit gate + Dependabot + README known-constraints. CI green (validate workflow incl. new lint/security steps). Awaiting human merge approval per auto-merge-protocol (main branch PR requires explicit human choice)."
+  ],
   "learning": {
     "failure_patterns": [],
     "success_patterns": [
