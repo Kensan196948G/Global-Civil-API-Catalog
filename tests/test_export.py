@@ -1,5 +1,5 @@
-from scripts.export_markdown import export_all
 from scripts.catalog_utils import EXPORT_DIR
+from scripts.export_markdown import export_all
 
 
 def test_export_all_generates_expected_files() -> None:

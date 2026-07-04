@@ -7,7 +7,6 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 EXPORT_DIR = ROOT / "export"
