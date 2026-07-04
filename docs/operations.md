@@ -157,3 +157,35 @@ Register-ScheduledTask -TaskName "GlobalCivilAPICatalog" -Action $action -Trigge
 - `deploy/global-civil-api-catalog-web.service`（systemd）は Linux 専用。Windows では使用しません。
 - `Makefile` の `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q` はbash構文のため Windows CMD では動作しません。`.\make.ps1 test` を使用してください。
 - ファイルパスに日本語が含まれる場合、Docker Desktop の設定で「Use the WSL 2 based engine」を有効にしてください。
+
+---
+
+## ☁️ Cloudflare Tunnel（api.mirai-dx-platform.com 公開）
+
+Named Tunnel + **Cloudflare Access（認証ゲート必須）** で Web UI をサブドメイン公開します。
+
+### 人間側で必要な初期設定（1回のみ）
+
+```powershell
+cloudflared tunnel login                       # ブラウザで Cloudflare 認証
+cloudflared tunnel create catalog              # Tunnel 作成
+cloudflared tunnel route dns catalog <サブドメイン>  # DNS ルート作成
+Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
+# config.yml の <TUNNEL_ID> と hostname を編集
+```
+
+### サービス登録（OS 起動時自動起動）
+
+```powershell
+.\deploy
+egister-cloudflared.ps1 -Install
+.\deploy
+egister-cloudflared.ps1 -Status
+.\deploy
+egister-cloudflared.ps1 -Uninstall
+```
+
+### ⚠️ セキュリティ必須事項
+
+- 本アプリは**ログイン認証なし**のため、公開前に Cloudflare Zero Trust ダッシュボードで **Access アプリケーション + ポリシー（許可メールアドレス等）** を必ず設定する
+- Access 未設定のままの公開は禁止（Security First）

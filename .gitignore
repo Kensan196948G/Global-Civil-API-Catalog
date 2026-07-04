@@ -21,3 +21,6 @@ $RECYCLE.BIN/
 
 # Backup files created by automated tools
 *.bak-*
+
+# machine-specific tunnel config (credentials path contains local username)
+deploy/cloudflare/config.yml

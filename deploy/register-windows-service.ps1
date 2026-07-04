@@ -54,9 +54,13 @@ $PortLockPath = Join-Path $ProjectRoot $PortLockRel
 
 # ---- ヘルパ ----------------------------------------------------------------
 function Resolve-PythonPath {
-    # python.exe のフルパスを解決する。見つからなければ null を返す。
+    # pythonw.exe (コンソール窓なし) を優先し、無ければ python.exe / py を返す。
     $cmd = Get-Command python -ErrorAction SilentlyContinue
     if ($null -ne $cmd -and $cmd.Source) {
+        $pythonw = Join-Path (Split-Path -Parent $cmd.Source) 'pythonw.exe'
+        if (Test-Path $pythonw) {
+            return $pythonw
+        }
         return $cmd.Source
     }
     $py = Get-Command py -ErrorAction SilentlyContinue
