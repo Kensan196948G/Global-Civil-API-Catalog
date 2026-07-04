@@ -7,6 +7,7 @@ every score on the dashboard is reproducible from the catalog fields. A compact
 
 Run: python scripts/score_catalog.py [--write]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -18,9 +19,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.catalog_utils import (  # noqa: E402
     CATALOG_PATH,
     EXPORT_DIR,
+    latest_verification_by_api,
     load_catalog,
     load_verification_results,
-    latest_verification_by_api,
     priority_rank,
     priority_score,
     trust_rank,
@@ -29,8 +30,15 @@ from scripts.catalog_utils import (  # noqa: E402
 
 EASY_FORMATS = {"JSON", "GeoJSON", "XYZ Tile", "Vector Tile", "REST", "JSON API", "WMS", "WMTS"}
 FREQUENT_UPDATES = {
-    "随時", "リアルタイム", "時間", "日次等", "短周期", "短周期/日次",
-    "観測周期", "定時", "年次/随時",
+    "随時",
+    "リアルタイム",
+    "時間",
+    "日次等",
+    "短周期",
+    "短周期/日次",
+    "観測周期",
+    "定時",
+    "年次/随時",
 }
 STATUS_MATURITY = {
     "本格利用候補": 10,
@@ -163,7 +171,9 @@ def trust_breakdown(item: dict, verified: bool) -> tuple[int, str, list[str]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Recompute catalog scores from rubrics.")
-    parser.add_argument("--write", action="store_true", help="write recomputed scores to the catalog")
+    parser.add_argument(
+        "--write", action="store_true", help="write recomputed scores to the catalog"
+    )
     args = parser.parse_args()
 
     catalog = load_catalog()
@@ -209,6 +219,7 @@ def main() -> int:
     print(f"business_fit avg: {before_fit:.0f} -> {after_fit:.0f}")
     print(f"integration avg: {before_int:.0f} -> {after_int:.0f}")
     from collections import Counter
+
     print("trust_rank:", dict(Counter(i["trust_rank"] for i in catalog)))
     print("connection_priority:", dict(Counter(i["connection_priority"] for i in catalog)))
 

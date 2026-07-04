@@ -9,7 +9,6 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
-
 ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 DESIGN_HTML_PATH = Path(__file__).resolve().parent / "Global Civil API Catalog.html"
@@ -57,9 +56,7 @@ def filter_catalog(
     """Return catalog items matching all supplied filters."""
     if keyword:
         catalog = [
-            item
-            for item in catalog
-            if keyword in json.dumps(item, ensure_ascii=False).lower()
+            item for item in catalog if keyword in json.dumps(item, ensure_ascii=False).lower()
         ]
     if category:
         catalog = [item for item in catalog if item["category"] == category]
@@ -175,10 +172,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if (
-            parsed.path in {"/design.html", "/claude-design.html"}
-            and DESIGN_HTML_PATH.exists()
-        ):
+        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=True)
             return
         if parsed.path == "/api/health":
@@ -203,9 +197,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.handle_export_index()
             return
         if parsed.path.startswith("/exports/"):
-            self.handle_export_file(
-                parsed.path, parse_qs(parsed.query), include_body=True
-            )
+            self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=True)
             return
         if parsed.path.startswith("/data/"):
             self.handle_data_file(parsed.path)
@@ -214,16 +206,11 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
-        if (
-            parsed.path in {"/design.html", "/claude-design.html"}
-            and DESIGN_HTML_PATH.exists()
-        ):
+        if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=False)
             return
         if parsed.path.startswith("/exports/"):
-            self.handle_export_file(
-                parsed.path, parse_qs(parsed.query), include_body=False
-            )
+            self.handle_export_file(parsed.path, parse_qs(parsed.query), include_body=False)
             return
         super().do_HEAD()
 
@@ -241,9 +228,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         keyword = (query.get("q", [""])[0] or "").lower()
         category = query.get("category", [""])[0]
         status = query.get("status", [""])[0]
-        self.write_json(
-            filter_catalog(catalog, keyword=keyword, category=category, status=status)
-        )
+        self.write_json(filter_catalog(catalog, keyword=keyword, category=category, status=status))
 
     def handle_summary(self) -> None:
         catalog = load_json_cached(DATA_DIR / "api_catalog.json")
@@ -253,11 +238,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             "catalog_count": len(catalog),
             "verification_count": len(results),
             "candidate_count": len(
-                [
-                    item
-                    for item in catalog
-                    if item["connection_status"] == "本格利用候補"
-                ]
+                [item for item in catalog if item["connection_status"] == "本格利用候補"]
             ),
             "implemented_count": len(
                 [
@@ -320,9 +301,7 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.send_error(404)
             return
         content_type = (
-            "text/markdown; charset=utf-8"
-            if path.suffix == ".md"
-            else "text/plain; charset=utf-8"
+            "text/markdown; charset=utf-8" if path.suffix == ".md" else "text/plain; charset=utf-8"
         )
         if path.suffix == ".json":
             content_type = "application/json; charset=utf-8"
@@ -384,9 +363,7 @@ def write_port_lock(path: str, port: int) -> None:
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Global Civil API Catalog WebUI server"
-    )
+    parser = argparse.ArgumentParser(description="Global Civil API Catalog WebUI server")
     parser.add_argument(
         "--host",
         default=os.environ.get("CATALOG_HOST", "0.0.0.0"),
