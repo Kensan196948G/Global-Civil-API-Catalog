@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import socket
+import sys
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -154,6 +155,12 @@ def live_map_payload(catalog: list[dict], results: list[dict]) -> dict:
 class CatalogHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(STATIC_DIR), **kwargs)
+
+    def log_message(self, format: str, *args) -> None:  # noqa: A002 - stdlib signature.
+        # Under pythonw.exe sys.stderr is None and the default implementation
+        # would crash every request handler thread.
+        if sys.stderr is not None:
+            super().log_message(format, *args)
 
     def end_headers(self) -> None:
         self.send_header("Cache-Control", "no-store")

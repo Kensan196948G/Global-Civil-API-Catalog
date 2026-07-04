@@ -1,0 +1,12 @@
+# Cloudflare Tunnel configuration template (Named Tunnel)
+# Copy to config.yml, then replace <TUNNEL_ID> and the hostname.
+# The credentials file is created by: cloudflared tunnel create <name>
+tunnel: <TUNNEL_ID>
+credentials-file: C:\Users\<USER>\.cloudflared\<TUNNEL_ID>.json
+
+ingress:
+  # Public subdomain -> local Web UI (port must match deploy/PORT.lock)
+  - hostname: catalog.example.com
+    service: http://localhost:49231
+  # Everything else is rejected
+  - service: http_status:404
