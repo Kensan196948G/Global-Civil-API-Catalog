@@ -67,6 +67,43 @@ def test_dashboard_has_fitness_map_and_osm_base_variants() -> None:
         assert catalog_id in js
 
 
+def test_ui_has_six_status_palette_and_design_enhancements() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+    css = Path(ROOT / "web" / "static" / "styles.css").read_text(encoding="utf-8")
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    # Six-status connection palette classes.
+    for klass in (
+        "statusColor-impl",
+        "statusColor-full",
+        "statusColor-verified",
+        "statusColor-candidate",
+        "statusColor-survey",
+        "statusColor-hold",
+    ):
+        assert f".{klass}" in css
+        assert klass in js
+
+    # Fitness scatter axis ticks and design-spec coordinate mapping.
+    assert "fitnessTick" in js
+    assert "fitnessTick" in css
+    assert "fitnessMap01" in js
+
+    # Current-layer overlay badge on the live map.
+    assert "currentLayerBadge" in js
+    assert ".currentLayerBadge" in css
+
+    # Light/dark theme toggle.
+    assert 'id="themeToggle"' in html
+    assert 'data-theme="dark"' in css
+    assert "localStorage" in js
+
+    # Sidebar nav count badges.
+    assert 'id="navBadgeCatalog"' in html
+    assert ".navBadge" in css
+    assert "setNavBadges" in js
+
+
 def test_catalog_links_are_scheme_validated() -> None:
     js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
 

@@ -190,7 +190,7 @@ small {
   padding: 13px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: #fff;
+  background: var(--panel);
 }
 
 .serviceBox strong {
@@ -464,7 +464,7 @@ code {
   padding: 0 15px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--panel);
   color: var(--ink-2);
   text-decoration: none;
   font-weight: 500;
@@ -623,7 +623,7 @@ input:focus,
 select:focus {
   outline: none;
   border-color: var(--gold);
-  background: #fff;
+  background: var(--panel);
 }
 
 /* ---------- table ---------- */
@@ -664,7 +664,7 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-  background: #fbf9f4;
+  background: var(--bg-soft);
 }
 
 td strong {
@@ -769,12 +769,37 @@ details p {
 }
 
 .barItem div:first-child,
-.statusItem,
 .listItem {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   align-items: center;
+}
+
+/* Connection-status breakdown rendered as horizontal bars. */
+.statusItem {
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.statusItemLabel {
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+
+.statusBarTrack {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--track);
+}
+
+.statusBarTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
 }
 
 .barItem strong {
@@ -947,13 +972,16 @@ details p {
   flex: none;
 }
 
-/* Connection-status colors shared by map markers, feature dots and legend.
+/* Six-status connection palette shared by map markers, feature dots, legend,
+   status bars, fitness scatter and adoption pills.
    Kept as classes because the CSP blocks inline style attributes. */
-.statusColor-full { background: #0f6f3c; }
-.statusColor-impl { background: #235789; }
-.statusColor-verified { background: #0b6b61; }
-.statusColor-hold { background: #9a5b00; }
-.statusColor-other { background: #6d7680; }
+.statusColor-impl { background: #1f9d5e; }
+.statusColor-full { background: #0b8a7c; }
+.statusColor-verified { background: #3f7fc0; }
+.statusColor-candidate { background: #6a7884; }
+.statusColor-survey { background: #c0820f; }
+.statusColor-hold { background: #8a9096; }
+.statusColor-other { background: #8a9096; }
 
 .layerList {
   gap: 6px;
@@ -966,7 +994,7 @@ details p {
   padding: 9px 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--panel);
   font-size: 12.5px;
   line-height: 1.4;
   cursor: pointer;
@@ -991,7 +1019,7 @@ details p {
   padding: 9px 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--panel);
   font-size: 12px;
   color: var(--muted);
 }
@@ -1041,11 +1069,43 @@ details p {
   height: 340px;
   border-left: 1.5px solid var(--line);
   border-bottom: 1.5px solid var(--line);
-  background:
-    linear-gradient(to right, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
-    linear-gradient(to top, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   overflow: hidden;
 }
+
+/* Central grid crosshair as dashed lines (design spec). */
+.fitnessMap::before,
+.fitnessMap::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.fitnessMap::before {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed #efe9dc;
+}
+
+.fitnessMap::after {
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed #efe9dc;
+}
+
+.fitnessTick {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #9a8f78;
+  pointer-events: none;
+}
+
+.fitnessTickYTop { top: 4px; left: 4px; }
+.fitnessTickYBottom { bottom: 4px; left: 4px; }
+.fitnessTickXLeft { bottom: 4px; left: 20px; }
+.fitnessTickXRight { bottom: 4px; right: 4px; }
 
 .fitnessDot {
   position: absolute;
@@ -1053,12 +1113,44 @@ details p {
   opacity: 0.78;
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-  cursor: help;
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
 }
 
 .fitnessDot:hover {
   opacity: 1;
   z-index: 5;
+  transform: scale(1.5);
+}
+
+.metadataDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 4px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.metadataRow {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px;
+  font-size: 11.5px;
+  align-items: baseline;
+}
+
+.metadataRow span {
+  color: var(--muted);
+}
+
+.metadataRow code {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  word-break: break-all;
+  color: var(--ink);
 }
 
 .mapFeatures #mapFeatureList {
@@ -1166,6 +1258,280 @@ details p {
   margin-top: 4px;
   color: var(--muted);
   font-size: 12.5px;
+}
+
+/* ---------- trust rank x region panel ---------- */
+.trustRegionGrid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.trustRankCards {
+  display: grid;
+  gap: 10px;
+}
+
+.trustCard {
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--bg-soft);
+  min-width: 96px;
+}
+
+.trustCard strong {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 33px;
+  line-height: 1;
+  color: var(--head);
+}
+
+.trustCard span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.trustCard-A { border-left-color: #1f9d5e; }
+.trustCard-B { border-left-color: #3f7fc0; }
+.trustCard-C { border-left-color: #c0820f; }
+
+.regionBar { background: #235789; }
+
+/* ---------- adoption top table ---------- */
+.adoptionTable {
+  min-width: 0;
+}
+
+.adoptionRow {
+  cursor: pointer;
+}
+
+.adoptionRow:hover {
+  background: var(--chip);
+}
+
+.priorityStars {
+  color: var(--gold);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.adoptionBars {
+  min-width: 90px;
+}
+
+.miniBarTrack {
+  height: 6px;
+  margin: 3px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--track);
+}
+
+.miniBarTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.miniBarFit { background: #0b6b61; }
+.miniBarInteg { background: #235789; }
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.statusPillDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* ---------- base-map color dots + current-layer badge ---------- */
+.layerDot {
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.layerDot-osm { background: #7ebc6f; }
+.layerDot-hot { background: #d06a4f; }
+.layerDot-cyclosm { background: #5a86c4; }
+.layerDot-gsi { background: #9a8f78; }
+
+.currentLayerBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 500;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+
+.mapAttribution {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--faint);
+}
+
+/* ---------- export type icons + bulk download ---------- */
+.exportItemHead {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.exportIcon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.exportIcon-md { background: #e1f0ee; color: #0b8a7c; }
+.exportIcon-csv { background: #e6f4ea; color: #1f9d5e; }
+.exportIcon-json { background: #e7eef6; color: #3f7fc0; }
+.exportIcon-file { background: var(--chip); color: var(--muted); }
+
+.downloadAllButton {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 11px 18px;
+  border: 1px dashed var(--gold);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gold-deep);
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.downloadAllButton:hover {
+  background: var(--gold-soft);
+}
+
+/* ---------- sidebar badges / legend / theme toggle ---------- */
+.navBadge {
+  display: inline-flex;
+  align-items: center;
+  min-width: 20px;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.themeToggle {
+  align-self: flex-start;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: 15px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.themeToggle:hover {
+  border-color: var(--gold);
+}
+
+.sideLegend {
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel);
+}
+
+.sideLegendTitle {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+
+.sideLegend .legendList {
+  margin: 0;
+}
+
+.sideLastCheck {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--faint);
+}
+
+.sideLastCheck span {
+  font-family: var(--mono);
+}
+
+/* ---------- dark theme ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #10161a;
+  --bg-soft: #161d22;
+  --sidebar: #0a1013;
+  --sidebar-ink: #c4ccd0;
+  --sidebar-muted: #8fa0a9;
+  --panel: #1a2228;
+  --ink: #dbe3e6;
+  --head: #f3efe6;
+  --ink-2: #c4ccd0;
+  --muted: #8fa0a9;
+  --muted-2: #7d8893;
+  --faint: #8fa0a9;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.06);
+  --track: #222c33;
+  --chip: #1e282e;
+  --good-bg: #12332a;
+  --blue-bg: #16283a;
+  --warn-bg: #3a2f16;
+  --gold-soft: #2a2418;
+}
+
+:root[data-theme="dark"] .snippet pre {
+  background: #0c1418;
+}
+
+:root[data-theme="dark"] .currentLayerBadge {
+  background: rgba(20, 28, 33, 0.85);
 }
 
 /* ---------- responsive ---------- */

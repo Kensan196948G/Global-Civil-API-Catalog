@@ -88,6 +88,34 @@ function renderSummary() {
   byId("sourceName").textContent = state.metadata.source;
   const productionCount = state.catalog.filter((item) => item.catalog_mode === "production").length;
   byId("productionCoverage").textContent = `${productionCount}/${state.catalog.length}`;
+  renderMetadataDetail();
+}
+
+const METADATA_LABELS = {
+  dataset_name: "データセット名",
+  catalog_mode: "カタログモード",
+  source: "取込元",
+  source_path: "取込元パス",
+  imported_at: "取込日",
+  record_count: "登録件数",
+  verification_count: "検証件数",
+  merge_policy: "マージ方針",
+  design_html_sha256: "デザインHTML SHA-256",
+  catalog_sha256: "台帳 SHA-256",
+  verification_sha256: "検証結果 SHA-256",
+};
+
+function renderMetadataDetail() {
+  const detail = byId("metadataDetail");
+  detail.innerHTML = Object.entries(state.metadata).map(([key, value]) => `
+    <div class="metadataRow">
+      <span>${escapeHtml(METADATA_LABELS[key] || key)}</span>
+      <code>${escapeHtml(String(value))}</code>
+    </div>
+  `).join("");
+  byId("metadataToggle").addEventListener("click", () => {
+    detail.hidden = !detail.hidden;
+  });
 }
 
 function renderFilters() {
@@ -118,14 +146,36 @@ function renderDistribution() {
   });
 
   const statusCounts = countBy(state.catalog, "connection_status");
-  byId("statusList").innerHTML = Object.entries(statusCounts)
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, count]) => `
-      <div class="statusItem">
-        ${badge(name)}
-        <strong>${count}</strong>
-      </div>
-    `).join("");
+  const maxStatus = Math.max(1, ...Object.values(statusCounts));
+  // Known statuses render in the design's fixed order; any extras follow.
+  const orderedStatuses = [
+    ...STATUS_ORDER.filter((name) => statusCounts[name]),
+    ...Object.keys(statusCounts).filter((name) => !STATUS_ORDER.includes(name)),
+  ];
+  byId("statusList").innerHTML = orderedStatuses.map((name) => `
+    <div class="statusItem">
+      <span class="statusItemLabel">${escapeHtml(name)}</span>
+      <div class="statusBarTrack"><span class="${statusColorClassByName(name)}" data-ratio="${(statusCounts[name] / maxStatus) * 100}"></span></div>
+      <strong>${statusCounts[name]}</strong>
+    </div>
+  `).join("");
+  // CSP blocks style attributes in generated HTML; widths set via CSSOM.
+  document.querySelectorAll("#statusList .statusBarTrack span").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
+}
+
+const STATUS_ORDER = ["実装接続済", "本格利用候補", "接続検証済", "接続候補", "調査中", "保留"];
+
+// A small status pill (colored dot + label) reused by the adoption-top table.
+function statusPill(status) {
+  return `<span class="statusPill"><span class="statusPillDot ${statusColorClassByName(status)}"></span>${escapeHtml(status || "-")}</span>`;
+}
+
+// Maps a 40-100 score onto a 0-1 axis position (design spec), clamped so
+// out-of-range values stay inside the plot area.
+function fitnessMap01(value) {
+  return Math.max(0, Math.min(1, (Number(value) - 40) / 60));
 }
 
 function renderFitnessMap() {
@@ -134,22 +184,99 @@ function renderFitnessMap() {
     (item) => Number.isFinite(item.business_fit_score) && Number.isFinite(item.integration_score),
   );
   byId("fitnessCount").textContent = `N=${items.length}`;
-  container.innerHTML = items.map((item) => `
+  const dots = items.map((item) => `
     <span class="fitnessDot ${statusColorClass(item)}"
+      data-name="${escapeHtml(item.name)}"
       data-x="${item.business_fit_score}" data-y="${item.integration_score}"
       data-size="${8 + Number(item.connection_priority || 2) * 3}"
       title="${escapeHtml(item.name)}｜事業適合度 ${item.business_fit_score}／連携実装性 ${item.integration_score}／優先度 ${escapeHtml(String(item.connection_priority))}"></span>
   `).join("");
+  const ticks = `
+    <span class="fitnessTick fitnessTickYTop">100</span>
+    <span class="fitnessTick fitnessTickYBottom">40</span>
+    <span class="fitnessTick fitnessTickXLeft">40</span>
+    <span class="fitnessTick fitnessTickXRight">100 →</span>
+  `;
+  container.innerHTML = dots + ticks;
   // Position via CSSOM because the CSP blocks style attributes in generated HTML.
   container.querySelectorAll(".fitnessDot").forEach((dot) => {
     const size = Number(dot.dataset.size);
-    // Squeeze the 0-100 scale into 3%..97% so edge dots are not clipped.
-    const x = 3 + Number(dot.dataset.x) * 0.94;
-    const y = 3 + Number(dot.dataset.y) * 0.94;
+    const x = fitnessMap01(dot.dataset.x) * 100;
+    const y = fitnessMap01(dot.dataset.y) * 100;
     dot.style.width = `${size}px`;
     dot.style.height = `${size}px`;
     dot.style.left = `calc(${x}% - ${size / 2}px)`;
     dot.style.bottom = `calc(${y}% - ${size / 2}px)`;
+    // Clicking a point jumps to the catalog view filtered to that API.
+    dot.addEventListener("click", () => {
+      setView("catalog");
+      byId("searchInput").value = dot.dataset.name;
+      renderCatalog();
+    });
+  });
+}
+
+function renderTrustRegion() {
+  const trustCounts = countBy(state.catalog, "trust_rank");
+  byId("trustRankCards").innerHTML = ["A", "B", "C"].map((rank) => `
+    <div class="trustCard trustCard-${rank}">
+      <strong>${trustCounts[rank] || 0}</strong>
+      <span>信頼度 ${rank}</span>
+    </div>
+  `).join("");
+
+  const regionCounts = countBy(state.catalog, "region");
+  const maxRegion = Math.max(1, ...Object.values(regionCounts));
+  byId("regionBars").innerHTML = Object.entries(regionCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => `
+      <div class="barItem">
+        <div><strong>${escapeHtml(name)}</strong><span>${count}件</span></div>
+        <div class="barTrack"><span class="regionBar" data-ratio="${(count / maxRegion) * 100}"></span></div>
+      </div>
+    `).join("");
+  // CSP blocks style attributes in generated HTML; widths set via CSSOM.
+  document.querySelectorAll("#regionBars .regionBar").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
+}
+
+function jumpToCatalog(name) {
+  setView("catalog");
+  byId("searchInput").value = name;
+  renderCatalog();
+}
+
+function renderAdoptionTop() {
+  const clamp100 = (value) => Math.max(0, Math.min(100, Number(value) || 0));
+  const rows = [...state.catalog]
+    .sort(
+      (a, b) =>
+        (b.connection_priority - a.connection_priority) ||
+        (b.business_fit_score - a.business_fit_score),
+    )
+    .slice(0, 8);
+  byId("adoptionTopRows").innerHTML = rows.map((item) => {
+    const stars = "★".repeat(Math.max(0, Math.min(5, Number(item.connection_priority) || 0)));
+    return `
+      <tr class="adoptionRow" data-name="${escapeHtml(item.name)}">
+        <td>${escapeHtml(item.name)}</td>
+        <td>${escapeHtml(item.category)}</td>
+        <td class="priorityStars">${stars}</td>
+        <td class="adoptionBars">
+          <div class="miniBarTrack"><span class="miniBarFit" data-ratio="${clamp100(item.business_fit_score)}"></span></div>
+          <div class="miniBarTrack"><span class="miniBarInteg" data-ratio="${clamp100(item.integration_score)}"></span></div>
+        </td>
+        <td>${statusPill(item.connection_status)}</td>
+      </tr>
+    `;
+  }).join("");
+  // CSP blocks style attributes in generated HTML; widths set via CSSOM.
+  document.querySelectorAll("#adoptionTopRows .miniBarFit, #adoptionTopRows .miniBarInteg").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
+  document.querySelectorAll("#adoptionTopRows .adoptionRow").forEach((row) => {
+    row.addEventListener("click", () => jumpToCatalog(row.dataset.name));
   });
 }
 
@@ -239,29 +366,77 @@ function exportKind(name) {
   return "File";
 }
 
+// Icon label + color class per file type (see .exportIcon-* in styles.css).
+function exportIcon(name) {
+  if (name.endsWith(".md")) return { label: "MD", cls: "exportIcon-md" };
+  if (name.endsWith(".csv")) return { label: "CSV", cls: "exportIcon-csv" };
+  if (name.endsWith(".json")) return { label: "JSON", cls: "exportIcon-json" };
+  return { label: "FILE", cls: "exportIcon-file" };
+}
+
 function renderExports() {
-  byId("exportList").innerHTML = state.exports.map((item) => `
+  byId("exportList").innerHTML = state.exports.map((item) => {
+    const icon = exportIcon(item.name);
+    return `
     <article class="exportItem">
-      <div>
-        <strong>${escapeHtml(item.name)}</strong>
-        <span>${exportKind(item.name)} / 本番データ成果物</span>
+      <div class="exportItemHead">
+        <span class="exportIcon ${icon.cls}">${icon.label}</span>
+        <div>
+          <strong>${escapeHtml(item.name)}</strong>
+          <span>${exportKind(item.name)} / 本番データ成果物</span>
+        </div>
       </div>
       <div class="exportActions">
         <a href="${safeUrl(item.url)}" target="_blank" rel="noreferrer">開く</a>
         <a href="${safeUrl(item.download_url || `${item.url}?download=1`)}" download>ダウンロード</a>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
+
+  const downloadAll = byId("downloadAllExports");
+  if (downloadAll) {
+    downloadAll.addEventListener("click", () => {
+      state.exports.forEach((item, index) => {
+        // Stagger clicks so the browser does not drop concurrent downloads.
+        setTimeout(() => {
+          const anchor = document.createElement("a");
+          anchor.setAttribute("href", safeUrl(item.download_url || `${item.url}?download=1`));
+          anchor.setAttribute("download", "");
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+        }, index * 400);
+      });
+    });
+  }
 }
 
 // CSP blocks style attributes in generated HTML, so status colors are
 // applied through CSS classes (see .statusColor-* in styles.css).
+// The six-status palette is shared by map markers, feature dots, the fitness
+// scatter, status bars, legend and adoption pills.
+function statusColorClassByName(status) {
+  switch (status) {
+    case "実装接続済":
+      return "statusColor-impl";
+    case "本格利用候補":
+      return "statusColor-full";
+    case "接続検証済":
+      return "statusColor-verified";
+    case "接続候補":
+      return "statusColor-candidate";
+    case "調査中":
+      return "statusColor-survey";
+    case "保留":
+      return "statusColor-hold";
+    default:
+      return "statusColor-other";
+  }
+}
+
 function statusColorClass(feature) {
-  if (feature.connection_status === "本格利用候補") return "statusColor-full";
-  if (feature.connection_status === "実装接続済") return "statusColor-impl";
-  if (feature.connection_status === "接続検証済") return "statusColor-verified";
-  if (feature.connection_status === "保留") return "statusColor-hold";
-  return "statusColor-other";
+  return statusColorClassByName(feature.connection_status);
 }
 
 function markerIcon(feature) {
@@ -337,6 +512,7 @@ const BASE_MAPS = [
     id: "osm",
     name: "OSM 標準",
     catalogId: "OSM-TILE-001",
+    dotClass: "layerDot-osm",
     url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors",
@@ -345,6 +521,7 @@ const BASE_MAPS = [
     id: "osm_hot",
     name: "Humanitarian (HOT)",
     catalogId: "OSM-HOT",
+    dotClass: "layerDot-hot",
     url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
     subdomains: "abc",
     maxZoom: 19,
@@ -354,6 +531,7 @@ const BASE_MAPS = [
     id: "osm_cyclosm",
     name: "CyclOSM",
     catalogId: "OSM-CYCLOSM",
+    dotClass: "layerDot-cyclosm",
     url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
     subdomains: "abc",
     maxZoom: 19,
@@ -363,6 +541,7 @@ const BASE_MAPS = [
     id: "gsi_pale",
     name: "地理院 淡色地図",
     catalogId: "GSI-PALE",
+    dotClass: "layerDot-gsi",
     url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
     maxZoom: 18,
     attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
@@ -371,11 +550,25 @@ const BASE_MAPS = [
     id: "gsi_std",
     name: "地理院 標準地図",
     catalogId: "GSI-STD",
+    dotClass: "layerDot-gsi",
     url: "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
     maxZoom: 18,
     attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
   },
 ];
+
+// A translucent overlay badge on the map showing the active base layer.
+// Created lazily because Leaflet manages the #map container's children.
+function updateCurrentLayerBadge(name) {
+  let badge = byId("currentLayerBadge");
+  if (!badge) {
+    badge = document.createElement("div");
+    badge.id = "currentLayerBadge";
+    badge.className = "currentLayerBadge";
+    byId("map").appendChild(badge);
+  }
+  badge.textContent = `CURRENT LAYER: ${name}`;
+}
 
 function setBaseMap(id) {
   const entry = BASE_MAPS.find((base) => base.id === id) || BASE_MAPS[0];
@@ -383,12 +576,14 @@ function setBaseMap(id) {
   const options = { maxZoom: entry.maxZoom, attribution: entry.attribution };
   if (entry.subdomains) options.subdomains = entry.subdomains;
   state.baseLayer = L.tileLayer(entry.url, options).addTo(state.map);
+  updateCurrentLayerBadge(entry.name);
 }
 
 function renderBaseMapList() {
   byId("baseMapList").innerHTML = BASE_MAPS.map((base, index) => `
     <label class="layerToggle">
       <input type="radio" name="baseMap" value="${escapeHtml(base.id)}" ${index === 0 ? "checked" : ""} />
+      <span class="layerDot ${base.dotClass}"></span>
       <span>${escapeHtml(base.name)}<small class="layerSubId">${escapeHtml(base.catalogId)}</small></span>
     </label>
   `).join("");
@@ -466,6 +661,32 @@ function initNav() {
   setView("dashboard");
 }
 
+function setNavBadges() {
+  byId("navBadgeCatalog").textContent = state.catalog.length;
+  byId("navBadgeMap").textContent = "OSM";
+  byId("navBadgeExports").textContent = state.exports.length;
+  const lastCheck = byId("sideLastCheck");
+  if (lastCheck) lastCheck.textContent = state.metadata.imported_at || "-";
+}
+
+// Light/dark theme via [data-theme] on <html>, persisted in localStorage.
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const toggle = byId("themeToggle");
+  if (toggle) toggle.textContent = theme === "dark" ? "☀" : "☾";
+}
+
+function initTheme() {
+  applyTheme(localStorage.getItem("theme") || "light");
+  const toggle = byId("themeToggle");
+  if (!toggle) return;
+  toggle.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    applyTheme(next);
+    localStorage.setItem("theme", next);
+  });
+}
+
 async function boot() {
   [state.summary, state.metadata, state.catalog, state.verification, state.exports, state.liveMap] = await Promise.all([
     loadJson("/api/summary"),
@@ -479,11 +700,15 @@ async function boot() {
   renderFilters();
   renderDistribution();
   renderFitnessMap();
+  renderTrustRegion();
+  renderAdoptionTop();
   renderCatalog();
   renderVerification();
   renderExports();
   initMap();
   initNav();
+  setNavBadges();
+  initTheme();
   ["searchInput", "categoryFilter", "statusFilter", "regionFilter", "trustRankFilter", "minPriorityFilter"].forEach((id) => {
     byId(id).addEventListener("input", renderCatalog);
     byId(id).addEventListener("change", renderCatalog);

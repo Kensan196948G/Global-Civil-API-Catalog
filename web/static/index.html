@@ -17,6 +17,7 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap"
     />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c08a2e'/%3E%3Ctext x='16' y='21' font-family='serif' font-weight='700' font-size='14' fill='%23fff' text-anchor='middle'%3EGC%3C/text%3E%3C/svg%3E" />
   </head>
   <body>
     <div class="appShell">
@@ -30,11 +31,24 @@
         </div>
         <nav class="sideNav" id="sideNav">
           <button type="button" class="navBtn active" data-view="dashboard">ダッシュボード</button>
-          <button type="button" class="navBtn" data-view="catalog">API台帳</button>
+          <button type="button" class="navBtn" data-view="catalog">API台帳<span class="navBadge" id="navBadgeCatalog"></span></button>
           <button type="button" class="navBtn" data-view="flow">API活用フロー</button>
-          <button type="button" class="navBtn" data-view="map">ライブマップ</button>
-          <button type="button" class="navBtn" data-view="exports">成果物エクスポート</button>
+          <button type="button" class="navBtn" data-view="map">ライブマップ<span class="navBadge" id="navBadgeMap"></span></button>
+          <button type="button" class="navBtn" data-view="exports">成果物エクスポート<span class="navBadge" id="navBadgeExports"></span></button>
         </nav>
+        <button type="button" class="themeToggle" id="themeToggle" aria-label="ライト・ダークテーマ切替">☾</button>
+        <div class="sideLegend">
+          <span class="sideLegendTitle">接続状態</span>
+          <ul class="legendList">
+            <li><span class="legendDot statusColor-impl"></span>実装接続済</li>
+            <li><span class="legendDot statusColor-full"></span>本格利用候補</li>
+            <li><span class="legendDot statusColor-verified"></span>接続検証済</li>
+            <li><span class="legendDot statusColor-candidate"></span>接続候補</li>
+            <li><span class="legendDot statusColor-survey"></span>調査中</li>
+            <li><span class="legendDot statusColor-hold"></span>保留</li>
+          </ul>
+          <p class="sideLastCheck">最終確認 <span id="sideLastCheck">-</span></p>
+        </div>
         <div class="serviceBox">
           <span class="statusDot"></span>
           <div>
@@ -70,7 +84,7 @@
                   <h2>カテゴリ分布</h2>
                   <p id="metadataLine">本番台帳メタデータを確認中</p>
                 </div>
-                <a class="textButton" href="/api/metadata" target="_blank" rel="noreferrer">metadata</a>
+                <button type="button" class="textButton" id="metadataToggle">metadata</button>
               </div>
               <div class="opsGrid">
                 <div><strong id="importedAt">-</strong><span>取込日</span></div>
@@ -78,6 +92,7 @@
                 <div><strong id="verificationCount">-</strong><span>検証件数</span></div>
                 <div><strong id="productionCoverage">-</strong><span>Production反映</span></div>
               </div>
+              <div id="metadataDetail" class="metadataDetail" hidden></div>
               <div id="categoryList" class="barList"></div>
             </article>
 
@@ -90,6 +105,44 @@
               </div>
               <div id="statusList" class="statusList"></div>
               <div id="verificationList" class="list compactList"></div>
+            </article>
+          </section>
+
+          <section class="dashboardGrid">
+            <article class="panel">
+              <div class="panelHeader">
+                <div>
+                  <h2>信頼度ランク×地域</h2>
+                  <p>信頼度ランク別の件数と、地域ごとの分布です。</p>
+                </div>
+              </div>
+              <div class="trustRegionGrid">
+                <div id="trustRankCards" class="trustRankCards"></div>
+                <div id="regionBars" class="barList"></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panelHeader">
+                <div>
+                  <h2>採用優先トップ</h2>
+                  <p>接続優先度・事業適合度の高い順トップ8。行クリックで台帳へ。</p>
+                </div>
+              </div>
+              <div class="tableWrap">
+                <table class="adoptionTable">
+                  <thead>
+                    <tr>
+                      <th>API名</th>
+                      <th>カテゴリ</th>
+                      <th>優先度</th>
+                      <th>適合・連携</th>
+                      <th>状態</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adoptionTopRows"></tbody>
+                </table>
+              </div>
             </article>
           </section>
 
@@ -316,11 +369,12 @@ L.tileLayer(
                 <div class="mapSideSection">
                   <h3>凡例（接続状態）</h3>
                   <ul class="legendList">
-                    <li><span class="legendDot statusColor-full"></span>本格利用候補</li>
                     <li><span class="legendDot statusColor-impl"></span>実装接続済</li>
+                    <li><span class="legendDot statusColor-full"></span>本格利用候補</li>
                     <li><span class="legendDot statusColor-verified"></span>接続検証済</li>
+                    <li><span class="legendDot statusColor-candidate"></span>接続候補</li>
+                    <li><span class="legendDot statusColor-survey"></span>調査中</li>
                     <li><span class="legendDot statusColor-hold"></span>保留</li>
-                    <li><span class="legendDot statusColor-other"></span>その他</li>
                   </ul>
                 </div>
 
@@ -333,6 +387,7 @@ L.tileLayer(
                 </div>
               </aside>
             </div>
+            <p class="mapAttribution">© OpenStreetMap contributors ／ ODbL ／ タイル利用ポリシーに従って利用</p>
           </section>
         </div>
 
@@ -347,6 +402,7 @@ L.tileLayer(
               <a class="textButton" href="/api/export" target="_blank" rel="noreferrer">export index</a>
             </div>
             <div id="exportList" class="exportGrid"></div>
+            <button type="button" class="downloadAllButton" id="downloadAllExports">⬇ すべて順次ダウンロード</button>
           </section>
         </div>
       </main>
