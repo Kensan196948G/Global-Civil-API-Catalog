@@ -12,7 +12,9 @@
 
 ---
 
-## Linux（現行環境）
+## Linux（旧環境 / 参考）
+
+> ⚠️ 本番は Windows 完結（Task Scheduler 自動起動）へ移行済み。以下は旧 Linux 環境の参考情報です。
 
 ### 状態確認
 

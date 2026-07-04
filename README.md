@@ -2,8 +2,9 @@
 
 🏗️ **土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。**
 
-Web UI: **http://192.168.0.185:49231**  
-固定ポート: **49231**（変更しません）
+🖥️ 本番プラットフォーム: **Windows（Task Scheduler による OS 起動時自動起動）**  
+🔌 ポート: 既定 **49231**（競合時は空きポートへ自動移行し `deploy/PORT.lock` に記録）  
+🌐 アクセスURL: `.\deploy\register-windows-service.ps1 -Status` で現在の自動割当IP・ポートを確認
 
 ## このシステムで分かること
 
@@ -111,9 +112,9 @@ flowchart LR
 
 ### 🖥️ 社内IT部門・システム運用管理者向け
 
-このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。Web UIはDockerコンテナで起動します（Linux では `loginctl enable-linger` で常駐、Windows では Docker Desktop 自動起動）。
+このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。本番は **Windows ネイティブ Python + Task Scheduler** で OS 起動時に自動起動します（Docker は開発・検証用の代替手段）。
 
-**Linux（現行本番環境）**
+**Linux（旧環境 / 参考。本番は Windows 完結）**
 
 - 稼働URL: `http://192.168.0.185:49231`
 - 起動方式: systemd ユーザーサービス (`global-civil-api-catalog-web.service`)
@@ -133,7 +134,7 @@ flowchart LR
 .\make.ps1 check
 ```
 
-ダッシュボード: `http://localhost:49231`（同一端末から）/ `http://192.168.0.185:49231`（別端末から）  
+ダッシュボード: `http://localhost:49231`（同一端末から）/ 別端末からは `-Status` で表示される自動割当IPのURL  
 詳細: [運用メモ](docs/operations.md)
 
 ```mermaid
@@ -169,13 +170,13 @@ flowchart LR
 | 項目 | 件数 |
 |---|---:|
 | API・公開データ台帳 | 50件 |
-| 接続検証結果 | 10件 |
+| 接続検証結果 | 32件 |
 | 実装接続候補 | 5件 |
 | 本格利用候補 | 3件 |
 
 - データ状態: **production**
 - 取込元: `web/Global Civil API Catalog.html` のClaude Design本番台帳リソース
-- 確認API: `http://192.168.0.185:49231/api/metadata`
+- 確認API: `/api/metadata`（稼働ホスト上）
 
 本格利用候補:
 - 🗺️ 地理院標準地図タイル

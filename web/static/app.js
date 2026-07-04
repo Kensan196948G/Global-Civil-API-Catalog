@@ -81,6 +81,7 @@ function renderSummary() {
   byId("candidateCount").textContent = state.summary.candidate_count;
   byId("avgFit").textContent = average(state.catalog, "business_fit_score");
   byId("avgInt").textContent = average(state.catalog, "integration_score");
+  byId("serviceHost").textContent = window.location.host;
   byId("metadataLine").textContent = `本番台帳 ${state.metadata.record_count}件を反映（${state.metadata.imported_at} 更新）`;
   byId("importedAt").textContent = state.metadata.imported_at;
   byId("sourceName").textContent = state.metadata.source;
