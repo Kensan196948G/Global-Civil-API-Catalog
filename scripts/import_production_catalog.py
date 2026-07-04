@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import base64
 import gzip
 import hashlib
@@ -16,6 +17,7 @@ from scripts.catalog_utils import (  # noqa: E402
     CATALOG_METADATA_PATH,
     CATALOG_PATH,
     ROOT,
+    VERIFICATION_PATH,
     load_catalog,
     load_verification_results,
     write_json,
@@ -44,7 +46,9 @@ def _decode_resource(manifest: dict[str, Any], uuid: str) -> bytes:
     return raw
 
 
-def load_design_resources() -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, str]]:
+def load_design_resources() -> tuple[
+    list[dict[str, Any]], list[dict[str, Any]], dict[str, str]
+]:
     html = DESIGN_HTML_PATH.read_text(encoding="utf-8")
     manifest = json.loads(_script_content(html, "__bundler/manifest"))
     resources = json.loads(_script_content(html, "__bundler/ext_resources"))
@@ -54,7 +58,9 @@ def load_design_resources() -> tuple[list[dict[str, Any]], list[dict[str, Any]],
         decoded[resource["id"]] = _decode_resource(manifest, resource["uuid"])
 
     if "catalog" not in decoded or "verification" not in decoded:
-        raise ValueError("design bundle must include catalog and verification resources")
+        raise ValueError(
+            "design bundle must include catalog and verification resources"
+        )
 
     hashes = {
         "design_html_sha256": hashlib.sha256(DESIGN_HTML_PATH.read_bytes()).hexdigest(),
@@ -97,21 +103,63 @@ def merge_catalog(
     return merged
 
 
-def main() -> int:
+def check_verification_consistency(
+    production_verification: list[dict[str, Any]],
+    current_verification: list[dict[str, Any]],
+    keep_local_verification: bool,
+) -> None:
+    """Guard the bundle/canonical verification equality unless explicitly kept local.
+
+    When ``keep_local_verification`` is set the canonical ``verification_results.json``
+    is treated as authoritative (it advances via weekly live verification), so the
+    bundled snapshot is allowed to lag behind and no equality check is enforced.
+    """
+    if keep_local_verification:
+        return
+    if production_verification != current_verification:
+        raise ValueError(
+            "production verification data differs from canonical verification data"
+        )
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Import the production catalog bundle."
+    )
+    parser.add_argument(
+        "--keep-local-verification",
+        action="store_true",
+        help=(
+            "Keep the canonical data/verification_results.json as authoritative and "
+            "skip the bundle/canonical verification equality check."
+        ),
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    keep_local_verification = args.keep_local_verification
+
     imported_at = date.today().isoformat()
     production_catalog, production_verification, hashes = load_design_resources()
     current_catalog = load_catalog()
     current_verification = load_verification_results()
 
-    if production_verification != current_verification:
-        raise ValueError("production verification data differs from canonical verification data")
+    check_verification_consistency(
+        production_verification, current_verification, keep_local_verification
+    )
+    if keep_local_verification:
+        hashes["verification_sha256"] = hashlib.sha256(
+            VERIFICATION_PATH.read_bytes()
+        ).hexdigest()
 
     merged_catalog = merge_catalog(production_catalog, current_catalog, imported_at)
     metadata = {
         "dataset_name": "Global Civil API Catalog production catalog",
         "catalog_mode": "production",
         "source": PRODUCTION_SOURCE,
-        "source_path": str(DESIGN_HTML_PATH.relative_to(ROOT)),
+        "source_path": DESIGN_HTML_PATH.relative_to(ROOT).as_posix(),
         "imported_at": imported_at,
         "record_count": len(merged_catalog),
         "verification_count": len(current_verification),

@@ -3,11 +3,11 @@
   "catalog_mode": "production",
   "source": "claude-design-bundle",
   "source_path": "web/Global Civil API Catalog.html",
-  "imported_at": "2026-06-18",
+  "imported_at": "2026-07-04",
   "record_count": 50,
-  "verification_count": 30,
+  "verification_count": 32,
   "merge_policy": "Production bundle fields are authoritative; local enrichment fields such as usage_summary and usage_notes are preserved.",
-  "design_html_sha256": "cdeb157d6e6f77832771eec9ed3458bdf752d09c68fb73fb9812a094480998c6",
-  "catalog_sha256": "2472ff7722b36fa26017ddce5f013a7fdf604ad1fef7e792fd7b2ef80cb51ced",
-  "verification_sha256": "67d0e34453cef032dd1b4f3ed0ec7474d7ce84c6c26386e0b7c2cecc9177d64a"
+  "design_html_sha256": "85264f189ef076513e79c2265abd33e40e118ada9d7bc7434e715863126ac880",
+  "catalog_sha256": "51c4c9d3b4a34fab31b1bed229ada21bf37211fdfe55526fe9b12480847d35ca",
+  "verification_sha256": "f2a7d696ff502c48c431068a3c8e15a795a7647c66bb5358d8c0bf803e95f655"
 }

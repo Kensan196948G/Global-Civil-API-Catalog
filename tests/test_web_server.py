@@ -62,6 +62,64 @@ def test_live_map_ui_has_base_map_and_opacity_controls() -> None:
     assert "tileLayer.addTo(state.map)" not in js
 
 
+def test_dashboard_has_fitness_map_and_osm_base_variants() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="fitnessMap"' in html
+    assert "renderFitnessMap" in js
+    assert "採用ダッシュボード" in js
+    # OSM live-connection base map variants from the design bundle.
+    for catalog_id in ("OSM-TILE-001", "OSM-HOT", "OSM-CYCLOSM"):
+        assert catalog_id in js
+
+
+def test_ui_has_six_status_palette_and_design_enhancements() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+    css = Path(ROOT / "web" / "static" / "styles.css").read_text(encoding="utf-8")
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    # Six-status connection palette classes.
+    for klass in (
+        "statusColor-impl",
+        "statusColor-full",
+        "statusColor-verified",
+        "statusColor-candidate",
+        "statusColor-survey",
+        "statusColor-hold",
+    ):
+        assert f".{klass}" in css
+        assert klass in js
+
+    # Fitness scatter axis ticks and design-spec coordinate mapping.
+    assert "fitnessTick" in js
+    assert "fitnessTick" in css
+    assert "fitnessMap01" in js
+
+    # Current-layer overlay badge on the live map.
+    assert "currentLayerBadge" in js
+    assert ".currentLayerBadge" in css
+
+    # Light/dark theme toggle.
+    assert 'id="themeToggle"' in html
+    assert 'data-theme="dark"' in css
+    assert "localStorage" in js
+
+    # Sidebar nav count badges.
+    assert 'id="navBadgeCatalog"' in html
+    assert ".navBadge" in css
+    assert "setNavBadges" in js
+
+
+def test_catalog_links_are_scheme_validated() -> None:
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert "function safeUrl" in js
+    # Every dynamic href must go through safeUrl, not bare escapeHtml.
+    assert 'href="${escapeHtml(' not in js
+    assert 'href="${item.' not in js
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {
@@ -81,9 +139,7 @@ def test_live_map_payload_uses_catalog_data() -> None:
             "license_note": "attribution",
         }
     ]
-    results = [
-        {"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"}
-    ]
+    results = [{"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"}]
 
     payload = live_map_payload(catalog, results)
 

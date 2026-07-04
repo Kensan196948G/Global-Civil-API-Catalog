@@ -28,13 +28,25 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+// href values need scheme validation on top of HTML escaping: catalog data
+// could otherwise smuggle javascript: or other dangerous schemes into links.
+function safeUrl(value) {
+  const url = String(value || "").trim();
+  if (url.startsWith("/")) return escapeHtml(url);
+  try {
+    const protocol = new URL(url).protocol;
+    if (protocol === "http:" || protocol === "https:") return escapeHtml(url);
+  } catch {
+    // fall through: not a parseable absolute URL
+  }
+  return "#";
+}
+
 function badge(value) {
   const text = escapeHtml(value || "-");
-  const klass = value === "success" || value === "A" || value === "本格利用候補" || value === "production"
-    ? "good"
-    : value === "warning" || value === "保留" || value === "調査中"
-      ? "warn"
-      : "";
+  const goodValues = new Set(["success", "接続成功", "A", "本格利用候補", "production"]);
+  const warnValues = new Set(["warning", "要確認", "接続失敗", "保留", "調査中"]);
+  const klass = goodValues.has(value) ? "good" : warnValues.has(value) ? "warn" : "";
   return `<span class="badge ${klass}">${text}</span>`;
 }
 
@@ -69,7 +81,8 @@ function renderSummary() {
   byId("candidateCount").textContent = state.summary.candidate_count;
   byId("avgFit").textContent = average(state.catalog, "business_fit_score");
   byId("avgInt").textContent = average(state.catalog, "integration_score");
-  byId("metadataLine").textContent = `${state.metadata.source_path} から ${state.metadata.record_count}件を本番反映`;
+  byId("serviceHost").textContent = window.location.host;
+  byId("metadataLine").textContent = `本番台帳 ${state.metadata.record_count}件を反映（${state.metadata.imported_at} 更新）`;
   byId("importedAt").textContent = state.metadata.imported_at;
   byId("sourceName").textContent = state.metadata.source;
   const productionCount = state.catalog.filter((item) => item.catalog_mode === "production").length;
@@ -104,14 +117,138 @@ function renderDistribution() {
   });
 
   const statusCounts = countBy(state.catalog, "connection_status");
-  byId("statusList").innerHTML = Object.entries(statusCounts)
+  const maxStatus = Math.max(1, ...Object.values(statusCounts));
+  // Known statuses render in the design's fixed order; any extras follow.
+  const orderedStatuses = [
+    ...STATUS_ORDER.filter((name) => statusCounts[name]),
+    ...Object.keys(statusCounts).filter((name) => !STATUS_ORDER.includes(name)),
+  ];
+  byId("statusList").innerHTML = orderedStatuses.map((name) => `
+    <div class="statusItem">
+      <span class="statusItemLabel">${escapeHtml(name)}</span>
+      <div class="statusBarTrack"><span class="${statusColorClassByName(name)}" data-ratio="${(statusCounts[name] / maxStatus) * 100}"></span></div>
+      <strong>${statusCounts[name]}</strong>
+    </div>
+  `).join("");
+  // CSP blocks style attributes in generated HTML; widths set via CSSOM.
+  document.querySelectorAll("#statusList .statusBarTrack span").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
+}
+
+const STATUS_ORDER = ["実装接続済", "本格利用候補", "接続検証済", "接続候補", "調査中", "保留"];
+
+// A small status pill (colored dot + label) reused by the adoption-top table.
+function statusPill(status) {
+  return `<span class="statusPill"><span class="statusPillDot ${statusColorClassByName(status)}"></span>${escapeHtml(status || "-")}</span>`;
+}
+
+// Maps a 40-100 score onto a 0-1 axis position (design spec), clamped so
+// out-of-range values stay inside the plot area.
+function fitnessMap01(value) {
+  return Math.max(0, Math.min(1, (Number(value) - 40) / 60));
+}
+
+function renderFitnessMap() {
+  const container = byId("fitnessMap");
+  const items = state.catalog.filter(
+    (item) => Number.isFinite(item.business_fit_score) && Number.isFinite(item.integration_score),
+  );
+  byId("fitnessCount").textContent = `N=${items.length}`;
+  const dots = items.map((item) => `
+    <span class="fitnessDot ${statusColorClass(item)}"
+      data-name="${escapeHtml(item.name)}"
+      data-x="${item.business_fit_score}" data-y="${item.integration_score}"
+      data-size="${8 + Number(item.connection_priority || 2) * 3}"
+      title="${escapeHtml(item.name)}｜事業適合度 ${item.business_fit_score}／連携実装性 ${item.integration_score}／優先度 ${escapeHtml(String(item.connection_priority))}"></span>
+  `).join("");
+  const ticks = `
+    <span class="fitnessTick fitnessTickYTop">100</span>
+    <span class="fitnessTick fitnessTickYBottom">40</span>
+    <span class="fitnessTick fitnessTickXLeft">40</span>
+    <span class="fitnessTick fitnessTickXRight">100 →</span>
+  `;
+  container.innerHTML = dots + ticks;
+  // Position via CSSOM because the CSP blocks style attributes in generated HTML.
+  container.querySelectorAll(".fitnessDot").forEach((dot) => {
+    const size = Number(dot.dataset.size);
+    const x = fitnessMap01(dot.dataset.x) * 100;
+    const y = fitnessMap01(dot.dataset.y) * 100;
+    dot.style.width = `${size}px`;
+    dot.style.height = `${size}px`;
+    dot.style.left = `calc(${x}% - ${size / 2}px)`;
+    dot.style.bottom = `calc(${y}% - ${size / 2}px)`;
+    // Clicking a point jumps to the catalog view filtered to that API.
+    dot.addEventListener("click", () => {
+      setView("catalog");
+      byId("searchInput").value = dot.dataset.name;
+      renderCatalog();
+    });
+  });
+}
+
+function renderTrustRegion() {
+  const trustCounts = countBy(state.catalog, "trust_rank");
+  byId("trustRankCards").innerHTML = ["A", "B", "C"].map((rank) => `
+    <div class="trustCard trustCard-${rank}">
+      <strong>${trustCounts[rank] || 0}</strong>
+      <span>信頼度 ${rank}</span>
+    </div>
+  `).join("");
+
+  const regionCounts = countBy(state.catalog, "region");
+  const maxRegion = Math.max(1, ...Object.values(regionCounts));
+  byId("regionBars").innerHTML = Object.entries(regionCounts)
     .sort((a, b) => b[1] - a[1])
     .map(([name, count]) => `
-      <div class="statusItem">
-        ${badge(name)}
-        <strong>${count}</strong>
+      <div class="barItem">
+        <div><strong>${escapeHtml(name)}</strong><span>${count}件</span></div>
+        <div class="barTrack"><span class="regionBar" data-ratio="${(count / maxRegion) * 100}"></span></div>
       </div>
     `).join("");
+  // CSP blocks style attributes in generated HTML; widths set via CSSOM.
+  document.querySelectorAll("#regionBars .regionBar").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
+}
+
+function jumpToCatalog(name) {
+  setView("catalog");
+  byId("searchInput").value = name;
+  renderCatalog();
+}
+
+function renderAdoptionTop() {
+  const clamp100 = (value) => Math.max(0, Math.min(100, Number(value) || 0));
+  const rows = [...state.catalog]
+    .sort(
+      (a, b) =>
+        (b.connection_priority - a.connection_priority) ||
+        (b.business_fit_score - a.business_fit_score),
+    )
+    .slice(0, 8);
+  byId("adoptionTopRows").innerHTML = rows.map((item) => {
+    const stars = "★".repeat(Math.max(0, Math.min(5, Number(item.connection_priority) || 0)));
+    return `
+      <tr class="adoptionRow" data-name="${escapeHtml(item.name)}">
+        <td>${escapeHtml(item.name)}</td>
+        <td>${escapeHtml(item.category)}</td>
+        <td class="priorityStars">${stars}</td>
+        <td class="adoptionBars">
+          <div class="miniBarTrack"><span class="miniBarFit" data-ratio="${clamp100(item.business_fit_score)}"></span></div>
+          <div class="miniBarTrack"><span class="miniBarInteg" data-ratio="${clamp100(item.integration_score)}"></span></div>
+        </td>
+        <td>${statusPill(item.connection_status)}</td>
+      </tr>
+    `;
+  }).join("");
+  // CSP blocks style attributes in generated HTML; widths set via CSSOM.
+  document.querySelectorAll("#adoptionTopRows .miniBarFit, #adoptionTopRows .miniBarInteg").forEach((bar) => {
+    bar.style.width = `${bar.dataset.ratio}%`;
+  });
+  document.querySelectorAll("#adoptionTopRows .adoptionRow").forEach((row) => {
+    row.addEventListener("click", () => jumpToCatalog(row.dataset.name));
+  });
 }
 
 function filteredCatalog() {
@@ -166,9 +303,9 @@ function renderCatalog() {
           <summary>${escapeHtml(item.usage_summary || "利用説明を確認")}</summary>
           <p>${escapeHtml(item.usage_notes || "").replaceAll("\n", "<br>")}</p>
           <div class="detailLinks">
-            <a href="${escapeHtml(item.official_url)}" target="_blank" rel="noreferrer">公式</a>
-            <a href="${escapeHtml(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
-            ${item.sample_endpoint ? `<a href="${escapeHtml(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
+            <a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer">公式</a>
+            <a href="${safeUrl(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
+            ${item.sample_endpoint ? `<a href="${safeUrl(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
           </div>
           <small>形式: ${escapeHtml((item.data_formats || []).join(", "))}</small>
           ${scoreBreakdownHtml(item)}
@@ -182,13 +319,14 @@ function renderVerification() {
   const latestRows = [...state.verification]
     .sort((a, b) => b.verified_at.localeCompare(a.verified_at))
     .slice(0, 5);
+  const resultLabel = { success: "接続成功", failure: "接続失敗", warning: "要確認", skipped: "スキップ" };
   byId("verificationList").innerHTML = latestRows.map((item) => `
     <div class="listItem">
       <div>
         <strong>${escapeHtml(item.api_id)}</strong>
-        <span>${escapeHtml(item.verified_at)} / ${escapeHtml(item.note || "")}</span>
+        <span>${escapeHtml(String(item.verified_at).slice(0, 10))} 検証</span>
       </div>
-      ${badge(item.result)}
+      ${badge(resultLabel[item.result] || item.result)}
     </div>
   `).join("");
 }
@@ -200,29 +338,77 @@ function exportKind(name) {
   return "File";
 }
 
+// Icon label + color class per file type (see .exportIcon-* in styles.css).
+function exportIcon(name) {
+  if (name.endsWith(".md")) return { label: "MD", cls: "exportIcon-md" };
+  if (name.endsWith(".csv")) return { label: "CSV", cls: "exportIcon-csv" };
+  if (name.endsWith(".json")) return { label: "JSON", cls: "exportIcon-json" };
+  return { label: "FILE", cls: "exportIcon-file" };
+}
+
 function renderExports() {
-  byId("exportList").innerHTML = state.exports.map((item) => `
+  byId("exportList").innerHTML = state.exports.map((item) => {
+    const icon = exportIcon(item.name);
+    return `
     <article class="exportItem">
-      <div>
-        <strong>${escapeHtml(item.name)}</strong>
-        <span>${exportKind(item.name)} / 本番データ成果物</span>
+      <div class="exportItemHead">
+        <span class="exportIcon ${icon.cls}">${icon.label}</span>
+        <div>
+          <strong>${escapeHtml(item.name)}</strong>
+          <span>${exportKind(item.name)} / 本番データ成果物</span>
+        </div>
       </div>
       <div class="exportActions">
-        <a href="${item.url}" target="_blank" rel="noreferrer">開く</a>
-        <a href="${item.download_url || `${item.url}?download=1`}" download>ダウンロード</a>
+        <a href="${safeUrl(item.url)}" target="_blank" rel="noreferrer">開く</a>
+        <a href="${safeUrl(item.download_url || `${item.url}?download=1`)}" download>ダウンロード</a>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
+
+  const downloadAll = byId("downloadAllExports");
+  if (downloadAll) {
+    downloadAll.addEventListener("click", () => {
+      state.exports.forEach((item, index) => {
+        // Stagger clicks so the browser does not drop concurrent downloads.
+        setTimeout(() => {
+          const anchor = document.createElement("a");
+          anchor.setAttribute("href", safeUrl(item.download_url || `${item.url}?download=1`));
+          anchor.setAttribute("download", "");
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+        }, index * 400);
+      });
+    });
+  }
 }
 
 // CSP blocks style attributes in generated HTML, so status colors are
 // applied through CSS classes (see .statusColor-* in styles.css).
+// The six-status palette is shared by map markers, feature dots, the fitness
+// scatter, status bars, legend and adoption pills.
+function statusColorClassByName(status) {
+  switch (status) {
+    case "実装接続済":
+      return "statusColor-impl";
+    case "本格利用候補":
+      return "statusColor-full";
+    case "接続検証済":
+      return "statusColor-verified";
+    case "接続候補":
+      return "statusColor-candidate";
+    case "調査中":
+      return "statusColor-survey";
+    case "保留":
+      return "statusColor-hold";
+    default:
+      return "statusColor-other";
+  }
+}
+
 function statusColorClass(feature) {
-  if (feature.connection_status === "本格利用候補") return "statusColor-full";
-  if (feature.connection_status === "実装接続済") return "statusColor-impl";
-  if (feature.connection_status === "接続検証済") return "statusColor-verified";
-  if (feature.connection_status === "保留") return "statusColor-hold";
-  return "statusColor-other";
+  return statusColorClassByName(feature.connection_status);
 }
 
 function markerIcon(feature) {
@@ -295,42 +481,82 @@ function renderLayerList() {
 
 const BASE_MAPS = [
   {
-    id: "gsi_pale",
-    name: "地理院 淡色地図",
-    url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
-    maxZoom: 18,
-    attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
-  },
-  {
     id: "osm",
-    name: "OpenStreetMap",
+    name: "OSM 標準",
+    catalogId: "OSM-TILE-001",
+    dotClass: "layerDot-osm",
     url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors",
   },
   {
+    id: "osm_hot",
+    name: "Humanitarian (HOT)",
+    catalogId: "OSM-HOT",
+    dotClass: "layerDot-hot",
+    url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    subdomains: "abc",
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors, Tiles style by HOT",
+  },
+  {
+    id: "osm_cyclosm",
+    name: "CyclOSM",
+    catalogId: "OSM-CYCLOSM",
+    dotClass: "layerDot-cyclosm",
+    url: "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
+    subdomains: "abc",
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors, Tiles style by CyclOSM",
+  },
+  {
+    id: "gsi_pale",
+    name: "地理院 淡色地図",
+    catalogId: "GSI-PALE",
+    dotClass: "layerDot-gsi",
+    url: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+    maxZoom: 18,
+    attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
+  },
+  {
     id: "gsi_std",
     name: "地理院 標準地図",
+    catalogId: "GSI-STD",
+    dotClass: "layerDot-gsi",
     url: "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
     maxZoom: 18,
     attribution: "&copy; <a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>",
   },
 ];
 
+// A translucent overlay badge on the map showing the active base layer.
+// Created lazily because Leaflet manages the #map container's children.
+function updateCurrentLayerBadge(name) {
+  let badge = byId("currentLayerBadge");
+  if (!badge) {
+    badge = document.createElement("div");
+    badge.id = "currentLayerBadge";
+    badge.className = "currentLayerBadge";
+    byId("map").appendChild(badge);
+  }
+  badge.textContent = `CURRENT LAYER: ${name}`;
+}
+
 function setBaseMap(id) {
   const entry = BASE_MAPS.find((base) => base.id === id) || BASE_MAPS[0];
   if (state.baseLayer) state.baseLayer.remove();
-  state.baseLayer = L.tileLayer(entry.url, {
-    maxZoom: entry.maxZoom,
-    attribution: entry.attribution,
-  }).addTo(state.map);
+  const options = { maxZoom: entry.maxZoom, attribution: entry.attribution };
+  if (entry.subdomains) options.subdomains = entry.subdomains;
+  state.baseLayer = L.tileLayer(entry.url, options).addTo(state.map);
+  updateCurrentLayerBadge(entry.name);
 }
 
 function renderBaseMapList() {
   byId("baseMapList").innerHTML = BASE_MAPS.map((base, index) => `
     <label class="layerToggle">
       <input type="radio" name="baseMap" value="${escapeHtml(base.id)}" ${index === 0 ? "checked" : ""} />
-      <span>${escapeHtml(base.name)}</span>
+      <span class="layerDot ${base.dotClass}"></span>
+      <span>${escapeHtml(base.name)}<small class="layerSubId">${escapeHtml(base.catalogId)}</small></span>
     </label>
   `).join("");
   document.querySelectorAll('input[name="baseMap"]').forEach((input) => {
@@ -374,10 +600,10 @@ function initMap() {
 }
 
 const VIEWS = {
-  dashboard: { kicker: "OVERVIEW", title: "ダッシュボード", sub: "🏗️ 土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。" },
+  dashboard: { kicker: "OVERVIEW", title: "採用ダッシュボード", sub: "スコア・接続ステータス・優先度の全体像" },
   catalog: { kicker: "LEDGER", title: "API・公開データ台帳", sub: "検索・絞り込み・スコア比較とAPI詳細を本番データで確認します。" },
   flow: { kicker: "HOW TO USE", title: "API活用フロー", sub: "選定から本番実装までの5ステップと、データ形式別の接続早見表。" },
-  map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "公開タイルを実接続し、台帳のAPIを地図上で確認します。" },
+  map: { kicker: "LIVE MAP", title: "地理空間ライブマップ", sub: "OpenStreetMap のタイルを実接続して表示します。" },
   exports: { kicker: "EXPORTS", title: "成果物エクスポート", sub: "台帳データから各種ファイルを生成・出力します。" },
 };
 
@@ -407,6 +633,32 @@ function initNav() {
   setView("dashboard");
 }
 
+function setNavBadges() {
+  byId("navBadgeCatalog").textContent = state.catalog.length;
+  byId("navBadgeMap").textContent = "OSM";
+  byId("navBadgeExports").textContent = state.exports.length;
+  const lastCheck = byId("sideLastCheck");
+  if (lastCheck) lastCheck.textContent = state.metadata.imported_at || "-";
+}
+
+// Light/dark theme via [data-theme] on <html>, persisted in localStorage.
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const toggle = byId("themeToggle");
+  if (toggle) toggle.textContent = theme === "dark" ? "☀" : "☾";
+}
+
+function initTheme() {
+  applyTheme(localStorage.getItem("theme") || "light");
+  const toggle = byId("themeToggle");
+  if (!toggle) return;
+  toggle.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    applyTheme(next);
+    localStorage.setItem("theme", next);
+  });
+}
+
 async function boot() {
   [state.summary, state.metadata, state.catalog, state.verification, state.exports, state.liveMap] = await Promise.all([
     loadJson("/api/summary"),
@@ -419,11 +671,16 @@ async function boot() {
   renderSummary();
   renderFilters();
   renderDistribution();
+  renderFitnessMap();
+  renderTrustRegion();
+  renderAdoptionTop();
   renderCatalog();
   renderVerification();
   renderExports();
   initMap();
   initNav();
+  setNavBadges();
+  initTheme();
   ["searchInput", "categoryFilter", "statusFilter", "regionFilter", "trustRankFilter", "minPriorityFilter"].forEach((id) => {
     byId(id).addEventListener("input", renderCatalog);
     byId(id).addEventListener("change", renderCatalog);
