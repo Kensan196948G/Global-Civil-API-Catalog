@@ -44,11 +44,9 @@ function safeUrl(value) {
 
 function badge(value) {
   const text = escapeHtml(value || "-");
-  const klass = value === "success" || value === "A" || value === "本格利用候補" || value === "production"
-    ? "good"
-    : value === "warning" || value === "保留" || value === "調査中"
-      ? "warn"
-      : "";
+  const goodValues = new Set(["success", "接続成功", "A", "本格利用候補", "production"]);
+  const warnValues = new Set(["warning", "要確認", "接続失敗", "保留", "調査中"]);
+  const klass = goodValues.has(value) ? "good" : warnValues.has(value) ? "warn" : "";
   return `<span class="badge ${klass}">${text}</span>`;
 }
 
@@ -83,39 +81,11 @@ function renderSummary() {
   byId("candidateCount").textContent = state.summary.candidate_count;
   byId("avgFit").textContent = average(state.catalog, "business_fit_score");
   byId("avgInt").textContent = average(state.catalog, "integration_score");
-  byId("metadataLine").textContent = `${state.metadata.source_path} から ${state.metadata.record_count}件を本番反映`;
+  byId("metadataLine").textContent = `本番台帳 ${state.metadata.record_count}件を反映（${state.metadata.imported_at} 更新）`;
   byId("importedAt").textContent = state.metadata.imported_at;
   byId("sourceName").textContent = state.metadata.source;
   const productionCount = state.catalog.filter((item) => item.catalog_mode === "production").length;
   byId("productionCoverage").textContent = `${productionCount}/${state.catalog.length}`;
-  renderMetadataDetail();
-}
-
-const METADATA_LABELS = {
-  dataset_name: "データセット名",
-  catalog_mode: "カタログモード",
-  source: "取込元",
-  source_path: "取込元パス",
-  imported_at: "取込日",
-  record_count: "登録件数",
-  verification_count: "検証件数",
-  merge_policy: "マージ方針",
-  design_html_sha256: "デザインHTML SHA-256",
-  catalog_sha256: "台帳 SHA-256",
-  verification_sha256: "検証結果 SHA-256",
-};
-
-function renderMetadataDetail() {
-  const detail = byId("metadataDetail");
-  detail.innerHTML = Object.entries(state.metadata).map(([key, value]) => `
-    <div class="metadataRow">
-      <span>${escapeHtml(METADATA_LABELS[key] || key)}</span>
-      <code>${escapeHtml(String(value))}</code>
-    </div>
-  `).join("");
-  byId("metadataToggle").addEventListener("click", () => {
-    detail.hidden = !detail.hidden;
-  });
 }
 
 function renderFilters() {
@@ -348,13 +318,14 @@ function renderVerification() {
   const latestRows = [...state.verification]
     .sort((a, b) => b.verified_at.localeCompare(a.verified_at))
     .slice(0, 5);
+  const resultLabel = { success: "接続成功", failure: "接続失敗", warning: "要確認", skipped: "スキップ" };
   byId("verificationList").innerHTML = latestRows.map((item) => `
     <div class="listItem">
       <div>
         <strong>${escapeHtml(item.api_id)}</strong>
-        <span>${escapeHtml(item.verified_at)} / ${escapeHtml(item.note || "")}</span>
+        <span>${escapeHtml(String(item.verified_at).slice(0, 10))} 検証</span>
       </div>
-      ${badge(item.result)}
+      ${badge(resultLabel[item.result] || item.result)}
     </div>
   `).join("");
 }
