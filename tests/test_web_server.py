@@ -13,8 +13,16 @@ from web.server import (
 
 def test_latest_verification_prefers_newer_record() -> None:
     results = [
-        {"api_id": "A", "verified_at": "2026-01-01T00:00:00+09:00", "result": "failure"},
-        {"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"},
+        {
+            "api_id": "A",
+            "verified_at": "2026-01-01T00:00:00+09:00",
+            "result": "failure",
+        },
+        {
+            "api_id": "A",
+            "verified_at": "2026-06-18T00:00:00+09:00",
+            "result": "success",
+        },
     ]
 
     assert latest_verification(results)["A"]["result"] == "success"
@@ -36,6 +44,17 @@ def test_production_ui_sections_are_available() -> None:
     assert 'id="exports"' in text
 
 
+def test_live_map_ui_has_base_map_and_opacity_controls() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert 'id="baseMapList"' in html
+    assert 'id="overlayOpacity"' in html
+    # Overlays must not be stacked on the base map by default.
+    assert "setBaseMap" in js
+    assert "tileLayer.addTo(state.map)" not in js
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {
@@ -55,7 +74,9 @@ def test_live_map_payload_uses_catalog_data() -> None:
             "license_note": "attribution",
         }
     ]
-    results = [{"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"}]
+    results = [
+        {"api_id": "A", "verified_at": "2026-06-18T00:00:00+09:00", "result": "success"}
+    ]
 
     payload = live_map_payload(catalog, results)
 

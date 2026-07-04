@@ -947,6 +947,14 @@ details p {
   flex: none;
 }
 
+/* Connection-status colors shared by map markers, feature dots and legend.
+   Kept as classes because the CSP blocks inline style attributes. */
+.statusColor-full { background: #0f6f3c; }
+.statusColor-impl { background: #235789; }
+.statusColor-verified { background: #0b6b61; }
+.statusColor-hold { background: #9a5b00; }
+.statusColor-other { background: #6d7680; }
+
 .layerList {
   gap: 6px;
 }
@@ -972,6 +980,28 @@ details p {
   width: 15px;
   height: 15px;
   margin-top: 1px;
+  accent-color: var(--gold);
+}
+
+.opacityControl {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 9px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.opacityControl strong {
+  color: var(--ink);
+}
+
+.opacityControl input {
+  width: 100%;
   accent-color: var(--gold);
 }
 
