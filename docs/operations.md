@@ -128,7 +128,25 @@ Docker Desktop に依存せず、ネイティブ Python で OS 起動時に自�
 | ⏰ トリガー | OS 起動時（管理者権限が無い場合はログオン時へ自動フォールバック） |
 | 🔓 認証 | なし（社内 LAN 限定公開が前提） |
 
-> ⚠️ **既知の制約**: タスクは対話ユーザーのトークンで登録されるため、OS 起動時トリガーでも実際のサーバ起動は**該当ユーザーのログオン後**になります。ログオン不要の完全無人起動が必要な場合は、管理者権限で `Register-ScheduledTask -Principal (New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType S4U)` 相当の再登録が必要です。
+### 🔐 実行プリンシパル（-Principal / Issue #22）
+
+既定 (`Interactive`) はタスクが対話ユーザーのトークンで動作するため、**ログオフ/切断で常駐プロセスごと終了する**上、
+`GlobalCivilApiCatalog-Tunnel`（後述）は powershell ラッパー越しの起動になり Task Scheduler の `RestartCount` が機能しない欠陥がありました
+（2026-07-05 に Cloudflare Tunnel Error 1033 のダウンタイムとして顕在化・復旧済み）。
+
+`-Principal` パラメータで実行方式を切り替えられます。
+
+| 値 | 説明 | 用途 |
+|---|---|---|
+| `Interactive`（既定） | 現ユーザーの対話セッション依存。後方互換のため既定値のまま維持 | 旧構成との互換性が必要な場合のみ |
+| `S4U`（**本番採用・推奨**） | 現ユーザー権限のままログオン非依存で常駐。Task Scheduler がプロセスを直接監視するため `RestartCount`/`RestartInterval` が実際に機能する | 24/7 公開サービス（本プロジェクトの本番機はこれ） |
+| `LocalService` / `NetworkService` | Windows 組み込みサービスアカウントによる最小権限実行。本プロジェクトのフォルダ ACL（`icacls`で確認済み: `NT AUTHORITY\Authenticated Users:(M)` を継承）上は読み取り可能と推定されるが、本番未適用・追加検証推奨 | さらなる権限最小化が必要な場合 |
+
+```powershell
+# 本番で採用している再登録コマンド（ログオフ非依存・再発防止）
+.\deploy\register-windows-service.ps1 -Register -Principal S4U
+.\deploy\register-cloudflared.ps1 -Register -Principal S4U
+```
 
 サーバを直接起動する場合:
 
@@ -177,12 +195,11 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 ### サービス登録（OS 起動時自動起動）
 
 ```powershell
-.\deploy
-egister-cloudflared.ps1 -Install
-.\deploy
-egister-cloudflared.ps1 -Status
-.\deploy
-egister-cloudflared.ps1 -Uninstall
+.\deploy\register-cloudflared.ps1 -Register -Principal S4U   # 推奨（ログオフ非依存）
+.\deploy\register-cloudflared.ps1 -Status
+.\deploy\register-cloudflared.ps1 -Start
+.\deploy\register-cloudflared.ps1 -Stop
+.\deploy\register-cloudflared.ps1 -Unregister
 ```
 
 ### ⚠️ セキュリティ必須事項

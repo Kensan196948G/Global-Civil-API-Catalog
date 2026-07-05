@@ -16,7 +16,10 @@ param(
     [switch]$Unregister,
     [switch]$Status,
     [switch]$Start,
-    [switch]$Stop
+    [switch]$Stop,
+    # Interactive (既定・後方互換) / S4U (ログオン非依存・推奨) / LocalService / NetworkService (最小権限)
+    [ValidateSet('Interactive', 'S4U', 'LocalService', 'NetworkService')]
+    [string]$Principal = 'Interactive'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,6 +46,7 @@ if ($Unregister) {
         Write-Host "❌ 未登録です。-Register で登録してください。" -ForegroundColor Red
     } else {
         Write-Host "   📊 State : $($task.State)" -ForegroundColor Gray
+        Write-Host "   🔐 LogonType : $($task.Principal.LogonType) (UserId: $($task.Principal.UserId))" -ForegroundColor Gray
         & (Resolve-Cloudflared) tunnel --config $ConfigPath info gc-api-catalog 2>$null |
             Select-Object -First 6 | ForEach-Object { Write-Host "   $_" -ForegroundColor Gray }
         Write-Host "   🌐 https://api.mirai-dx-platform.com" -ForegroundColor Cyan
@@ -59,27 +63,56 @@ if ($Unregister) {
         exit 1
     }
     $cloudflared = Resolve-Cloudflared
-    # Hidden window: launch cloudflared through powershell Start-Process so the
-    # interactive-token scheduled task does not pop a console at logon.
-    $inner = "Start-Process -FilePath '$cloudflared' " +
-        "-ArgumentList 'tunnel','--config','$ConfigPath','run' -WindowStyle Hidden"
-    $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
-        -Argument "-NoProfile -NonInteractive -WindowStyle Hidden -Command `"$inner`"" `
-        -WorkingDirectory $ProjectRoot
+
+    if ($Principal -eq 'Interactive') {
+        # Hidden window: launch cloudflared through powershell Start-Process so the
+        # interactive-token scheduled task does not pop a console at logon.
+        # 既知の欠陥: Task Scheduler が監視するのはこの powershell.exe ラッパーのみで
+        # 即座に終了するため、cloudflared.exe が後でクラッシュしても RestartCount は働かない。
+        # 再発防止には -Principal S4U (推奨) を使うこと。
+        $inner = "Start-Process -FilePath '$cloudflared' " +
+            "-ArgumentList 'tunnel','--config','$ConfigPath','run' -WindowStyle Hidden"
+        $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
+            -Argument "-NoProfile -NonInteractive -WindowStyle Hidden -Command `"$inner`"" `
+            -WorkingDirectory $ProjectRoot
+    } else {
+        # S4U / LocalService / NetworkService は非対話セッションで実行されるため
+        # コンソールが表示されず、cloudflared.exe を直接アクションにできる。
+        # → Task Scheduler が実プロセスを監視し、RestartCount/RestartInterval が機能する。
+        $action = New-ScheduledTaskAction -Execute $cloudflared `
+            -Argument "tunnel --config `"$ConfigPath`" run" `
+            -WorkingDirectory $ProjectRoot
+    }
+
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
         -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1) -ExecutionTimeLimit ([TimeSpan]::Zero)
-    $trigger = New-ScheduledTaskTrigger -AtStartup
-    try {
+
+    if ($Principal -ne 'Interactive') {
+        $principalObj = switch ($Principal) {
+            'S4U'             { New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType S4U -RunLevel Limited }
+            'LocalService'    { New-ScheduledTaskPrincipal -UserId 'NT AUTHORITY\LocalService' -LogonType ServiceAccount -RunLevel Limited }
+            'NetworkService'  { New-ScheduledTaskPrincipal -UserId 'NT AUTHORITY\NetworkService' -LogonType ServiceAccount -RunLevel Limited }
+        }
+        $trigger = New-ScheduledTaskTrigger -AtStartup
         Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
-            -Description 'Cloudflare Tunnel: api.mirai-dx-platform.com -> localhost:49231' `
+            -Principal $principalObj `
+            -Description "Cloudflare Tunnel: api.mirai-dx-platform.com -> localhost:49231 (Principal=$Principal)" `
             -Force -ErrorAction Stop | Out-Null
-        Write-Host "✅ 登録完了 (OS 起動時 / AtStartup / バックグラウンド)" -ForegroundColor Green
-    } catch {
-        $trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
-        Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
-            -Description 'Cloudflare Tunnel: api.mirai-dx-platform.com -> localhost:49231' `
-            -Force -ErrorAction Stop | Out-Null
-        Write-Host "✅ 登録完了 (ログオン時 / AtLogOn へフォールバック)" -ForegroundColor Yellow
+        Write-Host "✅ 登録完了 (OS 起動時 / AtStartup / Principal: $Principal)" -ForegroundColor Green
+    } else {
+        $trigger = New-ScheduledTaskTrigger -AtStartup
+        try {
+            Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
+                -Description 'Cloudflare Tunnel: api.mirai-dx-platform.com -> localhost:49231' `
+                -Force -ErrorAction Stop | Out-Null
+            Write-Host "✅ 登録完了 (OS 起動時 / AtStartup / バックグラウンド)" -ForegroundColor Green
+        } catch {
+            $trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+            Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
+                -Description 'Cloudflare Tunnel: api.mirai-dx-platform.com -> localhost:49231' `
+                -Force -ErrorAction Stop | Out-Null
+            Write-Host "✅ 登録完了 (ログオン時 / AtLogOn へフォールバック)" -ForegroundColor Yellow
+        }
     }
     Write-Host "🔒 Cloudflare Zero Trust で Access ポリシー設定を推奨します（現状アプリ認証なし）。" -ForegroundColor Yellow
 }
