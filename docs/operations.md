@@ -212,6 +212,6 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 | 項目 | 値 |
 |---|---|
 | Access Application | `Global Civil API Catalog`（`api.mirai-dx-platform.com` 全体を保護） |
-| 許可ポリシー | メールアドレス `kensan1969@gmail.com` のみ許可（One-Time PIN 認証） |
+| 許可ポリシー | ドメイン `@mirai-const.co.jp` 全体 + メールアドレス `kensan1969@gmail.com`（いずれか一致・One-Time PIN 認証） |
 | 動作確認 | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み |
 | 変更方法 | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能 |
