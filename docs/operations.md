@@ -206,3 +206,12 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 
 - 本アプリは**ログイン認証なし**のため、公開前に Cloudflare Zero Trust ダッシュボードで **Access アプリケーション + ポリシー（許可メールアドレス等）** を必ず設定する
 - Access 未設定のままの公開は禁止（Security First）
+
+### ✅ Access 設定状況（2026-07-05 適用済み）
+
+| 項目 | 値 |
+|---|---|
+| Access Application | `Global Civil API Catalog`（`api.mirai-dx-platform.com` 全体を保護） |
+| 許可ポリシー | メールアドレス `kensan1969@gmail.com` のみ許可（One-Time PIN 認証） |
+| 動作確認 | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み |
+| 変更方法 | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能 |
