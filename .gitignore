@@ -24,3 +24,6 @@ $RECYCLE.BIN/
 
 # machine-specific tunnel config (credentials path contains local username)
 deploy/cloudflare/config.yml
+
+# Playwright MCP scratch data (session-scoped, not repo content)
+.playwright-mcp/

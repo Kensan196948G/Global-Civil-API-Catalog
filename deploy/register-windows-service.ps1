@@ -27,8 +27,18 @@
 .PARAMETER Port
     Web UI が listen するポート (既定: 49231)。
 
+.PARAMETER Principal
+    タスクの実行アカウント種別。既定は Interactive (現行動作を維持)。
+    - Interactive : 現ユーザーの対話セッション依存 (既定・後方互換)
+    - S4U         : 現ユーザー権限のままログオン非依存で実行 (ログオフ/切断でも常駐継続、推奨)
+    - LocalService / NetworkService : Windows 組み込みサービスアカウント (最小権限。
+      プロジェクトディレクトリへの読み取り ACL が必要。事前に -Status で動作確認すること)
+
 .EXAMPLE
     pwsh -NoProfile -File .\deploy\register-windows-service.ps1 -Register
+
+.EXAMPLE
+    pwsh -NoProfile -File .\deploy\register-windows-service.ps1 -Register -Principal S4U
 
 .EXAMPLE
     pwsh -NoProfile -File .\deploy\register-windows-service.ps1 -Status
@@ -40,7 +50,9 @@ param(
     [switch]$Status,
     [switch]$Start,
     [switch]$Stop,
-    [int]$Port = 49231
+    [int]$Port = 49231,
+    [ValidateSet('Interactive', 'S4U', 'LocalService', 'NetworkService')]
+    [string]$Principal = 'Interactive'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -121,6 +133,7 @@ function Invoke-Register {
     Write-Host "   📄 Server      : $ServerScript" -ForegroundColor Gray
     Write-Host "   📁 WorkingDir  : $ProjectRoot" -ForegroundColor Gray
     Write-Host "   🔌 Port        : $Port" -ForegroundColor Gray
+    Write-Host "   🔐 Principal   : $Principal" -ForegroundColor Gray
 
     # -Force で上書き登録する（先に削除すると登録失敗時に既存設定を失うため）
     $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
@@ -140,34 +153,57 @@ function Invoke-Register {
         -RestartInterval (New-TimeSpan -Minutes 1) `
         -ExecutionTimeLimit ([TimeSpan]::Zero)
 
-    # 第一候補: AtStartup (管理者権限が必要)
     $startupTrigger = New-ScheduledTaskTrigger -AtStartup
 
-    try {
-        Register-ScheduledTask -TaskName $TaskName `
-            -Action $action `
-            -Trigger $startupTrigger `
-            -Settings $settings `
-            -Description 'Global Civil API Catalog Web UI (native Python) auto-start at OS boot' `
-            -Force -ErrorAction Stop | Out-Null
-        Write-Host "✅ 登録完了 (トリガー: OS 起動時 / AtStartup)" -ForegroundColor Green
-    } catch {
-        Write-Host "⚠️ AtStartup 登録に失敗しました (管理者権限が必要な可能性)。" -ForegroundColor Yellow
-        Write-Host "   理由: $($_.Exception.Message)" -ForegroundColor Gray
-        Write-Host "🔧 ログオン時トリガー (AtLogOn / 現ユーザー) へフォールバックします..." -ForegroundColor Cyan
-
-        $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+    if ($Principal -ne 'Interactive') {
+        # S4U / LocalService / NetworkService: ログオン非依存で常駐し、Task Scheduler が
+        # プロセスを直接監視するため RestartCount/RestartInterval が実際に機能する。
+        $principalObj = switch ($Principal) {
+            'S4U'             { New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType S4U -RunLevel Limited }
+            'LocalService'    { New-ScheduledTaskPrincipal -UserId 'NT AUTHORITY\LocalService' -LogonType ServiceAccount -RunLevel Limited }
+            'NetworkService'  { New-ScheduledTaskPrincipal -UserId 'NT AUTHORITY\NetworkService' -LogonType ServiceAccount -RunLevel Limited }
+        }
         try {
             Register-ScheduledTask -TaskName $TaskName `
                 -Action $action `
-                -Trigger $logonTrigger `
+                -Trigger $startupTrigger `
                 -Settings $settings `
-                -Description 'Global Civil API Catalog Web UI (native Python) auto-start at user logon' `
+                -Principal $principalObj `
+                -Description "Global Civil API Catalog Web UI (native Python) auto-start at OS boot (Principal=$Principal)" `
                 -Force -ErrorAction Stop | Out-Null
-            Write-Host "✅ 登録完了 (トリガー: ログオン時 / AtLogOn / $env:USERNAME)" -ForegroundColor Green
+            Write-Host "✅ 登録完了 (トリガー: OS 起動時 / AtStartup / Principal: $Principal)" -ForegroundColor Green
         } catch {
-            Write-Host "❌ タスク登録に失敗しました: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "❌ タスク登録に失敗しました ($Principal): $($_.Exception.Message)" -ForegroundColor Red
             exit 1
+        }
+    } else {
+        # 第一候補: AtStartup (管理者権限が必要)
+        try {
+            Register-ScheduledTask -TaskName $TaskName `
+                -Action $action `
+                -Trigger $startupTrigger `
+                -Settings $settings `
+                -Description 'Global Civil API Catalog Web UI (native Python) auto-start at OS boot' `
+                -Force -ErrorAction Stop | Out-Null
+            Write-Host "✅ 登録完了 (トリガー: OS 起動時 / AtStartup)" -ForegroundColor Green
+        } catch {
+            Write-Host "⚠️ AtStartup 登録に失敗しました (管理者権限が必要な可能性)。" -ForegroundColor Yellow
+            Write-Host "   理由: $($_.Exception.Message)" -ForegroundColor Gray
+            Write-Host "🔧 ログオン時トリガー (AtLogOn / 現ユーザー) へフォールバックします..." -ForegroundColor Cyan
+
+            $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+            try {
+                Register-ScheduledTask -TaskName $TaskName `
+                    -Action $action `
+                    -Trigger $logonTrigger `
+                    -Settings $settings `
+                    -Description 'Global Civil API Catalog Web UI (native Python) auto-start at user logon' `
+                    -Force -ErrorAction Stop | Out-Null
+                Write-Host "✅ 登録完了 (トリガー: ログオン時 / AtLogOn / $env:USERNAME)" -ForegroundColor Green
+            } catch {
+                Write-Host "❌ タスク登録に失敗しました: $($_.Exception.Message)" -ForegroundColor Red
+                exit 1
+            }
         }
     }
 
@@ -199,6 +235,7 @@ function Invoke-Status {
     $info = Get-ScheduledTaskInfo -TaskName $TaskName -ErrorAction SilentlyContinue
     Write-Host "   ✅ 登録済み" -ForegroundColor Green
     Write-Host "   📊 State           : $($task.State)" -ForegroundColor Gray
+    Write-Host "   🔐 LogonType       : $($task.Principal.LogonType) (UserId: $($task.Principal.UserId))" -ForegroundColor Gray
     if ($null -ne $info) {
         Write-Host "   ⏱ LastRunTime      : $($info.LastRunTime)" -ForegroundColor Gray
         Write-Host "   🔢 LastTaskResult   : $($info.LastTaskResult)" -ForegroundColor Gray
