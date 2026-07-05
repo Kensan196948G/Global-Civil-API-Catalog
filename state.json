@@ -5,12 +5,12 @@
     "release_deadline": "2026-12-18",
     "phase_mode": "maintenance"
   },
-  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — PR#13 open, awaiting human merge decision",
+  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — production incident resolved (PR#29), awaiting human merge decisions on PR#24/#25/#29",
   "phase": "Verify",
   "kpi": {
     "success_rate_target": 0.9,
-    "ci_success_rate": 1.0,
-    "test_pass_rate": 1.0,
+    "ci_success_rate": 1,
+    "test_pass_rate": 1,
     "security_critical": 0,
     "blocker_count": 0
   },
@@ -18,7 +18,10 @@
     "max_duration_minutes": 180,
     "repair_count": 0,
     "max_repair": 3,
-    "same_error_limit": 2
+    "same_error_limit": 2,
+    "last_stop_at": "2026-07-04T07:29:26.524Z",
+    "current_session_start_at": "2026-07-04T23:50:37.656Z",
+    "last_trigger": "manual"
   },
   "automation": {
     "auto_issue_generation": true,
@@ -27,11 +30,21 @@
   "completed_issues": [
     "PR#7: catalog quality & score transparency (merged 2026-06-19)",
     "PR#9: Windows 11 compatibility + Claude/CodeRabbit config (merged 2026-06-20, sha=8be6223)",
-    "PR#10: catalog improvements P1-P4 — live verify, scheduled CI, classification, UI filters (merged 2026-06-20, sha=61000c3)"
+    "PR#10: catalog improvements P1-P4 — live verify, scheduled CI, classification, UI filters (merged 2026-06-20, sha=61000c3)",
+    "PR#11: security headers, JSON cache, filter_catalog refactor (merged)",
+    "PR#13: CI lint/pip-audit gate + Dependabot + README known-constraints (merged, sha=bc62382)",
+    "PR#15: connector unit test coverage expansion (merged)",
+    "PR#17: Windows 起動サービス登録 + 自動IP/空きポート検出 (merged)",
+    "PR#19: live map readability fix (merged)",
+    "PR#26: デザインバンドル100%適用 (merged)",
+    "PR#28: background service execution + Cloudflare Tunnel (merged, sha=f82074d) — Production Ready 達成"
   ],
   "blocked_issues": [],
   "pending_human_decision": [
-    "PR#13: chore CI lint/pip-audit gate + Dependabot + README known-constraints. CI green (validate workflow incl. new lint/security steps). Awaiting human merge approval per auto-merge-protocol (main branch PR requires explicit human choice)."
+    "PR#29: fix Web/Tunnel scheduled task principal (S4U) — production incident fix. CI green, CodeRabbit pass. Awaiting human merge approval (main branch).",
+    "PR#24: Dependabot actions/checkout v4->v7. CI green. Awaiting human merge approval (main branch, workflow file change).",
+    "PR#25: Dependabot actions/setup-python v5->v6. CI green. Awaiting human merge approval (main branch, workflow file change).",
+    "Issue #23: Cloudflare Access ポリシー（許可メールアドレス等）の決定はダッシュボード操作が必要なため人間側対応。Tunnel自体は稼働中。"
   ],
   "learning": {
     "failure_patterns": [],
@@ -41,7 +54,93 @@
       "CodeRabbit mergeStateStatus:UNSTABLE は name:null check の GitHub App artifact。レビューコメント本体で Critical/High=0 確認済みであれば merge 可",
       "CodeRabbit Quick win (末尾改行・URL統一) は merge 前に同ブランチで即修正してから merge するのが効率的",
       "新ワークフローファイルを含む PR は pull_request: synchronize が発火しない場合がある。空コミット push で回避可",
-      "scheduled-verify.yml: [skip ci] をコミットメッセージに入れることで週次検証の結果コミットが再度 CI を発火しないよう防止できる"
-    ]
+      "scheduled-verify.yml: [skip ci] をコミットメッセージに入れることで週次検証の結果コミットが再度 CI を発火しないよう防止できる",
+      "Windows Scheduled Task で detached プロセスを powershell Start-Process 経由で起動すると、Task Scheduler は即終了するラッパー側しか監視できず RestartCount が機能しない。対象exeを直接Actionにするか、LogonType=S4U/ServiceAccountにして直接実行すること",
+      "Task Scheduler の LogonType=Interactive はユーザーのログオフ/切断でプロセスごと終了する。24/7公開サービスは S4U (同一ユーザー権限のままログオン非依存) が有効"
+    ],
+    "usage_history": {
+      "agents": {
+        "security-reviewer": {
+          "call_count": 1,
+          "last_used": "2026-07-05T00:04:30.561Z",
+          "last_description": "Security scan of uncommitted ClaudeOS scaffold"
+        },
+        "_total_agent_calls": 1,
+        "_last_agent_call_at": "2026-07-05T00:04:30.561Z"
+      }
+    }
+  },
+  "dreaming": {
+    "patterns": [],
+    "curated_memories": [],
+    "recurring_mistakes": [],
+    "last_dreaming_run": null,
+    "dreaming_enabled": false
+  },
+  "warnings": [
+    {
+      "at": "2026-07-04T07:20:45.614Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 6 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "scripts/import_production_catalog.py",
+        "tests/test_connectors.py",
+        "tests/test_import_production.py",
+        "tests/test_web_server.py",
+        "web/server.py",
+        "web/static/app.js"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-04T07:27:56.474Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 6 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "scripts/import_production_catalog.py",
+        "tests/test_connectors.py",
+        "tests/test_import_production.py",
+        "tests/test_web_server.py",
+        "web/server.py",
+        "web/static/app.js"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-04T07:29:26.606Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 6 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "scripts/import_production_catalog.py",
+        "tests/test_connectors.py",
+        "tests/test_import_production.py",
+        "tests/test_web_server.py",
+        "web/server.py",
+        "web/static/app.js"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-05T00:00:00.000Z",
+      "kind": "production_incident",
+      "message": "api.mirai-dx-platform.com が Cloudflare Tunnel Error 1033 で応答不能 (ユーザー報告)。Web/Tunnel Scheduled Task 停止が原因。手動再起動で復旧確認 (200 OK) 後、PR#29 で恒久対策 (S4U principal 切替) を実施・本番適用済み。",
+      "files": [
+        "deploy/register-windows-service.ps1",
+        "deploy/register-cloudflared.ps1",
+        "docs/operations.md"
+      ],
+      "truncated": false
+    }
+  ],
+  "agent_teams_usage": {
+    "session_start_at": "2026-07-04T23:50:37.656Z",
+    "current_session": {
+      "team_create_count": 0,
+      "send_message_count": 1,
+      "teammates": [],
+      "patterns_used": [],
+      "last_activity_at": "2026-07-05T00:06:49.951Z"
+    },
+    "history": []
   }
 }
