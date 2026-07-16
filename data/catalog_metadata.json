@@ -5,7 +5,7 @@
   "source_path": "web/Global Civil API Catalog.html",
   "imported_at": "2026-07-04",
   "record_count": 50,
-  "verification_count": 32,
+  "verification_count": 30,
   "merge_policy": "Production bundle fields are authoritative; local enrichment fields such as usage_summary and usage_notes are preserved.",
   "design_html_sha256": "85264f189ef076513e79c2265abd33e40e118ada9d7bc7434e715863126ac880",
   "catalog_sha256": "51c4c9d3b4a34fab31b1bed229ada21bf37211fdfe55526fe9b12480847d35ca",
