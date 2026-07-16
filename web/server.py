@@ -373,8 +373,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Global Civil API Catalog WebUI server")
     parser.add_argument(
         "--host",
-        default=os.environ.get("CATALOG_HOST", "0.0.0.0"),
-        help="host interface to bind (default: env CATALOG_HOST or 0.0.0.0)",
+        default=os.environ.get("CATALOG_HOST", "127.0.0.1"),
+        help="host interface to bind (default: env CATALOG_HOST or 127.0.0.1)",
     )
     parser.add_argument(
         "--port",

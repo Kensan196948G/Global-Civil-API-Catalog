@@ -141,7 +141,11 @@ function Invoke-Register {
         Write-Host "⚠️ 既存タスクを検出しました。上書き登録します。" -ForegroundColor Yellow
     }
 
-    $argLine = ('"{0}" --port {1} --auto-port --port-lock-file "{2}"' -f `
+    # README の運用手順は他端末からの LAN 直接 IP アクセスを前提としており
+    # (`-Status` が案内する自動割当 IP での接続)、server.py 側の既定 bind は
+    # #38 でセキュリティ強化のため 127.0.0.1 化されている。本番の Windows
+    # ネイティブ経路ではここで明示的に 0.0.0.0 を指定し、LAN アクセスを維持する。
+    $argLine = ('"{0}" --host 0.0.0.0 --port {1} --auto-port --port-lock-file "{2}"' -f `
         $ServerScript, $Port, $PortLockRel)
 
     $action = New-ScheduledTaskAction -Execute $python -Argument $argLine -WorkingDirectory $ProjectRoot

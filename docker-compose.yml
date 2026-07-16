@@ -4,10 +4,16 @@ services:
     image: global-civil-api-catalog-web:local
     container_name: global-civil-api-catalog-web
     ports:
-      - "49231:8080"
+      - "127.0.0.1:49231:8080"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health')"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health')",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
