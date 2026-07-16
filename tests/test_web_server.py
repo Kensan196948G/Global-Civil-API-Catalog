@@ -12,6 +12,7 @@ from web.server import (
     find_free_port,
     latest_verification,
     live_map_payload,
+    parse_args,
     resolve_port,
     status_counts,
     write_port_lock,
@@ -257,6 +258,18 @@ def test_detect_lan_ip_returns_dotted_string() -> None:
     ip = detect_lan_ip()
     assert isinstance(ip, str)
     assert "." in ip
+
+
+def test_parse_args_default_host_is_localhost(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("CATALOG_HOST", raising=False)
+    args = parse_args([])
+    assert args.host == "127.0.0.1"
+
+
+def test_parse_args_host_overridable_via_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CATALOG_HOST", "0.0.0.0")
+    args = parse_args([])
+    assert args.host == "0.0.0.0"
 
 
 def test_write_port_lock_writes_port_number(tmp_path: Path) -> None:

@@ -40,6 +40,22 @@ def request_url(url: str, timeout: int) -> tuple[int | None, bytes, int]:
         return exc.code, exc.read(1024), elapsed_ms
 
 
+def extract_record_count(body: bytes) -> int | None:
+    """Best-effort record count for JSON/GeoJSON payloads; None for other formats."""
+    try:
+        payload = json.loads(body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return None
+    if isinstance(payload, list):
+        return len(payload)
+    if isinstance(payload, dict):
+        for key in ("features", "results", "items", "records", "data"):
+            value = payload.get(key)
+            if isinstance(value, list):
+                return len(value)
+    return None
+
+
 def build_result(item: dict, live: bool, timeout: int) -> dict:
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     result = {
@@ -92,6 +108,8 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
         result["response_time_ms"] = elapsed_ms
         result["response_size_bytes"] = len(body)
         result["result"] = "success" if status and 200 <= status < 300 else "failure"
+        if result["result"] == "success":
+            result["record_count"] = extract_record_count(body)
         result["note"] = "live verification executed"
         if len(body) >= MAX_SAMPLE_BYTES:
             result["sample_truncated"] = True
