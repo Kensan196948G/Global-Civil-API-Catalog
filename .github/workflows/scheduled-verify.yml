@@ -1,7 +1,7 @@
 name: scheduled-verify
 on:
   schedule:
-    - cron: "0 2 * * 1"  # 毎週月曜 02:00 UTC
+    - cron: "0 2 * * 1" # 毎週月曜 02:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -18,6 +18,8 @@ jobs:
         run: python scripts/run_verification.py --live --write --limit 50 --timeout 15
       - name: Update scores
         run: python scripts/score_catalog.py --write
+      - name: Refresh catalog metadata counts
+        run: python scripts/refresh_catalog_metadata.py --write
       - name: Export artifacts
         run: python scripts/export_markdown.py
       - name: Commit and push if changed
