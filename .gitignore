@@ -3,6 +3,12 @@ __pycache__/
 .hypothesis/
 .venv/
 *.pyc
+.coverage
+
+# ClaudeOS / Codex agent runtime artifacts (tool-generated, session-scoped)
+.agents/
+.codex/
+.claude/claudeos/snapshots/
 
 # Windows
 Thumbs.db
