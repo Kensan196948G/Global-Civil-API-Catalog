@@ -71,6 +71,8 @@ class CatalogEntry(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
+    # FR-012: deletion is logical — the row (and its history, epic #47) is kept.
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     __table_args__ = (
         CheckConstraint(
@@ -109,3 +111,38 @@ class VerificationResult(Base):
         ),
         Index("ix_verification_results_api_id_verified_at", "api_id", "verified_at"),
     )
+
+
+class AuthRequest(Base):
+    """Pending OIDC authorization request (state/nonce/PKCE verifier).
+
+    Rows are single-use: the callback consumes and deletes them. Stale rows
+    (abandoned logins) are purged opportunistically on each new login.
+    """
+
+    __tablename__ = "auth_requests"
+
+    state: Mapped[str] = mapped_column(Text, primary_key=True)
+    nonce: Mapped[str] = mapped_column(Text, nullable=False)
+    code_verifier: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+
+
+class UserSession(Base):
+    """Server-side login session (design §3.1): the browser only holds an
+    opaque random ID; tokens never reach the client."""
+
+    __tablename__ = "sessions"
+
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    user_sub: Mapped[str] = mapped_column(Text, nullable=False)
+    display_name: Mapped[str | None] = mapped_column(Text)
+    roles: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), nullable=False, server_default=text("'{}'")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
