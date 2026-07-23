@@ -364,6 +364,24 @@ def detect_lan_ip() -> str:
         return "127.0.0.1"
 
 
+LOOPBACK_HOSTS = {"localhost", "::1"}
+
+
+def is_loopback_host(host: str) -> bool:
+    """True for bind addresses that only resolve locally (localhost, ::1, 127/8)."""
+    return host in LOOPBACK_HOSTS or host.startswith("127.")
+
+
+def format_startup_banner(host: str, port: int, lan_ip: str) -> str:
+    """Startup banner; the LAN URL is only advertised when the bind interface
+    is actually reachable from other machines (a loopback bind is not)."""
+    base = f"Global Civil API Catalog WebUI listening on {host}:{port}"
+    if is_loopback_host(host):
+        url_host = "[::1]" if host == "::1" else host
+        return f"{base} (local access only: http://{url_host}:{port})"
+    return f"{base} (LAN: http://{lan_ip}:{port})"
+
+
 def write_port_lock(path: str, port: int) -> None:
     """Write the resolved port number to path as a single line of text."""
     Path(path).write_text(f"{port}\n", encoding="utf-8")
@@ -403,12 +421,7 @@ def main(argv: list[str] | None = None) -> int:
     # file can never advertise a port the server failed to bind.
     if args.port_lock_file:
         write_port_lock(args.port_lock_file, port)
-    lan_ip = detect_lan_ip()
-    print(
-        f"Global Civil API Catalog WebUI listening on {args.host}:{port} "
-        f"(LAN: http://{lan_ip}:{port})",
-        flush=True,
-    )
+    print(format_startup_banner(args.host, port, detect_lan_ip()), flush=True)
     server.serve_forever()
     return 0
 
