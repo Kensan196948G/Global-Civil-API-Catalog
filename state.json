@@ -5,8 +5,8 @@
     "release_deadline": "2026-12-18",
     "phase_mode": "maintenance"
   },
-  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23セッション: PR#51(週次検証修復)/PR#52(Issue#41・#44解消)/PR#53(週次データ)/PR#54(state記録)/PR#55(Q4 epic詳細設計書)/PR#57(Phase A: Neon DB基盤+読取API v1)を全てmerge。Neon project(billowing-cloud-38872160)作成+PostGIS+スキーマ適用(20260723_01)。全50件のJSON→DB投入+field-by-field round-trip照合PASS、実DB統合テスト7/7 PASS。Actions PR作成権限有効化(承認済み)。PR#57のCodeRabbit指摘(Minor4+nitpick2、Critical/High=0)はフォローアップPRで対応中(env.pyロギング/offline URL/updated_at upsert/no-op除去/verify最適化/geom GIST index)。次: Phase B(epic #45 認証)はEntra IDテナント設定(ユーザー操作)が前提。epic実装の残タスクはIssue #56参照。",
-  "phase": "Verify",
+  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23セッション完了(8 PR merge): PR#51(週次検証パイプライン根本修復)/PR#52(Issue#41・#44解消)/PR#53(週次データ)/PR#54(state記録)/PR#55(Q4 epic詳細設計書)/PR#57(Phase A: Neon DB基盤+読取API)/PR#58(CodeRabbitフォローアップ+GIST index)/PR#60(Phase B: Entra ID OIDC認証+RBAC+書込API、sha=7436704)。インフラ: Neon project(billowing-cloud-38872160)+PostGIS+migration 3本適用(20260723_01〜03)、Actions PR作成権限有効化、Entra IDテナント設定完了(secret はgitignore保全)。検証: テスト91/91 PASS(実Neon DB)、Codex対抗レビュー+セキュリティレビュー指摘全解消(Login CSRF/RS256固定/exp・iat必須/Origin検証)。残タスク: Issue #61(ロール再検証、Phase Cで対応)、実Entra ID対話ログインE2E(ユーザー確認)、Phase C(epic #47)/D(#48)/E(#49)の実装、次回月曜cronの週次検証一気通貫確認。残課題: OpenAQ api_key_required=unknownのデータ側不整合(別対応)。",
+  "phase": "Monitor",
   "kpi": {
     "success_rate_target": 0.9,
     "ci_success_rate": 1,
@@ -19,7 +19,7 @@
     "repair_count": 0,
     "max_repair": 3,
     "same_error_limit": 2,
-    "last_stop_at": "2026-07-23T02:12:47.391Z",
+    "last_stop_at": "2026-07-23T03:38:07.241Z",
     "current_session_start_at": "2026-07-23T01:21:07.664Z",
     "last_trigger": "manual"
   },
@@ -48,7 +48,9 @@
     "PR#51: scheduled-verify.yml YAMLブロックスカラー破壊の根本修復 — 週次検証パイプライン復旧 (merged 2026-07-23, sha=832a797)",
     "Issue #41 / Issue #44 / PR#52: CodeRabbitフォローアップ6件+レビューMinor2件解消 (merged 2026-07-23, sha=c079bfe, Closes #41 #44)",
     "PR#53: 週次検証データ2026-07-23の手動救済取込 + Actions PR作成権限有効化(ユーザー承認済み) (merged 2026-07-23, sha=0d19f36)",
-    "PR#57: Phase A — Neon PostgreSQL基盤(スキーマ/移行スクリプト/読取API v1) (merged 2026-07-23, sha=5b1184e)。全50件round-trip照合+統合テスト7/7 PASS (2026-07-23ライブ検証)"
+    "PR#57: Phase A — Neon PostgreSQL基盤(スキーマ/移行スクリプト/読取API v1) (merged 2026-07-23, sha=5b1184e)。全50件round-trip照合+統合テスト7/7 PASS (2026-07-23ライブ検証)",
+    "PR#58: PR#57 CodeRabbitフォローアップ6件+GIST index+EntraID secret保全 (merged 2026-07-23, sha=15dfa6c)",
+    "Issue #59(一部)/PR#60: Phase B — Entra ID OIDC(Code+PKCE)+5ロールRBAC+書込API+論理削除。Codex対抗レビュー・Login CSRF対策・RS256固定・Origin検証込み (merged 2026-07-23, sha=7436704)"
   ],
   "blocked_issues": [],
   "pending_human_decision": [],
@@ -63,7 +65,8 @@
       "scheduled-verify.yml: [skip ci] をコミットメッセージに入れることで週次検証の結果コミットが再度 CI を発火しないよう防止できる",
       "Windows Scheduled Task で detached プロセスを powershell Start-Process 経由で起動すると、Task Scheduler は即終了するラッパー側しか監視できず RestartCount が機能しない。対象exeを直接Actionにするか、LogonType=S4U/ServiceAccountにして直接実行すること",
       "Task Scheduler の LogonType=Interactive はユーザーのログオフ/切断でプロセスごと終了する。24/7公開サービスは S4U (同一ユーザー権限のままログオン非依存) が有効",
-      "GitHub Actions workflowのrun:ブロックに複数行文字列を直接埋め込むと、継続行のインデント不足でYAMLブロックスカラーを脱出し workflow 全体が invalid になる。printf+変数組み立てで回避し、actionlint(shellcheck込み)をローカル実行して検証する。症状は「pushごとの0s失敗+workflow名がパス表示+cron不発火」の3点セット"
+      "GitHub Actions workflowのrun:ブロックに複数行文字列を直接埋め込むと、継続行のインデント不足でYAMLブロックスカラーを脱出し workflow 全体が invalid になる。printf+変数組み立てで回避し、actionlint(shellcheck込み)をローカル実行して検証する。症状は「pushごとの0s失敗+workflow名がパス表示+cron不発火」の3点セット",
+      "OIDC実装の対抗レビュー3点セット: (1)stateはDB保存だけでなくブラウザcookieへ束縛(Login CSRF)、(2)JsonWebToken(['RS256'])でalg固定+exp/iat essential化、(3)書込APIにOrigin検証ミドルウェア。テストは攻撃系(HS256/exp欠如/未束縛state/クロスオリジン)を必ず含める"
     ],
     "usage_history": {
       "agents": {
@@ -772,6 +775,280 @@
         "tests/test_run_verification.py",
         "tests/test_web_server.py",
         "web/server.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:02:29.368Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 9 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:13:34.789Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 9 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:24:49.256Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:27:28.460Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:30:41.200Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:35:56.739Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:36:17.646Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:36:37.770Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:36:56.013Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:37:07.789Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:37:22.642Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:37:35.364Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:37:52.469Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T03:38:07.281Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 12 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "db/__init__.py",
+        "db/models.py",
+        "db/session.py",
+        "migrations/env.py",
+        "migrations/versions/20260723_01_initial_schema.py",
+        "migrations/versions/20260723_02_geom_gist_index.py",
+        "migrations/versions/20260723_03_auth_sessions.py",
+        "scripts/migrate_json_to_db.py",
+        "tests/test_auth_rbac.py",
+        "tests/test_db_phase_a.py",
+        "web/api_v1.py",
+        "web/auth.py"
       ],
       "truncated": false
     }
