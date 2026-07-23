@@ -41,11 +41,11 @@ systemctl --user restart global-civil-api-catalog-web.service
 
 ### 前提条件
 
-| 必須 | バージョン目安 |
-|---|---|
-| Docker Desktop | 4.30+ (WSL2 バックエンド) |
-| Python | 3.12+ |
-| PowerShell | 7.4+（Windows 11 25H2 標準） |
+| 必須           | バージョン目安               |
+| -------------- | ---------------------------- |
+| Docker Desktop | 4.30+ (WSL2 バックエンド)    |
+| Python         | 3.12+                        |
+| PowerShell     | 7.4+（Windows 11 25H2 標準） |
 
 WSL2 が有効であれば Docker Desktop が Linux コンテナをそのまま動かすため、`Dockerfile` と `docker-compose.yml` は変更不要です。
 
@@ -120,13 +120,13 @@ Docker Desktop に依存せず、ネイティブ Python で OS 起動時に自�
 .\deploy\register-windows-service.ps1 -Unregister
 ```
 
-| 項目 | 内容 |
-|---|---|
-| 🗓️ タスク名 | `GlobalCivilApiCatalog-Web` |
-| 🔌 ポート | 既定 `49231`。競合時は `--auto-port` により空きポートへ自動移行し `deploy/PORT.lock` に記録 |
-| 🌐 IP | DHCP 自動割当の LAN IP を起動ログと `-Status` で表示 |
-| ⏰ トリガー | OS 起動時（管理者権限が無い場合はログオン時へ自動フォールバック） |
-| 🔓 認証 | なし（社内 LAN 限定公開が前提） |
+| 項目        | 内容                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------- |
+| 🗓️ タスク名 | `GlobalCivilApiCatalog-Web`                                                                 |
+| 🔌 ポート   | 既定 `49231`。競合時は `--auto-port` により空きポートへ自動移行し `deploy/PORT.lock` に記録 |
+| 🌐 IP       | DHCP 自動割当の LAN IP を起動ログと `-Status` で表示                                        |
+| ⏰ トリガー | OS 起動時（管理者権限が無い場合はログオン時へ自動フォールバック）                           |
+| 🔓 認証     | なし（社内 LAN 限定公開が前提）                                                             |
 
 ### 🔐 実行プリンシパル（-Principal / Issue #22）
 
@@ -136,11 +136,11 @@ Docker Desktop に依存せず、ネイティブ Python で OS 起動時に自�
 
 `-Principal` パラメータで実行方式を切り替えられます。
 
-| 値 | 説明 | 用途 |
-|---|---|---|
-| `Interactive`（既定） | 現ユーザーの対話セッション依存。後方互換のため既定値のまま維持 | 旧構成との互換性が必要な場合のみ |
-| `S4U`（**本番採用・推奨**） | 現ユーザー権限のままログオン非依存で常駐。Task Scheduler がプロセスを直接監視するため `RestartCount`/`RestartInterval` が実際に機能する | 24/7 公開サービス（本プロジェクトの本番機はこれ） |
-| `LocalService` / `NetworkService` | Windows 組み込みサービスアカウントによる最小権限実行。本プロジェクトのフォルダ ACL（`icacls`で確認済み: `NT AUTHORITY\Authenticated Users:(M)` を継承）上は読み取り可能と推定されるが、本番未適用・追加検証推奨 | さらなる権限最小化が必要な場合 |
+| 値                                | 説明                                                                                                                                                                                                            | 用途                                              |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `Interactive`（既定）             | 現ユーザーの対話セッション依存。後方互換のため既定値のまま維持                                                                                                                                                  | 旧構成との互換性が必要な場合のみ                  |
+| `S4U`（**本番採用・推奨**）       | 現ユーザー権限のままログオン非依存で常駐。Task Scheduler がプロセスを直接監視するため `RestartCount`/`RestartInterval` が実際に機能する                                                                         | 24/7 公開サービス（本プロジェクトの本番機はこれ） |
+| `LocalService` / `NetworkService` | Windows 組み込みサービスアカウントによる最小権限実行。本プロジェクトのフォルダ ACL（`icacls`で確認済み: `NT AUTHORITY\Authenticated Users:(M)` を継承）上は読み取り可能と推定されるが、本番未適用・追加検証推奨 | さらなる権限最小化が必要な場合                    |
 
 ```powershell
 # 本番で採用している再登録コマンド（ログオフ非依存・再発防止）
@@ -204,17 +204,18 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 
 ### ⚠️ セキュリティ必須事項
 
-- 本アプリは**ログイン認証なし**のため、公開前に Cloudflare Zero Trust ダッシュボードで **Access アプリケーション + ポリシー（許可メールアドレス等）** を必ず設定する
+- 静的 Web UI（`web/server.py`）は**ログイン認証を持たない**ため、公開前に Cloudflare Zero Trust ダッシュボードで **Access アプリケーション + ポリシー（許可メールアドレス等）** を必ず設定する
 - Access 未設定のままの公開は禁止（Security First）
+- 新しい API v1 レイヤ（`web/api_v1.py`・opt-in）は **Entra ID OIDC + 5 ロール RBAC を実装済み**で、書込系（登録・更新・論理削除）は認証必須。公開時も Access による外側防御は併用する（多層防御。設定手順: `docs/entra-id-setup.md`）
 
 ### ✅ Access 設定状況（2026-07-05 適用済み）
 
-| 項目 | 値 |
-|---|---|
-| Access Application | `Global Civil API Catalog`（`api.mirai-dx-platform.com` 全体を保護） |
-| 許可ポリシー | ドメイン `@mirai-const.co.jp` 全体 + メールアドレス `kensan1969@gmail.com`（いずれか一致・One-Time PIN 認証） |
-| 動作確認 | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み |
-| 変更方法 | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能 |
+| 項目               | 値                                                                                                             |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Access Application | `Global Civil API Catalog`（`api.mirai-dx-platform.com` 全体を保護）                                           |
+| 許可ポリシー       | ドメイン `@mirai-const.co.jp` 全体 + メールアドレス `kensan1969@gmail.com`（いずれか一致・One-Time PIN 認証）  |
+| 動作確認           | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み                       |
+| 変更方法           | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能 |
 
 ---
 
