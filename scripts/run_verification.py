@@ -17,6 +17,7 @@ from scripts.catalog_utils import (  # noqa: E402
     load_catalog,
     write_json,
 )
+from scripts.url_guard import build_safe_opener, validate_public_url  # noqa: E402
 
 USER_AGENT = (
     "Global-Civil-API-Catalog/0.1 (+https://github.com/Kensan196948G/Global-Civil-API-Catalog)"
@@ -32,9 +33,10 @@ MAX_SAMPLE_BYTES = 64 * 1024
 
 def request_url(url: str, timeout: int) -> tuple[int | None, bytes, int]:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    opener = build_safe_opener()  # re-validates every redirect hop (SSRF guard)
     started = time.perf_counter()
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with opener.open(request, timeout=timeout) as response:
             # Read one byte past the cap so callers can distinguish a payload
             # that is exactly MAX_SAMPLE_BYTES long from a truncated one.
             body = response.read(MAX_SAMPLE_BYTES + 1)
@@ -105,6 +107,15 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
     if not endpoint or "{" in endpoint:
         result["result"] = "warning"
         result["note"] = "no concrete sample endpoint configured"
+        return result
+
+    # SSRF guard: endpoints are editor-editable via the write API, so the
+    # verifier must refuse anything that is not a public http(s) target.
+    blocked_reason = validate_public_url(endpoint, resolve=True)
+    if blocked_reason is not None:
+        result["result"] = "failure"
+        result["error_message"] = f"blocked by URL policy: {blocked_reason}"
+        result["note"] = "endpoint rejected by SSRF guard; live request not executed"
         return result
 
     try:

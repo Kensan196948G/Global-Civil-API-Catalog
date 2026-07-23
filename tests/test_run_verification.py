@@ -11,6 +11,13 @@ _ITEM = {
 }
 
 
+@pytest.fixture(autouse=True)
+def bypass_ssrf_guard(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests mock request_url and use a non-resolvable .test domain;
+    the SSRF guard itself is covered in tests/test_url_guard.py."""
+    monkeypatch.setattr("scripts.run_verification.validate_public_url", lambda *a, **k: None)
+
+
 def test_extract_record_count_json_array() -> None:
     assert extract_record_count(b"[1, 2, 3]") == 3
 
