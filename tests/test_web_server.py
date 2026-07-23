@@ -10,6 +10,7 @@ from web.server import (
     detect_lan_ip,
     filter_catalog,
     find_free_port,
+    format_startup_banner,
     latest_verification,
     live_map_payload,
     parse_args,
@@ -258,6 +259,19 @@ def test_detect_lan_ip_returns_dotted_string() -> None:
     ip = detect_lan_ip()
     assert isinstance(ip, str)
     assert "." in ip
+
+
+def test_format_startup_banner_loopback_hides_lan_url() -> None:
+    for host in ("127.0.0.1", "localhost", "::1"):
+        banner = format_startup_banner(host, 8080, "192.168.0.5")
+        assert "LAN" not in banner
+        assert "192.168.0.5" not in banner
+        assert "http://127.0.0.1:8080" in banner
+
+
+def test_format_startup_banner_lan_bind_shows_lan_url() -> None:
+    banner = format_startup_banner("0.0.0.0", 8080, "192.168.0.5")
+    assert "(LAN: http://192.168.0.5:8080)" in banner
 
 
 def test_parse_args_default_host_is_localhost(monkeypatch: pytest.MonkeyPatch) -> None:
