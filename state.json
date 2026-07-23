@@ -19,7 +19,7 @@
     "repair_count": 0,
     "max_repair": 3,
     "same_error_limit": 2,
-    "last_stop_at": "2026-07-23T02:01:44.386Z",
+    "last_stop_at": "2026-07-23T02:12:47.391Z",
     "current_session_start_at": "2026-07-23T01:21:07.664Z",
     "last_trigger": "manual"
   },
@@ -754,6 +754,17 @@
     },
     {
       "at": "2026-07-23T02:01:44.411Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "tests/test_run_verification.py",
+        "tests/test_web_server.py",
+        "web/server.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T02:12:47.406Z",
       "kind": "tdd_required",
       "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
       "files": [
