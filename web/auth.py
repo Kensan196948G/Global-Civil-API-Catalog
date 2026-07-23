@@ -30,6 +30,9 @@ from sqlalchemy.orm import Session
 from db.models import AuthRequest, UserSession
 
 SESSION_COOKIE = "catalog_session"
+# Binds the pending login to the browser that started it (login-CSRF
+# defence): the callback only accepts a state that this browser initiated.
+AUTH_REQ_COOKIE = "catalog_auth_req"
 SESSION_TTL = timedelta(hours=8)
 AUTH_REQUEST_TTL = timedelta(minutes=10)
 CLOCK_SKEW_SECONDS = 300  # design §3.3
@@ -174,10 +177,30 @@ def build_router(get_db) -> APIRouter:
             "code_challenge_method": "S256",
         }
         url = f"{_authority()}/oauth2/v2.0/authorize?{urlencode(params)}"
-        return Response(status_code=302, headers={"Location": url})
+        response = Response(status_code=302, headers={"Location": url})
+        # SameSite=Lax still sends this on the top-level GET redirect back
+        # from Entra ID, but not on attacker-initiated cross-site subrequests.
+        response.set_cookie(
+            AUTH_REQ_COOKIE,
+            state,
+            max_age=int(AUTH_REQUEST_TTL.total_seconds()),
+            httponly=True,
+            secure=_cookie_secure(),
+            samesite="lax",
+            path="/auth",
+        )
+        return response
 
     @router.get("/callback", name="auth_callback")
-    def callback(code: str, state: str, db: Session = Depends(get_db)) -> Response:
+    def callback(
+        request: Request, code: str, state: str, db: Session = Depends(get_db)
+    ) -> Response:
+        # Login-CSRF defence: the state must belong to THIS browser, not
+        # merely exist in the DB (an attacker can mint a valid state by
+        # starting their own login and replaying it here).
+        browser_state = request.cookies.get(AUTH_REQ_COOKIE, "")
+        if not secrets.compare_digest(browser_state, state):
+            raise HTTPException(status_code=401, detail="login was not initiated by this browser")
         pending = db.get(AuthRequest, state)
         if pending is None or pending.created_at < _now() - AUTH_REQUEST_TTL:
             raise HTTPException(status_code=401, detail="unknown or expired state")
@@ -203,6 +226,7 @@ def build_router(get_db) -> APIRouter:
             samesite="lax",
             path="/",
         )
+        response.delete_cookie(AUTH_REQ_COOKIE, path="/auth")
         return response
 
     @router.get("/logout", name="auth_logout")

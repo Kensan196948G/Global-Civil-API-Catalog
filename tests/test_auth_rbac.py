@@ -98,8 +98,22 @@ def test_login_redirects_with_pkce_state_nonce(client, db) -> None:
     assert params["client_id"] == [CLIENT]
     assert len(params["state"][0]) >= 32
     assert len(params["nonce"][0]) >= 32
-    # The pending request is persisted server-side for the callback.
+    # The pending request is persisted server-side for the callback, and the
+    # state is also bound to this browser via cookie (login-CSRF defence).
     assert db.get(AuthRequest, params["state"][0]) is not None
+    assert response.cookies.get("catalog_auth_req") == params["state"][0]
+
+
+def test_callback_rejects_state_not_bound_to_browser(client, db) -> None:
+    # Attacker-minted state: valid in the DB but this browser never started
+    # the flow (no catalog_auth_req cookie) -> must fail before any token
+    # exchange happens (login-CSRF defence).
+    db.add(AuthRequest(state="attacker-state", nonce="n", code_verifier="v"))
+    db.commit()
+    response = client.get("/auth/callback", params={"code": "any", "state": "attacker-state"})
+    assert response.status_code == 401
+    # The pending request must remain unconsumed (it was not this browser's).
+    assert db.get(AuthRequest, "attacker-state") is not None
 
 
 # --- ID token validation ---------------------------------------------------
