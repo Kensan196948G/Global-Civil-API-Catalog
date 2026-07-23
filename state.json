@@ -5,8 +5,8 @@
     "release_deadline": "2026-12-18",
     "phase_mode": "maintenance"
   },
-  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23セッション完了: (1) PR#51 merge(sha=832a797) — scheduled-verify.ymlのYAMLブロックスカラー破壊(PR#40起因)を根本修復。週次検証パイプライン復旧・workflow名正常化・push時phantom failure解消を確認。(2) PR#52 merge(sha=c079bfe) — Issue #41/#44のCodeRabbitフォローアップ6件+レビューMinor2件を解消しclose。(3) workflow_dispatch smoke runで新規障害を発見: Actions のPR作成権限が無効でgh pr create失敗→ユーザー承認の上 can_approve_pull_request_reviews=true に変更(default_workflow_permissions=readは維持)。検証データはPR#53として手動救済しmerge(sha=0d19f36)。次回確認: 月曜02:00 UTC cronでbranch push→PR自動作成の一気通貫成功を確認。残オープンIssue: epic #45〜#49のみ(詳細設計未着手)。次のアクション: epicの優先順位付けと詳細設計着手。残課題: data/api_catalog.jsonのOpenAQ api_key_required=unknownが要件定義書(必要)と不整合(スコア再計算を伴うため別対応)。",
-  "phase": "Monitor",
+  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23セッション: PR#51(週次検証修復)/PR#52(Issue#41・#44解消)/PR#53(週次データ)/PR#54(state記録)/PR#55(Q4 epic詳細設計書)/PR#57(Phase A: Neon DB基盤+読取API v1)を全てmerge。Neon project(billowing-cloud-38872160)作成+PostGIS+スキーマ適用(20260723_01)。全50件のJSON→DB投入+field-by-field round-trip照合PASS、実DB統合テスト7/7 PASS。Actions PR作成権限有効化(承認済み)。PR#57のCodeRabbit指摘(Minor4+nitpick2、Critical/High=0)はフォローアップPRで対応中(env.pyロギング/offline URL/updated_at upsert/no-op除去/verify最適化/geom GIST index)。次: Phase B(epic #45 認証)はEntra IDテナント設定(ユーザー操作)が前提。epic実装の残タスクはIssue #56参照。",
+  "phase": "Verify",
   "kpi": {
     "success_rate_target": 0.9,
     "ci_success_rate": 1,
@@ -47,7 +47,8 @@
     "Issue #45〜#49: 外部評価レポートQ4のP0大規模項目をepic Issueとして起票(認証基盤Entra ID/OIDC+RBAC、PostgreSQL/PostGIS移行+CRUD API、append-only監査ログ+承認ワークフロー、owner/steward管理、定期品質検証強化) (2026-07-16)",
     "PR#51: scheduled-verify.yml YAMLブロックスカラー破壊の根本修復 — 週次検証パイプライン復旧 (merged 2026-07-23, sha=832a797)",
     "Issue #41 / Issue #44 / PR#52: CodeRabbitフォローアップ6件+レビューMinor2件解消 (merged 2026-07-23, sha=c079bfe, Closes #41 #44)",
-    "PR#53: 週次検証データ2026-07-23の手動救済取込 + Actions PR作成権限有効化(ユーザー承認済み) (merged 2026-07-23, sha=0d19f36)"
+    "PR#53: 週次検証データ2026-07-23の手動救済取込 + Actions PR作成権限有効化(ユーザー承認済み) (merged 2026-07-23, sha=0d19f36)",
+    "PR#57: Phase A — Neon PostgreSQL基盤(スキーマ/移行スクリプト/読取API v1) (merged 2026-07-23, sha=5b1184e)。全50件round-trip照合+統合テスト7/7 PASS (2026-07-23ライブ検証)"
   ],
   "blocked_issues": [],
   "pending_human_decision": [],

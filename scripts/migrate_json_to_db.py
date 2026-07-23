@@ -63,9 +63,13 @@ def upsert(session, model, rows: list[dict]) -> None:
     if not rows:
         return
     stmt = insert(model).values(rows)
+    set_ = {k: stmt.excluded[k] for k in rows[0] if k != "id"}
+    # Refresh updated_at on re-load; the server_default only fires on INSERT.
+    if "updated_at" in model.__table__.columns:
+        set_["updated_at"] = func.now()
     stmt = stmt.on_conflict_do_update(
         index_elements=[model.__table__.primary_key.columns.keys()[0]],
-        set_={k: stmt.excluded[k] for k in rows[0] if k != "id"},
+        set_=set_,
     )
     session.execute(stmt)
 
@@ -79,11 +83,10 @@ def verify_round_trip(session, entries: list[dict], results: list[dict]) -> list
         if stored is None:
             problems.append(f"missing entry {record['id']}")
             continue
+        expected_row = entry_row(record)
         for field in ENTRY_FIELDS:
-            expected = entry_row(record)[field]
+            expected = expected_row[field]
             actual = getattr(stored, field)
-            if field == "last_checked_at" and actual is not None:
-                actual = actual  # already a date
             if expected != actual:
                 problems.append(f"{record['id']}.{field}: json={expected!r} db={actual!r}")
     db_count = session.scalar(select(func.count()).select_from(VerificationResult))

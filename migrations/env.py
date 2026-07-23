@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
+from logging.config import fileConfig
 from pathlib import Path
 
 from alembic import context
@@ -10,6 +11,10 @@ from sqlalchemy import create_engine
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from db.models import Base  # noqa: E402
+
+# Apply the [loggers]/[handlers]/[formatters] sections of alembic.ini.
+if context.config.config_file_name is not None:
+    fileConfig(context.config.config_file_name)
 
 target_metadata = Base.metadata
 
@@ -27,8 +32,10 @@ def _database_url() -> str:
 
 
 def run_migrations_offline() -> None:
+    # `or` (not a get() default) so an empty-string env var also falls back,
+    # matching the online path's "empty means unset" semantics.
     context.configure(
-        url=os.environ.get("CATALOG_DATABASE_URL", _OFFLINE_URL),
+        url=os.environ.get("CATALOG_DATABASE_URL") or _OFFLINE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
