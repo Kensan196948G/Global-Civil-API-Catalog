@@ -33,3 +33,4 @@ deploy/cloudflare/config.yml
 
 # Playwright MCP scratch data (session-scoped, not repo content)
 .playwright-mcp/
+docs/EntraID-info.txt
