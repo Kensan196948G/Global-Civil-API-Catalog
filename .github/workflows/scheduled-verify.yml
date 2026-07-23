@@ -40,10 +40,15 @@ jobs:
           git checkout -b "$BRANCH"
           git commit -m "chore: weekly verification ${DATE}"
           git push origin "$BRANCH"
+          # Compose the multi-line PR body with printf; embedding a literal
+          # multi-line string here previously broke out of the YAML block
+          # scalar (an unindented continuation line became a top-level key,
+          # invalidating the whole workflow file on the GitHub side).
+          BODY="$(printf '%s\n\n%s' \
+            "Automated weekly catalog verification (scheduled-verify workflow). Updates data/, export/, samples/ only." \
+            "Note: this PR is opened with the default \`GITHUB_TOKEN\`, so GitHub's recursive-workflow protection holds its own CI run in an approval-required state. A maintainer must approve the workflow run (or re-run it) before the required \`catalog\` check can pass and this PR can be merged.")"
           gh pr create \
             --base main \
             --head "$BRANCH" \
             --title "chore: weekly verification ${DATE}" \
-            --body "Automated weekly catalog verification (scheduled-verify workflow). Updates data/, export/, samples/ only.
-
-Note: this PR is opened with the default \`GITHUB_TOKEN\`, so GitHub's recursive-workflow protection holds its own CI run in an approval-required state. A maintainer must approve the workflow run (or re-run it) before the required \`catalog\` check can pass and this PR can be merged."
+            --body "$BODY"
