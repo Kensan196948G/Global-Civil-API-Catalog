@@ -79,7 +79,9 @@ def upgrade() -> None:
     # Grandfather every pre-existing entry as published (JSON files were the
     # reviewed system of record until now).
     op.execute(
-        "INSERT INTO entry_workflow (record_id, state) SELECT id, 'published' FROM catalog_entries"
+        "INSERT INTO entry_workflow (record_id, state) "
+        "SELECT id, CASE WHEN deleted_at IS NULL THEN 'published' ELSE 'draft' END "
+        "FROM catalog_entries"
     )
 
 

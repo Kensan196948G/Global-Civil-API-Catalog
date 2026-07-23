@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -31,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 from pydantic import BaseModel, Field  # noqa: E402
-from sqlalchemy import func, or_, select  # noqa: E402
+from sqlalchemy import Date, func, or_, select  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from db.audit import (  # noqa: E402
@@ -588,6 +589,11 @@ def restore_entry(
     for field, value in stored.snapshot.items():
         if field in _RESTORE_EXCLUDED or field not in CatalogEntry.__table__.columns:
             continue
+        # Snapshots are JSON, so non-JSON-native column types come back as
+        # strings; coerce them before writing (CodeRabbit, PR #68).
+        column = CatalogEntry.__table__.columns[field]
+        if isinstance(column.type, Date) and isinstance(value, str):
+            value = date.fromisoformat(value)
         setattr(entry, field, value)
     entry.deleted_at = None
     entry.updated_at = func.now()

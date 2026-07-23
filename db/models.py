@@ -69,7 +69,10 @@ class CatalogEntry(Base):
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()")
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("now()"),
+        onupdate=text("now()"),
     )
     # FR-012: deletion is logical — the row (and its history, epic #47) is kept.
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -167,7 +170,10 @@ class EntryWorkflow(Base):
     record_id: Mapped[str] = mapped_column(Text, ForeignKey("catalog_entries.id"), primary_key=True)
     state: Mapped[str] = mapped_column(Text, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()")
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("now()"),
+        onupdate=text("now()"),
     )
 
     __table_args__ = (
