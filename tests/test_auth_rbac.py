@@ -161,6 +161,23 @@ def test_validate_id_token_rejects_wrong_audience() -> None:
         validate_id_token(token, "expected-nonce", jwks)
 
 
+def test_validate_id_token_rejects_non_rs256_algorithm() -> None:
+    # Algorithm-confusion defence: HS256 token signed with a shared secret
+    # must be rejected outright (only RS256 is allowlisted).
+    secret_jwk = {"kty": "oct", "k": "c2VjcmV0LXNlY3JldC1zZWNyZXQtc2VjcmV0"}
+    token = jwt.encode({"alg": "HS256"}, _claims(), JsonWebKey.import_key(secret_jwk))
+    with pytest.raises(Exception):
+        validate_id_token(token.decode(), "expected-nonce", {"keys": [secret_jwk]})
+
+
+def test_validate_id_token_rejects_missing_exp() -> None:
+    claims = _claims()
+    del claims["exp"]
+    token, jwks = _signed_token(claims)
+    with pytest.raises(Exception):
+        validate_id_token(token, "expected-nonce", jwks)
+
+
 # --- RBAC on write endpoints ----------------------------------------------
 
 NEW_ENTRY = {
@@ -178,6 +195,20 @@ NEW_ENTRY = {
 
 def test_write_requires_authentication(client) -> None:
     assert client.post("/api/v1/entries", json=NEW_ENTRY).status_code == 401
+
+
+def test_cross_origin_write_rejected(client, db) -> None:
+    # Origin-check middleware (defence-in-depth CSRF guard): a write carrying
+    # a foreign Origin is rejected even with a valid admin session cookie.
+    cookies = {SESSION_COOKIE: make_session(db, [ROLE_ADMIN])}
+    response = client.post(
+        "/api/v1/entries",
+        json=NEW_ENTRY,
+        cookies=cookies,
+        headers={"Origin": "https://evil.example"},
+    )
+    assert response.status_code == 403
+    assert response.json()["detail"] == "cross-origin write rejected"
 
 
 def test_viewer_cannot_write(client, db) -> None:

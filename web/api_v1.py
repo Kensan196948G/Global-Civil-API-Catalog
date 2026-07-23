@@ -14,6 +14,7 @@ Run locally:
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -21,6 +22,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Response  # noqa: E402
+from fastapi.responses import JSONResponse  # noqa: E402
 from pydantic import BaseModel, Field  # noqa: E402
 from sqlalchemy import func, or_, select  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
@@ -30,6 +32,24 @@ from db.session import make_session_factory  # noqa: E402
 from web.auth import ROLE_ADMIN, ROLE_EDITOR, build_router, require_role  # noqa: E402
 
 app = FastAPI(title="Global Civil API Catalog API", version="1.1.0")
+
+
+@app.middleware("http")
+async def csrf_origin_check(request, call_next):
+    """Defence-in-depth CSRF guard for state-changing requests: when the
+    browser sends an Origin header it must match our own origin. SameSite=Lax
+    already blocks cross-site cookie sends in modern browsers; this closes
+    the gap for legacy/edge cases (adversarial review, PR #60)."""
+    if request.method in ("POST", "PUT", "PATCH", "DELETE"):
+        origin = request.headers.get("origin")
+        if origin:
+            allowed = os.environ.get("CATALOG_BASE_URL", "http://localhost:49232").rstrip("/")
+            if origin.rstrip("/") != allowed:
+                return JSONResponse(
+                    status_code=403, content={"detail": "cross-origin write rejected"}
+                )
+    return await call_next(request)
+
 
 _session_factory = None
 

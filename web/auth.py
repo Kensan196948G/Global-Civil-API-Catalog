@@ -22,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 
 import httpx
-from authlib.jose import JsonWebKey, jwt
+from authlib.jose import JsonWebKey, JsonWebToken
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
@@ -99,14 +99,21 @@ def _fetch_jwks() -> dict:
     return response.json()
 
 
+# Entra ID signs ID tokens with RS256 only; pinning the algorithm here
+# forecloses algorithm-confusion attacks (e.g. HS256 with a public key).
+_JWT = JsonWebToken(["RS256"])
+
+
 def validate_id_token(id_token: str, nonce: str, jwks: dict) -> dict:
-    """Validate signature and claims (iss/aud/exp/nonce, design §3.3)."""
-    claims = jwt.decode(
+    """Validate signature and claims (alg/iss/aud/exp/iat/nonce, design §3.3)."""
+    claims = _JWT.decode(
         id_token,
         JsonWebKey.import_key_set(jwks),
         claims_options={
             "iss": {"essential": True, "value": f"{_authority()}/v2.0"},
             "aud": {"essential": True, "value": _env("ENTRA_CLIENT_ID")},
+            "exp": {"essential": True},
+            "iat": {"essential": True},
         },
     )
     claims.validate(leeway=CLOCK_SKEW_SECONDS)
