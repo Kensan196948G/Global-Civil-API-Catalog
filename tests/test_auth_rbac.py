@@ -258,6 +258,19 @@ def test_invalid_payload_rejected(client, db) -> None:
     assert client.post("/api/v1/entries", json=bad, cookies=cookies).status_code == 422
 
 
+def test_private_endpoint_rejected_by_ssrf_guard(client, db) -> None:
+    # Editor tries to point the verifier at the cloud metadata service.
+    cookies = {SESSION_COOKIE: make_session(db, [ROLE_EDITOR])}
+    bad = dict(
+        NEW_ENTRY,
+        id="TEST-SSRF-API",
+        sample_endpoint="http://169.254.169.254/latest/meta-data/",
+    )
+    response = client.post("/api/v1/entries", json=bad, cookies=cookies)
+    assert response.status_code == 422
+    assert "blocked by URL policy" in response.json()["detail"]
+
+
 def test_me_reports_roles(client, db) -> None:
     cookies = {SESSION_COOKIE: make_session(db, [ROLE_VIEWER])}
     body = client.get("/auth/me", cookies=cookies).json()

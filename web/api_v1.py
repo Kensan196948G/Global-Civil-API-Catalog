@@ -29,6 +29,7 @@ from sqlalchemy.orm import Session  # noqa: E402
 
 from db.models import CatalogEntry, UserSession, VerificationResult  # noqa: E402
 from db.session import make_session_factory  # noqa: E402
+from scripts.url_guard import validate_public_url  # noqa: E402
 from web.auth import ROLE_ADMIN, ROLE_EDITOR, build_router, require_role  # noqa: E402
 
 app = FastAPI(title="Global Civil API Catalog API", version="1.1.0")
@@ -159,6 +160,29 @@ def metadata(session: Session = Depends(get_session)) -> dict[str, Any]:
 API_KEY_VALUES = ("required", "not_required", "unknown")
 TRUST_RANKS = ("A", "B", "C", "D", "E")
 
+# URL fields the verifier or UI will later dereference. Saved values must
+# pass the SSRF guard (IP-literal/scheme checks; templates with {} are
+# format-checked only — the verifier skips them, and re-validates with DNS
+# resolution at fetch time as the second layer).
+_GUARDED_URL_FIELDS = (
+    "official_url",
+    "document_url",
+    "endpoint_template",
+    "sample_endpoint",
+)
+
+
+def _reject_unsafe_urls(changes: dict[str, Any]) -> None:
+    for field in _GUARDED_URL_FIELDS:
+        value = changes.get(field)
+        if not value or "{" in value:
+            continue
+        reason = validate_public_url(value, resolve=False)
+        if reason is not None:
+            raise HTTPException(
+                status_code=422, detail=f"{field}: blocked by URL policy ({reason})"
+            )
+
 
 class EntryCreate(BaseModel):
     id: str = Field(min_length=1, max_length=100, pattern=r"^[A-Z0-9][A-Z0-9-]*$")
@@ -227,6 +251,7 @@ def create_entry(
 ) -> dict[str, Any]:
     if session.get(CatalogEntry, payload.id) is not None:
         raise HTTPException(status_code=409, detail=f"entry {payload.id} already exists")
+    _reject_unsafe_urls(payload.model_dump())
     entry = CatalogEntry(**payload.model_dump())
     session.add(entry)
     session.commit()
@@ -247,6 +272,7 @@ def update_entry(
     changes = payload.model_dump(exclude_unset=True)
     if not changes:
         raise HTTPException(status_code=422, detail="no fields to update")
+    _reject_unsafe_urls(changes)
     for field, value in changes.items():
         setattr(entry, field, value)
     entry.updated_at = func.now()

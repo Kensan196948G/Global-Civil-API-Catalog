@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import sys
 import time
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +16,7 @@ from scripts.catalog_utils import (  # noqa: E402
     load_catalog,
     write_json,
 )
+from scripts.url_guard import fetch_public_url, validate_public_url  # noqa: E402
 
 USER_AGENT = (
     "Global-Civil-API-Catalog/0.1 (+https://github.com/Kensan196948G/Global-Civil-API-Catalog)"
@@ -31,18 +31,16 @@ MAX_SAMPLE_BYTES = 64 * 1024
 
 
 def request_url(url: str, timeout: int) -> tuple[int | None, bytes, int]:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    # fetch_public_url validates + DNS-pins every hop (SSRF guard) and
+    # returns non-2xx statuses instead of raising, so 4xx/5xx bodies are
+    # captured like any other response. Read one byte past the cap so
+    # callers can distinguish an exactly-cap-sized payload from truncation.
     started = time.perf_counter()
-    try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
-            # Read one byte past the cap so callers can distinguish a payload
-            # that is exactly MAX_SAMPLE_BYTES long from a truncated one.
-            body = response.read(MAX_SAMPLE_BYTES + 1)
-            elapsed_ms = int((time.perf_counter() - started) * 1000)
-            return response.status, body, elapsed_ms
-    except urllib.error.HTTPError as exc:
-        elapsed_ms = int((time.perf_counter() - started) * 1000)
-        return exc.code, exc.read(1024), elapsed_ms
+    status, body, _final_url = fetch_public_url(
+        url, timeout=timeout, max_bytes=MAX_SAMPLE_BYTES + 1, user_agent=USER_AGENT
+    )
+    elapsed_ms = int((time.perf_counter() - started) * 1000)
+    return status, body, elapsed_ms
 
 
 def extract_record_count(body: bytes) -> int | None:
@@ -84,7 +82,9 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
         request_path = Path(result["sample_request_path"])
         request_path.parent.mkdir(parents=True, exist_ok=True)
         request_path.write_text(
-            f'curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "{endpoint}"\n',
+            # shlex.quote prevents stored shell injection when the sample is
+            # copy-pasted (endpoints are editor-editable via the write API).
+            f'curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" {shlex.quote(endpoint)}\n',
             encoding="utf-8",
         )
 
@@ -105,6 +105,15 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
     if not endpoint or "{" in endpoint:
         result["result"] = "warning"
         result["note"] = "no concrete sample endpoint configured"
+        return result
+
+    # SSRF guard: endpoints are editor-editable via the write API, so the
+    # verifier must refuse anything that is not a public http(s) target.
+    blocked_reason = validate_public_url(endpoint, resolve=True)
+    if blocked_reason is not None:
+        result["result"] = "failure"
+        result["error_message"] = f"blocked by URL policy: {blocked_reason}"
+        result["note"] = "endpoint rejected by SSRF guard; live request not executed"
         return result
 
     try:
