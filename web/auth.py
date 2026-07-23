@@ -27,6 +27,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
+from db.audit import ACTION_LOGIN, ACTION_LOGIN_FAILED, ACTION_LOGOUT, record_audit
 from db.models import AuthRequest, UserSession
 
 SESSION_COOKIE = "catalog_session"
@@ -212,8 +213,20 @@ def build_router(get_db) -> APIRouter:
         if pending is None or pending.created_at < _now() - AUTH_REQUEST_TTL:
             raise HTTPException(status_code=401, detail="unknown or expired state")
         db.delete(pending)  # single-use
-        tokens = _exchange_code(code, pending.code_verifier)
-        claims = validate_id_token(tokens.get("id_token", ""), pending.nonce, _fetch_jwks())
+        try:
+            tokens = _exchange_code(code, pending.code_verifier)
+            claims = validate_id_token(tokens.get("id_token", ""), pending.nonce, _fetch_jwks())
+        except Exception as exc:
+            # Observability for auth failures (design §3.3, issue #61).
+            record_audit(
+                db,
+                actor="anonymous",
+                actor_roles=[],
+                action=ACTION_LOGIN_FAILED,
+                reason=str(exc)[:500],
+            )
+            db.commit()
+            raise
         session = UserSession(
             id=secrets.token_urlsafe(32),
             user_sub=str(claims["sub"]),
@@ -222,6 +235,12 @@ def build_router(get_db) -> APIRouter:
             expires_at=_now() + SESSION_TTL,
         )
         db.add(session)
+        record_audit(
+            db,
+            actor=session.user_sub,
+            actor_roles=session.roles,
+            action=ACTION_LOGIN,
+        )
         db.commit()
         response = Response(status_code=302, headers={"Location": "/"})
         response.set_cookie(
@@ -240,6 +259,14 @@ def build_router(get_db) -> APIRouter:
     def logout(request: Request, db: Session = Depends(get_db)) -> Response:
         session_id = request.cookies.get(SESSION_COOKIE)
         if session_id:
+            session = db.get(UserSession, session_id)
+            if session is not None:
+                record_audit(
+                    db,
+                    actor=session.user_sub,
+                    actor_roles=session.roles,
+                    action=ACTION_LOGOUT,
+                )
             db.execute(delete(UserSession).where(UserSession.id == session_id))
             db.commit()
         logout_url = f"{_authority()}/oauth2/v2.0/logout?" + urlencode(

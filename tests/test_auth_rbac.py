@@ -57,8 +57,15 @@ def db():
     factory = make_session_factory()
     session = factory()
     yield session
-    # Clean up everything this module created.
-    session.execute(delete(CatalogEntry).where(CatalogEntry.id == TEST_ENTRY_ID))
+    # Clean up everything this module created (children before parent: the
+    # Phase C workflow/version/audit tables reference catalog_entries).
+    from db.models import AuditLog, CatalogEntryVersion, EntryWorkflow
+
+    for test_id in (TEST_ENTRY_ID, "TEST-BAD-URL", "TEST-SSRF-API"):
+        session.execute(delete(EntryWorkflow).where(EntryWorkflow.record_id == test_id))
+        session.execute(delete(CatalogEntryVersion).where(CatalogEntryVersion.record_id == test_id))
+        session.execute(delete(AuditLog).where(AuditLog.record_id == test_id))
+        session.execute(delete(CatalogEntry).where(CatalogEntry.id == test_id))
     session.execute(delete(UserSession).where(UserSession.user_sub.like("test-sub-%")))
     session.execute(delete(AuthRequest))
     session.commit()
@@ -190,6 +197,7 @@ NEW_ENTRY = {
     "document_url": "https://example.test/docs",
     "api_key_required": "unknown",
     "connection_status": "未調査",
+    "reason": "test: initial registration",  # change reason (Phase C, epic #47)
 }
 
 
@@ -232,18 +240,25 @@ def test_editor_create_update_and_admin_delete_lifecycle(client, db) -> None:
     # duplicate id -> 409
     assert client.post("/api/v1/entries", json=NEW_ENTRY, cookies=editor).status_code == 409
 
-    # FR-011 update + FR-012 status change by editor
+    # FR-011 update + FR-012 status change by editor (reason required)
     patched = client.patch(
         f"/api/v1/entries/{TEST_ENTRY_ID}",
-        json={"connection_status": "利用終了"},
+        json={"connection_status": "利用終了", "reason": "test: provider sunset"},
         cookies=editor,
     )
     assert patched.status_code == 200
     assert patched.json()["connection_status"] == "利用終了"
 
-    # FR-012 delete: editor forbidden, admin allowed (logical delete)
-    assert client.delete(f"/api/v1/entries/{TEST_ENTRY_ID}", cookies=editor).status_code == 403
-    assert client.delete(f"/api/v1/entries/{TEST_ENTRY_ID}", cookies=admin).status_code == 204
+    # FR-012 delete: editor forbidden, admin allowed (logical delete + reason)
+    params = {"reason": "test: cleanup"}
+    assert (
+        client.delete(f"/api/v1/entries/{TEST_ENTRY_ID}", params=params, cookies=editor).status_code
+        == 403
+    )
+    assert (
+        client.delete(f"/api/v1/entries/{TEST_ENTRY_ID}", params=params, cookies=admin).status_code
+        == 204
+    )
 
     # deleted entries vanish from reads but the row remains (logical delete)
     assert client.get(f"/api/v1/entries/{TEST_ENTRY_ID}").status_code == 404

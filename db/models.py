@@ -113,6 +113,71 @@ class VerificationResult(Base):
     )
 
 
+class AuditLog(Base):
+    """Append-only audit trail (design §4.1, epic #47).
+
+    Application code only ever INSERTs into this table; the DB-role based
+    enforcement (AD-6: revoke UPDATE/DELETE from the app role) is applied at
+    the production cutover together with the dedicated ``catalog_app`` role
+    (tracked in issue #47 — the migration itself stays role-agnostic so it
+    can run on any branch).
+    """
+
+    __tablename__ = "audit_log"
+
+    seq: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    actor: Mapped[str] = mapped_column(Text, nullable=False)
+    actor_roles: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), nullable=False, server_default=text("'{}'")
+    )
+    action: Mapped[str] = mapped_column(Text, nullable=False)
+    record_id: Mapped[str | None] = mapped_column(Text)
+    diff: Mapped[dict | None] = mapped_column(JSONB)
+    reason: Mapped[str | None] = mapped_column(Text)
+    request_id: Mapped[str | None] = mapped_column(Text)
+
+    __table_args__ = (Index("ix_audit_log_record_id_at", "record_id", "at"),)
+
+
+class CatalogEntryVersion(Base):
+    """Immutable snapshot of a catalog entry taken before every change."""
+
+    __tablename__ = "catalog_entry_versions"
+
+    record_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    version: Mapped[int] = mapped_column(Integer, primary_key=True)
+    snapshot: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    created_by: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+WORKFLOW_STATES = ("draft", "in_review", "pending_approval", "published", "rejected")
+
+
+class EntryWorkflow(Base):
+    """Editorial state per catalog entry (design §4.2)."""
+
+    __tablename__ = "entry_workflow"
+
+    record_id: Mapped[str] = mapped_column(Text, ForeignKey("catalog_entries.id"), primary_key=True)
+    state: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "state IN ('draft','in_review','pending_approval','published','rejected')",
+            name="ck_entry_workflow_state",
+        ),
+    )
+
+
 class AuthRequest(Base):
     """Pending OIDC authorization request (state/nonce/PKCE verifier).
 
