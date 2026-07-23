@@ -262,11 +262,16 @@ def test_detect_lan_ip_returns_dotted_string() -> None:
 
 
 def test_format_startup_banner_loopback_hides_lan_url() -> None:
-    for host in ("127.0.0.1", "localhost", "::1"):
+    for host, url in (
+        ("127.0.0.1", "http://127.0.0.1:8080"),
+        ("127.0.0.2", "http://127.0.0.2:8080"),
+        ("localhost", "http://localhost:8080"),
+        ("::1", "http://[::1]:8080"),
+    ):
         banner = format_startup_banner(host, 8080, "192.168.0.5")
         assert "LAN" not in banner
         assert "192.168.0.5" not in banner
-        assert "http://127.0.0.1:8080" in banner
+        assert f"(local access only: {url})" in banner
 
 
 def test_format_startup_banner_lan_bind_shows_lan_url() -> None:

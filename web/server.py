@@ -364,15 +364,21 @@ def detect_lan_ip() -> str:
         return "127.0.0.1"
 
 
-LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
+LOOPBACK_HOSTS = {"localhost", "::1"}
+
+
+def is_loopback_host(host: str) -> bool:
+    """True for bind addresses that only resolve locally (localhost, ::1, 127/8)."""
+    return host in LOOPBACK_HOSTS or host.startswith("127.")
 
 
 def format_startup_banner(host: str, port: int, lan_ip: str) -> str:
     """Startup banner; the LAN URL is only advertised when the bind interface
     is actually reachable from other machines (a loopback bind is not)."""
     base = f"Global Civil API Catalog WebUI listening on {host}:{port}"
-    if host in LOOPBACK_HOSTS:
-        return f"{base} (local access only: http://127.0.0.1:{port})"
+    if is_loopback_host(host):
+        url_host = "[::1]" if host == "::1" else host
+        return f"{base} (local access only: http://{url_host}:{port})"
     return f"{base} (LAN: http://{lan_ip}:{port})"
 
 

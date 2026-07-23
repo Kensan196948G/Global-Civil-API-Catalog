@@ -410,4 +410,4 @@ FR-012 の「登録からの削除」は管理者のみが実行できる。「�
 - USGS Water Data APIs: https://www.usgs.gov/tools/usgs-water-data-apis
 - National Weather Service API: https://www.weather.gov/documentation/services-web-api
 - OpenStreetMap Overpass API: https://wiki.openstreetmap.org/wiki/Overpass_API
-- OpenAQ 公式API仕様書（APIキー必須の記載）: https://docs.openaq.org/
+- OpenAQ 公式API仕様書: https://docs.openaq.org/ （APIキー認証の解説: https://docs.openaq.org/using-the-api/api-key ）
