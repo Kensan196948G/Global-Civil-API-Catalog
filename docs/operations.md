@@ -136,11 +136,11 @@ Docker Desktop に依存せず、ネイティブ Python で OS 起動時に自�
 
 `-Principal` パラメータで実行方式を切り替えられます。
 
-| 値                                | 説明                                                                                                                                                                                                            | 用途                                              |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `Interactive`（既定）             | 現ユーザーの対話セッション依存。後方互換のため既定値のまま維持                                                                                                                                                  | 旧構成との互換性が必要な場合のみ                  |
-| `S4U`（**本番採用・推奨**）       | 現ユーザー権限のままログオン非依存で常駐。Task Scheduler がプロセスを直接監視するため `RestartCount`/`RestartInterval` が実際に機能する                                                                         | 24/7 公開サービス（本プロジェクトの本番機はこれ） |
-| `LocalService` / `NetworkService` | Windows 組み込みサービスアカウントによる最小権限実行。本プロジェクトのフォルダ ACL（`icacls`で確認済み: `NT AUTHORITY\Authenticated Users:(M)` を継承）上は読み取り可能と推定されるが、本番未適用・追加検証推奨 | さらなる権限最小化が必要な場合                    |
+| 値                                | 説明                                                                                                                                                                                                                                                                                                            | 用途                                              |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `Interactive`（既定）             | 現ユーザーの対話セッション依存。後方互換のため既定値のまま維持                                                                                                                                                                                                                                                  | 旧構成との互換性が必要な場合のみ                  |
+| `S4U`（**本番採用・推奨**）       | 現ユーザー権限のままログオン非依存で常駐。Task Scheduler がプロセスを直接監視するため `RestartCount`/`RestartInterval` が実際に機能する                                                                                                                                                                         | 24/7 公開サービス（本プロジェクトの本番機はこれ） |
+| `LocalService` / `NetworkService` | Windows 組み込みサービスアカウントによる最小権限実行。⚠️ 現状のフォルダ ACL は `Authenticated Users:(M)`（Modify）を継承しており**最小権限の根拠にはならない**。採用時は実行ファイル・設定を Read/Execute に限定し、書込は data/・log 専用ディレクトリへ分離した ACL を設定すること（本番未適用・追加検証必須） | さらなる権限最小化が必要な場合                    |
 
 ```powershell
 # 本番で採用している再登録コマンド（ログオフ非依存・再発防止）
@@ -210,12 +210,12 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 
 ### ✅ Access 設定状況（2026-07-05 適用済み）
 
-| 項目               | 値                                                                                                             |
-| ------------------ | -------------------------------------------------------------------------------------------------------------- |
-| Access Application | `Global Civil API Catalog`（`api.mirai-dx-platform.com` 全体を保護）                                           |
-| 許可ポリシー       | ドメイン `@mirai-const.co.jp` 全体 + メールアドレス `kensan1969@gmail.com`（いずれか一致・One-Time PIN 認証）  |
-| 動作確認           | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み                       |
-| 変更方法           | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能 |
+| 項目               | 値                                                                                                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Access Application | `Global Civil API Catalog`（`api.mirai-dx-platform.com` 全体を保護）                                                                                                                                  |
+| 許可ポリシー       | ドメイン `@mirai-const.co.jp` 全体 + 個別許可メールアドレス（いずれか一致・One-Time PIN 認証）。個別アドレスは Cloudflare Access ダッシュボード側でのみ管理し、本文書には記載しない（PII/標的型対策） |
+| 動作確認           | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み                                                                                                              |
+| 変更方法           | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能                                                                                        |
 
 ---
 
@@ -227,5 +227,5 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 - 📦 依存導入: `pip install -e ".[db]"`（既定の静的サイト・バッチは従来どおり stdlib のみで動作）
 - 🧬 スキーマ適用: `CATALOG_DATABASE_URL=... python -m alembic upgrade head`（rollback は `alembic downgrade base`）
 - 🔁 データ投入 + 照合: `CATALOG_DATABASE_URL=... python scripts/migrate_json_to_db.py`（冪等 upsert + field-by-field round-trip 検証。`--verify-only` で照合のみ）
-- 🌐 読取 API 起動: `CATALOG_DATABASE_URL=... uvicorn web.api_v1:app --port 49232`（read-only。書込系は epic #45 の認証導入後まで実装しない）
+- 🌐 API v1 起動: `CATALOG_DATABASE_URL=... ENTRA_TENANT_ID=... ENTRA_CLIENT_ID=... ENTRA_CLIENT_SECRET=... uvicorn web.api_v1:app --port 49232`（読取は公開、**書込系（登録・更新・論理削除）は Phase B で実装済み・OIDC+RBAC 認証必須**。URL フィールドは SSRF ガードで検証される。設定手順: `docs/entra-id-setup.md`）
 - 🧪 DB テスト: `CATALOG_DATABASE_URL=... python -m pytest tests/test_db_phase_a.py`（env 未設定時は自動 skip — CI は現状 DB secret を持たないため skip される）
