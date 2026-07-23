@@ -64,7 +64,12 @@ def record_audit(
 
 
 def snapshot_entry(session: Session, entry: CatalogEntry, actor: str) -> int:
-    """Store the current state of ``entry`` as the next version; returns it."""
+    """Store the current state of ``entry`` as the next version; returns it.
+
+    Callers MUST hold a FOR UPDATE lock on the entry row (all mutating
+    endpoints do): max(version)+1 is only race-free while writers for the
+    same record are serialised (adversarial review, PR #68).
+    """
     current = session.scalar(
         select(func.coalesce(func.max(CatalogEntryVersion.version), 0)).where(
             CatalogEntryVersion.record_id == entry.id

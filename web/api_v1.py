@@ -359,9 +359,23 @@ def update_entry(
     actor: UserSession = Depends(require_editor),
     session: Session = Depends(get_session),
 ) -> dict[str, Any]:
-    entry = session.get(CatalogEntry, entry_id)
+    # FOR UPDATE serialises all writers per record (adversarial review:
+    # non-atomic version numbering under concurrency).
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
     if entry is None or entry.deleted_at is not None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
+    state = _workflow_state(session, entry_id)
+    if state not in ("draft", "rejected"):
+        # State-machine enforcement (adversarial review): published or
+        # in-review content cannot be edited in place — reopen it first so
+        # every change re-enters the approval flow.
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"content changes require draft state (current: {state}); "
+                "use the 'reopen' transition first"
+            ),
+        )
     changes = payload.model_dump(exclude_unset=True, exclude={"reason"})
     if not changes:
         raise HTTPException(status_code=422, detail="no fields to update")
@@ -399,17 +413,29 @@ def delete_entry(
     session: Session = Depends(get_session),
 ) -> None:
     """FR-012: admin-only logical delete; the row and its history remain."""
-    entry = session.get(CatalogEntry, entry_id)
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
     if entry is None or entry.deleted_at is not None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
     entry.deleted_at = func.now()
+    # A deleted entry drops back to draft so a later restore always
+    # re-enters the approval flow before becoming publicly visible again.
+    workflow = session.get(EntryWorkflow, entry_id, with_for_update=True)
+    before_state = workflow.state if workflow is not None else "published"
+    if workflow is None:
+        session.add(EntryWorkflow(record_id=entry_id, state="draft"))
+    else:
+        workflow.state = "draft"
+        workflow.updated_at = func.now()
     record_audit(
         session,
         actor=actor.user_sub,
         actor_roles=actor.roles,
         action=ACTION_DELETE,
         record_id=entry.id,
-        diff={"deleted": {"before": False, "after": True}},
+        diff={
+            "deleted": {"before": False, "after": True},
+            "state": {"before": before_state, "after": "draft"},
+        },
         reason=reason,
     )
     session.commit()
@@ -439,6 +465,9 @@ _TRANSITIONS: dict[str, dict[str, Any]] = {
         "to": "draft",
         "roles": {ROLE_VERIFIER, ROLE_APPROVER, ROLE_ADMIN},
     },
+    # Published content is immutable in place; editing requires an explicit,
+    # audited reopen back to draft (adversarial review, PR #68).
+    "reopen": {"from": {"published"}, "to": "draft", "roles": {ROLE_EDITOR, ROLE_ADMIN}},
 }
 
 
@@ -454,13 +483,16 @@ def transition_entry(
     actor: UserSession = Depends(require_staff),
     session: Session = Depends(get_session),
 ) -> dict[str, Any]:
-    entry = session.get(CatalogEntry, entry_id)
+    # Lock order (entry -> workflow) matches the other mutating endpoints so
+    # concurrent transitions serialise instead of overwriting each other
+    # (adversarial review: non-linearised transitions).
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
     if entry is None or entry.deleted_at is not None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
     rule = _TRANSITIONS[payload.action]
     if not set(actor.roles) & rule["roles"]:
         raise HTTPException(status_code=403, detail=f"role cannot perform '{payload.action}'")
-    workflow = session.get(EntryWorkflow, entry_id)
+    workflow = session.get(EntryWorkflow, entry_id, with_for_update=True)
     if workflow is None:
         workflow = EntryWorkflow(record_id=entry_id, state="published")
         session.add(workflow)
@@ -534,10 +566,21 @@ def restore_entry(
     session: Session = Depends(get_session),
 ) -> dict[str, Any]:
     """Admin-only restore from a stored version; also revives a logically
-    deleted entry (design §4.2 復元)."""
-    entry = session.get(CatalogEntry, entry_id)
+    deleted entry (design §4.2 復元). Restored content re-enters the
+    approval flow: like PATCH, it is only possible in draft/rejected state
+    (deletion always drops the entry back to draft)."""
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
     if entry is None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
+    state = _workflow_state(session, entry_id)
+    if state not in ("draft", "rejected"):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"restore requires draft state (current: {state}); "
+                "use the 'reopen' transition first"
+            ),
+        )
     stored = session.get(CatalogEntryVersion, (entry_id, payload.version))
     if stored is None:
         raise HTTPException(status_code=404, detail="version not found")

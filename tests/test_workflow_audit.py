@@ -203,7 +203,24 @@ def test_versions_and_admin_restore(client, db) -> None:
     admin = cookie(db, [ROLE_ADMIN])
     viewer = cookie(db, [ROLE_VIEWER])
 
-    # a data change creates a new version
+    # published content is immutable in place: PATCH requires reopen first
+    blocked = client.patch(
+        f"/api/v1/entries/{WF_ID}",
+        json={"name": "Renamed by test", "reason": "test: rename"},
+        cookies=editor,
+    )
+    assert blocked.status_code == 409
+    assert "reopen" in blocked.json()["detail"]
+    assert (
+        client.post(
+            f"/api/v1/entries/{WF_ID}/transitions",
+            json={"action": "reopen", "reason": "test: edit published entry"},
+            cookies=editor,
+        ).json()["state"]
+        == "draft"
+    )
+
+    # a data change (now in draft) creates a new version
     client.patch(
         f"/api/v1/entries/{WF_ID}",
         json={"name": "Renamed by test", "reason": "test: rename"},

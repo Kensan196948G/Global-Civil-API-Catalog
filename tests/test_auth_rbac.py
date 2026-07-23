@@ -291,3 +291,42 @@ def test_me_reports_roles(client, db) -> None:
     body = client.get("/auth/me", cookies=cookies).json()
     assert body["roles"] == [ROLE_VIEWER]
     assert client.get("/auth/me").status_code == 401
+
+
+def test_login_failure_audit_never_stores_raw_exception_text(
+    client, db, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Token-exchange/parsing errors can embed token material or PII claims;
+    # the login_failed audit row must only carry the exception class name.
+    from sqlalchemy import select
+
+    from db.models import AuditLog
+
+    def _boom(code, verifier):
+        raise RuntimeError("id_token=SECRET-TOKEN-MATERIAL")
+
+    monkeypatch.setattr("web.auth._exchange_code", _boom)
+
+    login = client.get("/auth/login")
+    from urllib.parse import parse_qs, urlparse
+
+    state = parse_qs(urlparse(login.headers["location"]).query)["state"][0]
+    with pytest.raises(RuntimeError):
+        client.get(
+            "/auth/callback",
+            params={"code": "x", "state": state},
+            cookies={"catalog_auth_req": state},
+        )
+
+    row = db.execute(
+        select(AuditLog)
+        .where(AuditLog.action == "login_failed")
+        .order_by(AuditLog.seq.desc())
+        .limit(1)
+    ).scalar_one()
+    assert row.reason == "RuntimeError"
+    assert "SECRET-TOKEN-MATERIAL" not in (row.reason or "")
+    db.execute(
+        AuditLog.__table__.delete().where(AuditLog.seq == row.seq)
+    )  # test-row cleanup
+    db.commit()

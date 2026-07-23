@@ -218,12 +218,16 @@ def build_router(get_db) -> APIRouter:
             claims = validate_id_token(tokens.get("id_token", ""), pending.nonce, _fetch_jwks())
         except Exception as exc:
             # Observability for auth failures (design §3.3, issue #61).
+            # Only our own HTTPException details are safe to persist; raw
+            # exception text from token parsing can embed token material or
+            # PII claims, so anything else is reduced to the class name.
+            detail = exc.detail if isinstance(exc, HTTPException) else type(exc).__name__
             record_audit(
                 db,
                 actor="anonymous",
                 actor_roles=[],
                 action=ACTION_LOGIN_FAILED,
-                reason=str(exc)[:500],
+                reason=str(detail)[:200],
             )
             db.commit()
             raise
