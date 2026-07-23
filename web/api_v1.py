@@ -1,11 +1,18 @@
 """Catalog API v1 (FastAPI) — Phase A read layer (epic #46) + Phase B
-authenticated write layer (epic #45, Issue #59).
+authenticated write layer (epic #45) + Phase C audit/versioning/approval
+workflow (epic #47, design §4).
 
-Reads are public. Writes require an Entra ID login session with the
-appropriate app role (design §2.2 / §3.2):
+Reads are public but only expose ``published`` entries; staff (Editor/
+Verifier/Approver/Admin sessions) also see drafts. Writes require an Entra
+ID login session with the appropriate app role (design §2.2 / §3.2):
 
-    POST/PATCH  Catalog.Editor or Catalog.Admin
-    DELETE      Catalog.Admin only (logical delete, FR-012)
+    POST/PATCH   Catalog.Editor or Catalog.Admin (change reason required)
+    DELETE       Catalog.Admin only (logical delete + audit, FR-012)
+    transitions  submit=Editor / review_ok=Verifier / approve=Approver
+                 / send_back=Verifier·Approver (Admin can do all)
+    restore      Catalog.Admin only (from a stored version, audited)
+
+Every mutation writes an append-only audit_log row and a version snapshot.
 
 Run locally:
     CATALOG_DATABASE_URL=... ENTRA_TENANT_ID=... ENTRA_CLIENT_ID=... \
@@ -16,23 +23,50 @@ from __future__ import annotations
 
 import os
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Response  # noqa: E402
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 from pydantic import BaseModel, Field  # noqa: E402
-from sqlalchemy import func, or_, select  # noqa: E402
+from sqlalchemy import Date, func, or_, select  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
-from db.models import CatalogEntry, UserSession, VerificationResult  # noqa: E402
+from db.audit import (  # noqa: E402
+    ACTION_CREATE,
+    ACTION_DELETE,
+    ACTION_RESTORE,
+    ACTION_TRANSITION,
+    ACTION_UPDATE,
+    entry_snapshot_dict,
+    field_diff,
+    record_audit,
+    snapshot_entry,
+)
+from db.models import (  # noqa: E402
+    AuditLog,
+    CatalogEntry,
+    CatalogEntryVersion,
+    EntryWorkflow,
+    UserSession,
+    VerificationResult,
+)
 from db.session import make_session_factory  # noqa: E402
 from scripts.url_guard import validate_public_url  # noqa: E402
-from web.auth import ROLE_ADMIN, ROLE_EDITOR, build_router, require_role  # noqa: E402
+from web.auth import (  # noqa: E402
+    ROLE_ADMIN,
+    ROLE_APPROVER,
+    ROLE_EDITOR,
+    ROLE_VERIFIER,
+    build_router,
+    current_session,
+    require_role,
+)
 
-app = FastAPI(title="Global Civil API Catalog API", version="1.1.0")
+app = FastAPI(title="Global Civil API Catalog API", version="1.2.0")
 
 
 @app.middleware("http")
@@ -70,14 +104,34 @@ app.include_router(build_router(get_session))
 
 require_editor = require_role(get_session, ROLE_EDITOR, ROLE_ADMIN)
 require_admin = require_role(get_session, ROLE_ADMIN)
+require_staff = require_role(get_session, ROLE_EDITOR, ROLE_VERIFIER, ROLE_APPROVER, ROLE_ADMIN)
+
+_STAFF_ROLES = {ROLE_EDITOR, ROLE_VERIFIER, ROLE_APPROVER, ROLE_ADMIN}
 
 
-def entry_to_dict(entry: CatalogEntry) -> dict[str, Any]:
-    return {
+def _staff_session(request: Request, db: Session) -> UserSession | None:
+    """Session with any staff role; anonymous/viewer-only returns None."""
+    session = current_session(request, db)
+    if session is None or not set(session.roles) & _STAFF_ROLES:
+        return None
+    return session
+
+
+def entry_to_dict(entry: CatalogEntry, workflow_state: str | None = None) -> dict[str, Any]:
+    payload = {
         c.name: getattr(entry, c.name)
         for c in CatalogEntry.__table__.columns
         if c.name not in ("created_at", "updated_at", "deleted_at")
     }
+    if workflow_state is not None:
+        payload["workflow_state"] = workflow_state
+    return payload
+
+
+def _workflow_state(session: Session, record_id: str) -> str:
+    row = session.get(EntryWorkflow, record_id)
+    # Entries predating the workflow tables are grandfathered as published.
+    return row.state if row is not None else "published"
 
 
 # --- read (public) ---------------------------------------------------------
@@ -85,6 +139,7 @@ def entry_to_dict(entry: CatalogEntry) -> dict[str, Any]:
 
 @app.get("/api/v1/entries")
 def list_entries(
+    request: Request,
     category: str | None = None,
     provider: str | None = None,
     status: str | None = None,
@@ -94,7 +149,14 @@ def list_entries(
     offset: int = Query(0, ge=0),
     session: Session = Depends(get_session),
 ) -> dict[str, Any]:
-    stmt = select(CatalogEntry).where(CatalogEntry.deleted_at.is_(None))
+    stmt = (
+        select(CatalogEntry, EntryWorkflow.state)
+        .outerjoin(EntryWorkflow, EntryWorkflow.record_id == CatalogEntry.id)
+        .where(CatalogEntry.deleted_at.is_(None))
+    )
+    if _staff_session(request, session) is None:
+        # Anonymous / viewer: published entries only (design §4.2).
+        stmt = stmt.where(func.coalesce(EntryWorkflow.state, "published") == "published")
     if category:
         stmt = stmt.where(CatalogEntry.category == category)
     if provider:
@@ -113,16 +175,25 @@ def list_entries(
             )
         )
     total = session.scalar(select(func.count()).select_from(stmt.subquery()))
-    rows = session.scalars(stmt.order_by(CatalogEntry.id).limit(limit).offset(offset)).all()
-    return {"total": total, "items": [entry_to_dict(e) for e in rows]}
+    rows = session.execute(stmt.order_by(CatalogEntry.id).limit(limit).offset(offset)).all()
+    return {
+        "total": total,
+        "items": [entry_to_dict(e, state or "published") for e, state in rows],
+    }
 
 
 @app.get("/api/v1/entries/{entry_id}")
-def get_entry(entry_id: str, session: Session = Depends(get_session)) -> dict[str, Any]:
+def get_entry(
+    request: Request, entry_id: str, session: Session = Depends(get_session)
+) -> dict[str, Any]:
     entry = session.get(CatalogEntry, entry_id)
     if entry is None or entry.deleted_at is not None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
-    return entry_to_dict(entry)
+    state = _workflow_state(session, entry_id)
+    if state != "published" and _staff_session(request, session) is None:
+        # Unpublished entries are indistinguishable from missing ones.
+        raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
+    return entry_to_dict(entry, state)
 
 
 @app.get("/api/v1/verifications")
@@ -148,7 +219,11 @@ def metadata(session: Session = Depends(get_session)) -> dict[str, Any]:
     # record_count drift class of bugs (PR #37) cannot recur here.
     return {
         "record_count": session.scalar(
-            select(func.count()).select_from(CatalogEntry).where(CatalogEntry.deleted_at.is_(None))
+            select(func.count())
+            .select_from(CatalogEntry)
+            .outerjoin(EntryWorkflow, EntryWorkflow.record_id == CatalogEntry.id)
+            .where(CatalogEntry.deleted_at.is_(None))
+            .where(func.coalesce(EntryWorkflow.state, "published") == "published")
         ),
         "verification_count": session.scalar(select(func.count()).select_from(VerificationResult)),
         "source": "postgresql",
@@ -185,6 +260,8 @@ def _reject_unsafe_urls(changes: dict[str, Any]) -> None:
 
 
 class EntryCreate(BaseModel):
+    # Change reason is mandatory for every mutation (design §4.1, epic #47).
+    reason: str = Field(min_length=1, max_length=1000)
     id: str = Field(min_length=1, max_length=100, pattern=r"^[A-Z0-9][A-Z0-9-]*$")
     name: str = Field(min_length=1)
     category: str = Field(min_length=1)
@@ -214,8 +291,10 @@ class EntryCreate(BaseModel):
 
 
 class EntryPatch(BaseModel):
-    """Partial update (FR-011); all fields optional, id immutable."""
+    """Partial update (FR-011); data fields optional, id immutable,
+    change reason mandatory (design §4.1)."""
 
+    reason: str = Field(min_length=1, max_length=1000)
     name: str | None = Field(default=None, min_length=1)
     category: str | None = None
     sub_category: str | None = None
@@ -251,12 +330,27 @@ def create_entry(
 ) -> dict[str, Any]:
     if session.get(CatalogEntry, payload.id) is not None:
         raise HTTPException(status_code=409, detail=f"entry {payload.id} already exists")
-    _reject_unsafe_urls(payload.model_dump())
-    entry = CatalogEntry(**payload.model_dump())
+    data = payload.model_dump(exclude={"reason"})
+    _reject_unsafe_urls(data)
+    entry = CatalogEntry(**data)
     session.add(entry)
+    # New API-created entries enter the approval workflow as drafts and are
+    # invisible to the public until approved (design §4.2).
+    session.add(EntryWorkflow(record_id=entry.id, state="draft"))
+    session.flush()
+    snapshot_entry(session, entry, actor.user_sub)
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_CREATE,
+        record_id=entry.id,
+        diff=field_diff({}, entry_snapshot_dict(entry)),
+        reason=payload.reason,
+    )
     session.commit()
     session.refresh(entry)
-    return entry_to_dict(entry)
+    return entry_to_dict(entry, "draft")
 
 
 @app.patch("/api/v1/entries/{entry_id}")
@@ -266,19 +360,45 @@ def update_entry(
     actor: UserSession = Depends(require_editor),
     session: Session = Depends(get_session),
 ) -> dict[str, Any]:
-    entry = session.get(CatalogEntry, entry_id)
+    # FOR UPDATE serialises all writers per record (adversarial review:
+    # non-atomic version numbering under concurrency).
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
     if entry is None or entry.deleted_at is not None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
-    changes = payload.model_dump(exclude_unset=True)
+    state = _workflow_state(session, entry_id)
+    if state not in ("draft", "rejected"):
+        # State-machine enforcement (adversarial review): published or
+        # in-review content cannot be edited in place — reopen it first so
+        # every change re-enters the approval flow.
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"content changes require draft state (current: {state}); "
+                "use the 'reopen' transition first"
+            ),
+        )
+    changes = payload.model_dump(exclude_unset=True, exclude={"reason"})
     if not changes:
         raise HTTPException(status_code=422, detail="no fields to update")
     _reject_unsafe_urls(changes)
+    before = entry_snapshot_dict(entry)
     for field, value in changes.items():
         setattr(entry, field, value)
     entry.updated_at = func.now()
-    session.commit()
+    session.flush()
     session.refresh(entry)
-    return entry_to_dict(entry)
+    snapshot_entry(session, entry, actor.user_sub)
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_UPDATE,
+        record_id=entry.id,
+        diff=field_diff(before, entry_snapshot_dict(entry)),
+        reason=payload.reason,
+    )
+    session.commit()
+    return entry_to_dict(entry, _workflow_state(session, entry_id))
 
 
 @app.delete(
@@ -289,12 +409,224 @@ def update_entry(
 )
 def delete_entry(
     entry_id: str,
+    reason: str = Query(min_length=1, max_length=1000),
     actor: UserSession = Depends(require_admin),
     session: Session = Depends(get_session),
 ) -> None:
     """FR-012: admin-only logical delete; the row and its history remain."""
-    entry = session.get(CatalogEntry, entry_id)
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
     if entry is None or entry.deleted_at is not None:
         raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
     entry.deleted_at = func.now()
+    # A deleted entry drops back to draft so a later restore always
+    # re-enters the approval flow before becoming publicly visible again.
+    workflow = session.get(EntryWorkflow, entry_id, with_for_update=True)
+    before_state = workflow.state if workflow is not None else "published"
+    if workflow is None:
+        session.add(EntryWorkflow(record_id=entry_id, state="draft"))
+    else:
+        workflow.state = "draft"
+        workflow.updated_at = func.now()
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_DELETE,
+        record_id=entry.id,
+        diff={
+            "deleted": {"before": False, "after": True},
+            "state": {"before": before_state, "after": "draft"},
+        },
+        reason=reason,
+    )
     session.commit()
+
+
+# --- workflow / versions / audit (Phase C) ---------------------------------
+
+# design §4.2: who may drive which transition, and from which states.
+_TRANSITIONS: dict[str, dict[str, Any]] = {
+    "submit": {
+        "from": {"draft", "rejected"},
+        "to": "in_review",
+        "roles": {ROLE_EDITOR, ROLE_ADMIN},
+    },
+    "review_ok": {
+        "from": {"in_review"},
+        "to": "pending_approval",
+        "roles": {ROLE_VERIFIER, ROLE_ADMIN},
+    },
+    "approve": {
+        "from": {"pending_approval"},
+        "to": "published",
+        "roles": {ROLE_APPROVER, ROLE_ADMIN},
+    },
+    "send_back": {
+        "from": {"in_review", "pending_approval"},
+        "to": "draft",
+        "roles": {ROLE_VERIFIER, ROLE_APPROVER, ROLE_ADMIN},
+    },
+    # Published content is immutable in place; editing requires an explicit,
+    # audited reopen back to draft (adversarial review, PR #68).
+    "reopen": {"from": {"published"}, "to": "draft", "roles": {ROLE_EDITOR, ROLE_ADMIN}},
+}
+
+
+class TransitionRequest(BaseModel):
+    action: str = Field(pattern=f"^({'|'.join(_TRANSITIONS)})$")
+    reason: str = Field(min_length=1, max_length=1000)
+
+
+@app.post("/api/v1/entries/{entry_id}/transitions")
+def transition_entry(
+    entry_id: str,
+    payload: TransitionRequest,
+    actor: UserSession = Depends(require_staff),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    # Lock order (entry -> workflow) matches the other mutating endpoints so
+    # concurrent transitions serialise instead of overwriting each other
+    # (adversarial review: non-linearised transitions).
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
+    if entry is None or entry.deleted_at is not None:
+        raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
+    rule = _TRANSITIONS[payload.action]
+    if not set(actor.roles) & rule["roles"]:
+        raise HTTPException(status_code=403, detail=f"role cannot perform '{payload.action}'")
+    workflow = session.get(EntryWorkflow, entry_id, with_for_update=True)
+    if workflow is None:
+        workflow = EntryWorkflow(record_id=entry_id, state="published")
+        session.add(workflow)
+    if workflow.state not in rule["from"]:
+        raise HTTPException(
+            status_code=409,
+            detail=f"cannot '{payload.action}' from state '{workflow.state}'",
+        )
+    before_state = workflow.state
+    workflow.state = rule["to"]
+    workflow.updated_at = func.now()
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_TRANSITION,
+        record_id=entry_id,
+        diff={"state": {"before": before_state, "after": rule["to"]}},
+        reason=payload.reason,
+    )
+    session.commit()
+    return {"record_id": entry_id, "state": rule["to"]}
+
+
+@app.get("/api/v1/entries/{entry_id}/versions")
+def list_versions(
+    entry_id: str,
+    actor: UserSession = Depends(require_staff),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    rows = session.scalars(
+        select(CatalogEntryVersion)
+        .where(CatalogEntryVersion.record_id == entry_id)
+        .order_by(CatalogEntryVersion.version.desc())
+    ).all()
+    return {
+        "items": [
+            {"version": r.version, "created_at": r.created_at, "created_by": r.created_by}
+            for r in rows
+        ]
+    }
+
+
+@app.get("/api/v1/entries/{entry_id}/versions/{version}")
+def get_version(
+    entry_id: str,
+    version: int,
+    actor: UserSession = Depends(require_staff),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    row = session.get(CatalogEntryVersion, (entry_id, version))
+    if row is None:
+        raise HTTPException(status_code=404, detail="version not found")
+    return {"version": row.version, "created_by": row.created_by, "snapshot": row.snapshot}
+
+
+class RestoreRequest(BaseModel):
+    version: int = Field(ge=1)
+    reason: str = Field(min_length=1, max_length=1000)
+
+
+# Columns that must never be overwritten by a restore.
+_RESTORE_EXCLUDED = {"id", "created_at", "updated_at", "deleted_at"}
+
+
+@app.post("/api/v1/entries/{entry_id}/restore")
+def restore_entry(
+    entry_id: str,
+    payload: RestoreRequest,
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    """Admin-only restore from a stored version; also revives a logically
+    deleted entry (design §4.2 復元). Restored content re-enters the
+    approval flow: like PATCH, it is only possible in draft/rejected state
+    (deletion always drops the entry back to draft)."""
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
+    if entry is None:
+        raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
+    state = _workflow_state(session, entry_id)
+    if state not in ("draft", "rejected"):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"restore requires draft state (current: {state}); "
+                "use the 'reopen' transition first"
+            ),
+        )
+    stored = session.get(CatalogEntryVersion, (entry_id, payload.version))
+    if stored is None:
+        raise HTTPException(status_code=404, detail="version not found")
+    before = entry_snapshot_dict(entry)
+    for field, value in stored.snapshot.items():
+        if field in _RESTORE_EXCLUDED or field not in CatalogEntry.__table__.columns:
+            continue
+        # Snapshots are JSON, so non-JSON-native column types come back as
+        # strings; coerce them before writing (CodeRabbit, PR #68).
+        column = CatalogEntry.__table__.columns[field]
+        if isinstance(column.type, Date) and isinstance(value, str):
+            value = date.fromisoformat(value)
+        setattr(entry, field, value)
+    entry.deleted_at = None
+    entry.updated_at = func.now()
+    session.flush()
+    session.refresh(entry)
+    snapshot_entry(session, entry, actor.user_sub)
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_RESTORE,
+        record_id=entry_id,
+        diff=field_diff(before, entry_snapshot_dict(entry)),
+        reason=payload.reason,
+    )
+    session.commit()
+    return entry_to_dict(entry, _workflow_state(session, entry_id))
+
+
+@app.get("/api/v1/audit")
+def list_audit(
+    record_id: str | None = None,
+    action: str | None = None,
+    limit: int = Query(100, ge=1, le=500),
+    actor: UserSession = Depends(require_staff),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    stmt = select(AuditLog).order_by(AuditLog.seq.desc())
+    if record_id:
+        stmt = stmt.where(AuditLog.record_id == record_id)
+    if action:
+        stmt = stmt.where(AuditLog.action == action)
+    rows = session.scalars(stmt.limit(limit)).all()
+    return {
+        "items": [{c.name: getattr(r, c.name) for c in AuditLog.__table__.columns} for r in rows]
+    }

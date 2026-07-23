@@ -229,3 +229,10 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 - 🔁 データ投入 + 照合: `CATALOG_DATABASE_URL=... python scripts/migrate_json_to_db.py`（冪等 upsert + field-by-field round-trip 検証。`--verify-only` で照合のみ）
 - 🌐 API v1 起動: `CATALOG_DATABASE_URL=... ENTRA_TENANT_ID=... ENTRA_CLIENT_ID=... ENTRA_CLIENT_SECRET=... uvicorn web.api_v1:app --port 49232`（読取は公開、**書込系（登録・更新・論理削除）は Phase B で実装済み・OIDC+RBAC 認証必須**。URL フィールドは SSRF ガードで検証される。設定手順: `docs/entra-id-setup.md`）
 - 🧪 DB テスト: `CATALOG_DATABASE_URL=... python -m pytest tests/test_db_phase_a.py`（env 未設定時は自動 skip — CI は現状 DB secret を持たないため skip される）
+
+### 📜 Phase C: 監査ログ・版管理・承認ワークフロー（epic #47）
+
+- 🔁 承認フロー: API 新規登録は `draft` で開始し、`submit`(編集者) → `review_ok`(検証者) → `approve`(承認者) で `published`。差戻しは `send_back`。**公開読取は published のみ**（既存 50 件は移行時に published へ backfill 済み）
+- 📜 全変更・遷移・ログイン事象は `audit_log` へ append-only 記録（**変更理由 reason 必須**）。参照: `GET /api/v1/audit`（staff のみ）
+- 🕐 版管理: 変更ごとに snapshot 保存。`GET /api/v1/entries/{id}/versions`、復元は `POST /api/v1/entries/{id}/restore`（Admin のみ・論理削除からの復活も可能・監査記録付き）
+- ⚠️ AD-6 の DB ロールによる append-only 強制（専用 `catalog_app` ロール + UPDATE/DELETE 剥奪）は **DB 正本切替の Approval PR に含めて適用**する（Issue #47 参照）
