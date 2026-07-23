@@ -5,8 +5,8 @@
     "release_deadline": "2026-12-18",
     "phase_mode": "maintenance"
   },
-  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23: (1) scheduled-verify.yml のYAMLブロックスカラー破壊(PR#40起因)を根本特定しPR#51で修復・merge済み(sha=832a797)。週次検証パイプライン復旧、workflow名正常化、push時のphantom failure解消を確認。workflow_dispatch smoke run実施。(2) Issue #41(Major2+Minor2)・Issue #44(Major1+Minor1)のCodeRabbitフォローアップ6件をPR#52で解消(record_count切り詰め明示化/loopback時LAN URL抑制/FR-012状態・権限・監査整合/OpenAQ認証要否/state.json整形)。FR-012の版管理・論理削除詳細はepic #47へ委譲記録済み。残: PR#52マージ待ち。次のアクション: epic #45〜#49の優先順位付けと詳細設計着手。残課題: data/api_catalog.jsonのOpenAQ api_key_required=unknownは文書と不整合(スコア再計算を伴うため別対応)。",
-  "phase": "Review",
+  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23セッション完了: (1) PR#51 merge(sha=832a797) — scheduled-verify.ymlのYAMLブロックスカラー破壊(PR#40起因)を根本修復。週次検証パイプライン復旧・workflow名正常化・push時phantom failure解消を確認。(2) PR#52 merge(sha=c079bfe) — Issue #41/#44のCodeRabbitフォローアップ6件+レビューMinor2件を解消しclose。(3) workflow_dispatch smoke runで新規障害を発見: Actions のPR作成権限が無効でgh pr create失敗→ユーザー承認の上 can_approve_pull_request_reviews=true に変更(default_workflow_permissions=readは維持)。検証データはPR#53として手動救済しmerge(sha=0d19f36)。次回確認: 月曜02:00 UTC cronでbranch push→PR自動作成の一気通貫成功を確認。残オープンIssue: epic #45〜#49のみ(詳細設計未着手)。次のアクション: epicの優先順位付けと詳細設計着手。残課題: data/api_catalog.jsonのOpenAQ api_key_required=unknownが要件定義書(必要)と不整合(スコア再計算を伴うため別対応)。",
+  "phase": "Monitor",
   "kpi": {
     "success_rate_target": 0.9,
     "ci_success_rate": 1,
@@ -19,7 +19,7 @@
     "repair_count": 0,
     "max_repair": 3,
     "same_error_limit": 2,
-    "last_stop_at": "2026-07-23T01:41:40.622Z",
+    "last_stop_at": "2026-07-23T02:01:44.386Z",
     "current_session_start_at": "2026-07-23T01:21:07.664Z",
     "last_trigger": "manual"
   },
@@ -44,7 +44,10 @@
     "Issue #38 / PR#39: server.py デフォルトbindを0.0.0.0→127.0.0.1化 + run_verification.py record_count抽出欠落を修正、CodeRabbit指摘(Dockerfile CATALOG_HOST到達性/Windowsサービス--host明示)も同PR内で解消 (merged 2026-07-16, sha=762eb76, Closes #38)",
     "PR#40: 週次verification workflowをmain直pushからPRフロー化(Q2対応、branch protection前提) (merged, sha=66d7d11)",
     "PR#43: 要件定義書7.1章にUpdate/Delete FRを追加(Q3対応) (merged, sha=607a75b)",
-    "Issue #45〜#49: 外部評価レポートQ4のP0大規模項目をepic Issueとして起票(認証基盤Entra ID/OIDC+RBAC、PostgreSQL/PostGIS移行+CRUD API、append-only監査ログ+承認ワークフロー、owner/steward管理、定期品質検証強化) (2026-07-16)"
+    "Issue #45〜#49: 外部評価レポートQ4のP0大規模項目をepic Issueとして起票(認証基盤Entra ID/OIDC+RBAC、PostgreSQL/PostGIS移行+CRUD API、append-only監査ログ+承認ワークフロー、owner/steward管理、定期品質検証強化) (2026-07-16)",
+    "PR#51: scheduled-verify.yml YAMLブロックスカラー破壊の根本修復 — 週次検証パイプライン復旧 (merged 2026-07-23, sha=832a797)",
+    "Issue #41 / Issue #44 / PR#52: CodeRabbitフォローアップ6件+レビューMinor2件解消 (merged 2026-07-23, sha=c079bfe, Closes #41 #44)",
+    "PR#53: 週次検証データ2026-07-23の手動救済取込 + Actions PR作成権限有効化(ユーザー承認済み) (merged 2026-07-23, sha=0d19f36)"
   ],
   "blocked_issues": [],
   "pending_human_decision": [],
@@ -58,7 +61,8 @@
       "新ワークフローファイルを含む PR は pull_request: synchronize が発火しない場合がある。空コミット push で回避可",
       "scheduled-verify.yml: [skip ci] をコミットメッセージに入れることで週次検証の結果コミットが再度 CI を発火しないよう防止できる",
       "Windows Scheduled Task で detached プロセスを powershell Start-Process 経由で起動すると、Task Scheduler は即終了するラッパー側しか監視できず RestartCount が機能しない。対象exeを直接Actionにするか、LogonType=S4U/ServiceAccountにして直接実行すること",
-      "Task Scheduler の LogonType=Interactive はユーザーのログオフ/切断でプロセスごと終了する。24/7公開サービスは S4U (同一ユーザー権限のままログオン非依存) が有効"
+      "Task Scheduler の LogonType=Interactive はユーザーのログオフ/切断でプロセスごと終了する。24/7公開サービスは S4U (同一ユーザー権限のままログオン非依存) が有効",
+      "GitHub Actions workflowのrun:ブロックに複数行文字列を直接埋め込むと、継続行のインデント不足でYAMLブロックスカラーを脱出し workflow 全体が invalid になる。printf+変数組み立てで回避し、actionlint(shellcheck込み)をローカル実行して検証する。症状は「pushごとの0s失敗+workflow名がパス表示+cron不発火」の3点セット"
     ],
     "usage_history": {
       "agents": {
@@ -717,6 +721,39 @@
     },
     {
       "at": "2026-07-23T01:41:40.688Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "tests/test_run_verification.py",
+        "tests/test_web_server.py",
+        "web/server.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T01:50:10.211Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "tests/test_run_verification.py",
+        "tests/test_web_server.py",
+        "web/server.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T02:01:27.570Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "tests/test_run_verification.py",
+        "tests/test_web_server.py",
+        "web/server.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T02:01:44.411Z",
       "kind": "tdd_required",
       "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
       "files": [
