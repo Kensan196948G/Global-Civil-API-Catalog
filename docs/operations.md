@@ -215,3 +215,16 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 | 許可ポリシー | ドメイン `@mirai-const.co.jp` 全体 + メールアドレス `kensan1969@gmail.com`（いずれか一致・One-Time PIN 認証） |
 | 動作確認 | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み |
 | 変更方法 | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能 |
+
+---
+
+## 🗄️ DB レイヤ（Phase A / epic #46 — dual-run 期間中）
+
+> 📌 正本は引き続き `data/*.json`。DB は expand-and-contract 移行の併走側であり、正本切替は別途 Approval PR で行う（設計正本: `docs/epic-detailed-design-q4.md`）。
+
+- 🐘 DB: Neon PostgreSQL + PostGIS（project: `global-civil-api-catalog` / `billowing-cloud-38872160`、dev 用。接続文字列は Secret 管理 — リポジトリ・ログへ書かない）
+- 📦 依存導入: `pip install -e ".[db]"`（既定の静的サイト・バッチは従来どおり stdlib のみで動作）
+- 🧬 スキーマ適用: `CATALOG_DATABASE_URL=... python -m alembic upgrade head`（rollback は `alembic downgrade base`）
+- 🔁 データ投入 + 照合: `CATALOG_DATABASE_URL=... python scripts/migrate_json_to_db.py`（冪等 upsert + field-by-field round-trip 検証。`--verify-only` で照合のみ）
+- 🌐 読取 API 起動: `CATALOG_DATABASE_URL=... uvicorn web.api_v1:app --port 49232`（read-only。書込系は epic #45 の認証導入後まで実装しない）
+- 🧪 DB テスト: `CATALOG_DATABASE_URL=... python -m pytest tests/test_db_phase_a.py`（env 未設定時は自動 skip — CI は現状 DB secret を持たないため skip される）

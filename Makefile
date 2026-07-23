@@ -3,7 +3,7 @@
 check: compile validate test export
 
 compile:
-	python -m compileall scripts tests web
+	python -m compileall scripts tests web db migrations
 
 validate:
 	python scripts/validate_catalog.py
