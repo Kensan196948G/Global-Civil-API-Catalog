@@ -24,6 +24,9 @@ USER_AGENT = (
 # Saved response samples are capped at this size. response_size_bytes therefore
 # records the captured (possibly truncated) sample size, not the full response
 # length; samples that hit this cap are flagged as truncated in the note.
+# record_count extraction works on the captured sample, so a truncated JSON
+# payload cannot be parsed — that case is called out explicitly in the note
+# instead of silently reporting record_count=None.
 MAX_SAMPLE_BYTES = 64 * 1024
 
 
@@ -32,7 +35,9 @@ def request_url(url: str, timeout: int) -> tuple[int | None, bytes, int]:
     started = time.perf_counter()
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            body = response.read(MAX_SAMPLE_BYTES)
+            # Read one byte past the cap so callers can distinguish a payload
+            # that is exactly MAX_SAMPLE_BYTES long from a truncated one.
+            body = response.read(MAX_SAMPLE_BYTES + 1)
             elapsed_ms = int((time.perf_counter() - started) * 1000)
             return response.status, body, elapsed_ms
     except urllib.error.HTTPError as exc:
@@ -104,6 +109,9 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
 
     try:
         status, body, elapsed_ms = request_url(endpoint, timeout)
+        truncated = len(body) > MAX_SAMPLE_BYTES
+        if truncated:
+            body = body[:MAX_SAMPLE_BYTES]
         result["http_status"] = status
         result["response_time_ms"] = elapsed_ms
         result["response_size_bytes"] = len(body)
@@ -111,9 +119,11 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
         if result["result"] == "success":
             result["record_count"] = extract_record_count(body)
         result["note"] = "live verification executed"
-        if len(body) >= MAX_SAMPLE_BYTES:
+        if truncated:
             result["sample_truncated"] = True
             result["note"] += f"; sample truncated to {MAX_SAMPLE_BYTES // 1024}KB"
+            if result["result"] == "success" and result["record_count"] is None:
+                result["note"] += "; record_count unavailable (payload exceeds sample cap)"
         sample_path = Path(result["sample_response_path"])
         sample_path.parent.mkdir(parents=True, exist_ok=True)
         sample_path.write_bytes(body)

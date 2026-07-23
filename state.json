@@ -5,8 +5,8 @@
     "release_deadline": "2026-12-18",
     "phase_mode": "maintenance"
   },
-  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-16: 外部評価レポートのファクトチェック(3並列Explore)完了、4項目の対応方針(Q1低リスク即実行/Q2週次workflowのPR化/Q3要件定義書FR追加/Q4大規模P0のIssue化)を全てユーザー承認・完了済み — Issue #38はPR#39(sha=762eb76、CodeRabbit指摘対応込み)でclose、Q2はPR#40、Q3はPR#43でmerge済み。Q4はIssue #45〜#49としてepic起票済み(詳細設計は未着手)。残タスク: Issue #41(PR#39 CodeRabbitフォローアップMajor/Minor4件)・Issue #44(PR#43 CodeRabbitフォローアップMajor/Minor2件)が未対応のままopen。次のアクションはIssue #41/#44の解消、またはIssue #45〜#49のうち優先度の高いepicの詳細設計着手。",
-  "phase": "Monitor",
+  "goal": "IN PROGRESS: Mission (Supervisor-driven Release/Production Ready) — CTO全権委任Mission稼働中。2026-07-23: (1) scheduled-verify.yml のYAMLブロックスカラー破壊(PR#40起因)を根本特定しPR#51で修復・merge済み(sha=832a797)。週次検証パイプライン復旧、workflow名正常化、push時のphantom failure解消を確認。workflow_dispatch smoke run実施。(2) Issue #41(Major2+Minor2)・Issue #44(Major1+Minor1)のCodeRabbitフォローアップ6件をPR#52で解消(record_count切り詰め明示化/loopback時LAN URL抑制/FR-012状態・権限・監査整合/OpenAQ認証要否/state.json整形)。FR-012の版管理・論理削除詳細はepic #47へ委譲記録済み。残: PR#52マージ待ち。次のアクション: epic #45〜#49の優先順位付けと詳細設計着手。残課題: data/api_catalog.jsonのOpenAQ api_key_required=unknownは文書と不整合(スコア再計算を伴うため別対応)。",
+  "phase": "Review",
   "kpi": {
     "success_rate_target": 0.9,
     "ci_success_rate": 1,
@@ -19,8 +19,8 @@
     "repair_count": 0,
     "max_repair": 3,
     "same_error_limit": 2,
-    "last_stop_at": "2026-07-16T12:00:41.220Z",
-    "current_session_start_at": "2026-07-16T12:17:00.579Z",
+    "last_stop_at": "2026-07-23T01:41:40.622Z",
+    "current_session_start_at": "2026-07-23T01:21:07.664Z",
     "last_trigger": "manual"
   },
   "automation": {
@@ -79,7 +79,7 @@
           "last_used": "2026-07-12T01:26:29.832Z",
           "last_description": "Verify PR #35 CI and triage tdd warnings"
         },
-        "Explore": {
+        "explore": {
           "call_count": 3,
           "last_used": "2026-07-16T09:55:01.161Z",
           "last_description": "data品質・検証履歴の検証"
@@ -702,6 +702,29 @@
         "web/server.py"
       ],
       "truncated": false
+    },
+    {
+      "at": "2026-07-16T12:34:04.017Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 4 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "tests/test_refresh_catalog_metadata.py",
+        "tests/test_run_verification.py",
+        "tests/test_web_server.py",
+        "web/server.py"
+      ],
+      "truncated": false
+    },
+    {
+      "at": "2026-07-23T01:41:40.688Z",
+      "kind": "tdd_required",
+      "message": "テスト未整備の変更が 3 件あります。/tdd または tdd-guide agent で対応してください。",
+      "files": [
+        "tests/test_run_verification.py",
+        "tests/test_web_server.py",
+        "web/server.py"
+      ],
+      "truncated": false
     }
   ],
   "agent_teams_usage": {
@@ -733,6 +756,6 @@
     ]
   },
   "compact": {
-    "last_pre_compact_at": "2026-07-16T12:15:13.642Z"
+    "last_pre_compact_at": "2026-07-23T01:21:49.887Z"
   }
 }
