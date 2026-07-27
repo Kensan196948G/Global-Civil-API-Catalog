@@ -1,1 +1,1 @@
-curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://disaportaldata.gsi.go.jp/raster/05_kyukeishakeikaikuiki/10/909/403.png"
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" https://disaportaldata.gsi.go.jp/raster/05_kyukeishakeikaikuiki/10/909/403.png

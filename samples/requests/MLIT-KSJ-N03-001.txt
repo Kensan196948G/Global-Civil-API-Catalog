@@ -1,1 +1,1 @@
-curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html"
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html
