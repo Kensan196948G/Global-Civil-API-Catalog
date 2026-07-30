@@ -19,6 +19,7 @@ Web UI の「登録・承認管理」画面（ログイン・エントリCRUD・
 - API v1 起動: `uvicorn web.api_v1:app --host 127.0.0.1 --port 49232`（`CATALOG_DATABASE_URL` 必須）
 - **api_v1 未起動時の挙動**: 閲覧UIは従来どおり動作し、編集操作のみ `503`（「編集サービスに接続できません」）となる — graceful degradation
 - 外部公開時は `CATALOG_BASE_URL` を公開オリジン（例: `https://api.mirai-dx-platform.com`）へ一致させること（Origin検査・Secure Cookie 判定に使用）
+- 認証モード: 既定は**ローカルユーザー/パスワード認証**（`CATALOG_AUTH_MODE=local`）。アカウント作成・パスワード再設定・ロック解除は `CATALOG_DATABASE_URL` を読み込んだ上で `python scripts/create_local_user.py --username <名前> --role Catalog.Admin`（パスワードは対話入力・12文字以上・ログイン5回失敗で15分ロック）。Entra ID OIDC は `CATALOG_AUTH_MODE=oidc` + `ENTRA_*` 設定時のみ有効（`docs/entra-id-setup.md`）
 
 ---
 
@@ -44,7 +45,12 @@ chmod 600 ~/.config/global-civil-api-catalog/api.env
 # 2) 依存導入（api_v1 のみ必要。Web UI は stdlib のみで動作）
 pip install -e ".[db]"
 
-# 3) Cloudflare Tunnel コネクタ（cert.pem = `cloudflared tunnel login` 済みが前提）
+# 3) DB スキーマ適用と初回ユーザー作成（api.env の値を読み込んだ上で一度だけ）
+python -m alembic upgrade head
+python scripts/create_local_user.py --username admin --role Catalog.Admin
+#   → パスワードは対話入力（12文字以上）。追加ユーザーも同コマンドで作成できる
+
+# 4) Cloudflare Tunnel コネクタ（cert.pem = `cloudflared tunnel login` 済みが前提）
 #    credentials は cert.pem からいつでも再生成できる（値は表示しないこと）:
 cloudflared tunnel token --cred-file ~/.cloudflared/370aef2d-fb96-4ec8-89c4-c7a16bd3e147.json gc-api-catalog
 #    config を ~/.cloudflared/gc-api-catalog-config.yml に作成
@@ -52,7 +58,7 @@ cloudflared tunnel token --cred-file ~/.cloudflared/370aef2d-fb96-4ec8-89c4-c7a1
 #      雛形: deploy/cloudflare/config.yml.example）
 cloudflared tunnel --config ~/.cloudflared/gc-api-catalog-config.yml ingress validate
 
-# 4) unit 配置と有効化
+# 5) unit 配置と有効化
 mkdir -p ~/.config/systemd/user
 cp deploy/global-civil-api-catalog-web.service ~/.config/systemd/user/
 cp deploy/global-civil-api-catalog-api.service ~/.config/systemd/user/
@@ -143,7 +149,7 @@ journalctl --user -u gc-api-catalog-cloudflared -n 20 --no-pager
 
 - 静的 Web UI（`web/server.py`）は**ログイン認証を持たない**ため、公開前に Cloudflare Zero Trust ダッシュボードで **Access アプリケーション + ポリシー（許可メールアドレス等）** を必ず設定する
 - Access 未設定のままの公開は禁止（Security First）
-- 新しい API v1 レイヤ（`web/api_v1.py`・opt-in）は **Entra ID OIDC + 5 ロール RBAC を実装済み**で、書込系（登録・更新・論理削除）は認証必須。公開時も Access による外側防御は併用する（多層防御。設定手順: `docs/entra-id-setup.md`）
+- API v1 レイヤ（`web/api_v1.py`）は**ログイン認証（既定: ローカルユーザー/パスワード、オプションで Entra ID OIDC）+ 5 ロール RBAC を実装済み**で、書込系（登録・更新・論理削除）は認証必須。公開時も Access による外側防御は併用する（多層防御）
 
 ### ✅ Access 設定状況（2026-07-05 適用済み）
 

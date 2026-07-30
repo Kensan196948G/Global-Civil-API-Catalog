@@ -1,5 +1,7 @@
 # 🔑 Entra ID (Azure AD) セットアップ手順 — Phase B (epic #45)
 
+> 🔄 **2026-07-30 更新**: 現行の本番認証は**ローカルユーザー/パスワード方式**（`CATALOG_AUTH_MODE=local`・`scripts/create_local_user.py` でアカウント管理）に切替済み。本書の Entra ID OIDC は `CATALOG_AUTH_MODE=oidc` を明示した場合のみ使うオプション構成として保全する。
+
 > 📌 設計正本: `docs/epic-detailed-design-q4.md` §3 ／ タスク: Issue #59 B-0/B-6
 > ⚠️ **client secret・接続文字列はこのリポジトリへ書かない**（`.gitignore` 済みのローカルメモまたは Secret 管理のみ）。
 
