@@ -217,3 +217,41 @@ class UserSession(Base):
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class LocalUser(Base):
+    """Local username/password account (auth mode ``local``).
+
+    Passwords are stored as scrypt hashes (stdlib, per-user salt); the
+    plaintext never touches the database or logs. ``role`` holds exactly one
+    of the five catalog roles — a login session copies it into
+    ``sessions.roles`` so ``require_role`` works unchanged for both auth
+    modes. Failed-attempt counting backs the temporary lockout policy.
+    """
+
+    __tablename__ = "local_users"
+
+    username: Mapped[str] = mapped_column(Text, primary_key=True)  # stored lowercase
+    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    display_name: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''"))
+    role: Mapped[str] = mapped_column(Text, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
+    failed_attempts: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("now()"),
+        onupdate=text("now()"),
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "role IN ('Catalog.Admin', 'Catalog.Editor', 'Catalog.Verifier',"
+            " 'Catalog.Approver', 'Catalog.Viewer')",
+            name="ck_local_users_role",
+        ),
+    )
