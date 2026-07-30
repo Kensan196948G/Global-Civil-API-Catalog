@@ -17,7 +17,10 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap"
     />
     <link rel="stylesheet" href="/styles.css" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c08a2e'/%3E%3Ctext x='16' y='21' font-family='serif' font-weight='700' font-size='14' fill='%23fff' text-anchor='middle'%3EGC%3C/text%3E%3C/svg%3E" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c08a2e'/%3E%3Ctext x='16' y='21' font-family='serif' font-weight='700' font-size='14' fill='%23fff' text-anchor='middle'%3EGC%3C/text%3E%3C/svg%3E"
+    />
   </head>
   <body>
     <div class="appShell">
@@ -30,24 +33,61 @@
           </div>
         </div>
         <nav class="sideNav" id="sideNav">
-          <button type="button" class="navBtn active" data-view="dashboard">ダッシュボード</button>
-          <button type="button" class="navBtn" data-view="catalog">API台帳<span class="navBadge" id="navBadgeCatalog"></span></button>
-          <button type="button" class="navBtn" data-view="flow">API活用フロー</button>
-          <button type="button" class="navBtn" data-view="map">ライブマップ<span class="navBadge" id="navBadgeMap"></span></button>
-          <button type="button" class="navBtn" data-view="exports">成果物エクスポート<span class="navBadge" id="navBadgeExports"></span></button>
+          <button type="button" class="navBtn active" data-view="dashboard">
+            ダッシュボード
+          </button>
+          <button type="button" class="navBtn" data-view="catalog">
+            API台帳<span class="navBadge" id="navBadgeCatalog"></span>
+          </button>
+          <button type="button" class="navBtn" data-view="flow">
+            API活用フロー
+          </button>
+          <button type="button" class="navBtn" data-view="map">
+            ライブマップ<span class="navBadge" id="navBadgeMap"></span>
+          </button>
+          <button type="button" class="navBtn" data-view="exports">
+            成果物エクスポート<span
+              class="navBadge"
+              id="navBadgeExports"
+            ></span>
+          </button>
+          <button
+            type="button"
+            class="navBtn"
+            data-view="manage"
+            id="navManage"
+            hidden
+          >
+            登録・承認管理<span class="navBadge" id="navBadgeManage"></span>
+          </button>
         </nav>
-        <button type="button" class="themeToggle" id="themeToggle" aria-label="ライト・ダークテーマ切替">☾</button>
+        <button
+          type="button"
+          class="themeToggle"
+          id="themeToggle"
+          aria-label="ライト・ダークテーマ切替"
+        >
+          ☾
+        </button>
         <div class="sideLegend">
           <span class="sideLegendTitle">接続状態</span>
           <ul class="legendList">
             <li><span class="legendDot statusColor-impl"></span>実装接続済</li>
-            <li><span class="legendDot statusColor-full"></span>本格利用候補</li>
-            <li><span class="legendDot statusColor-verified"></span>接続検証済</li>
-            <li><span class="legendDot statusColor-candidate"></span>接続候補</li>
+            <li>
+              <span class="legendDot statusColor-full"></span>本格利用候補
+            </li>
+            <li>
+              <span class="legendDot statusColor-verified"></span>接続検証済
+            </li>
+            <li>
+              <span class="legendDot statusColor-candidate"></span>接続候補
+            </li>
             <li><span class="legendDot statusColor-survey"></span>調査中</li>
             <li><span class="legendDot statusColor-hold"></span>保留</li>
           </ul>
-          <p class="sideLastCheck">最終確認 <span id="sideLastCheck">-</span></p>
+          <p class="sideLastCheck">
+            最終確認 <span id="sideLastCheck">-</span>
+          </p>
         </div>
         <div class="serviceBox">
           <span class="statusDot"></span>
@@ -60,22 +100,64 @@
 
       <main>
         <header class="viewHead">
-          <p class="eyebrow" id="viewKicker">OVERVIEW</p>
-          <h2 id="viewTitle">ダッシュボード</h2>
-          <p id="viewSub">🏗️ 土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。</p>
+          <div class="viewHeadText">
+            <p class="eyebrow" id="viewKicker">OVERVIEW</p>
+            <h2 id="viewTitle">ダッシュボード</h2>
+            <p id="viewSub">
+              🏗️
+              土木建設で使える国内外API・公開データを、現場判断・技術検討・研究・社内IT運用で迷わず使うための共通台帳です。
+            </p>
+          </div>
+          <div class="authArea" id="authArea">
+            <a class="authButton" id="loginButton" href="/auth/login" hidden
+              >ログイン</a
+            >
+            <div class="userBox" id="userBox" hidden>
+              <div class="userMeta">
+                <span class="userName" id="userName"></span>
+                <span class="roleChips" id="roleChips"></span>
+              </div>
+              <a class="textButton" id="logoutButton" href="/auth/logout"
+                >ログアウト</a
+              >
+            </div>
+          </div>
         </header>
 
         <!-- ============ Dashboard ============ -->
         <div class="view" id="dashboard" data-view="dashboard">
           <section class="metrics" aria-label="summary">
-            <div class="metric"><small class="metricLabel">登録データソース</small><span id="catalogCount">-</span><small class="metricSub">API・公開データ</small></div>
-            <div class="metric"><small class="metricLabel">本格利用候補</small><span id="candidateCount">-</span><small class="metricSub">最優先採用</small></div>
-            <div class="metric"><small class="metricLabel">実装・本格候補</small><span id="implementedCount">-</span><small class="metricSub">運用フェーズ</small></div>
-            <div class="metric"><small class="metricLabel">平均 事業適合度</small><span id="avgFit">-</span><small class="metricSub">business_fit</small></div>
-            <div class="metric"><small class="metricLabel">平均 連携実装性</small><span id="avgInt">-</span><small class="metricSub">integration</small></div>
+            <div class="metric">
+              <small class="metricLabel">登録データソース</small
+              ><span id="catalogCount">-</span
+              ><small class="metricSub">API・公開データ</small>
+            </div>
+            <div class="metric">
+              <small class="metricLabel">本格利用候補</small
+              ><span id="candidateCount">-</span
+              ><small class="metricSub">最優先採用</small>
+            </div>
+            <div class="metric">
+              <small class="metricLabel">実装・本格候補</small
+              ><span id="implementedCount">-</span
+              ><small class="metricSub">運用フェーズ</small>
+            </div>
+            <div class="metric">
+              <small class="metricLabel">平均 事業適合度</small
+              ><span id="avgFit">-</span
+              ><small class="metricSub">business_fit</small>
+            </div>
+            <div class="metric">
+              <small class="metricLabel">平均 連携実装性</small
+              ><span id="avgInt">-</span
+              ><small class="metricSub">integration</small>
+            </div>
           </section>
 
-          <p class="scoreNote">※ 事業適合度・連携実装性・信頼度・優先度は、台帳の各項目から<strong>算定式で自動計算した評価値</strong>です。算定基準は「API活用フロー」、個別の根拠は「API台帳」の各行詳細で確認できます。</p>
+          <p class="scoreNote">
+            ※
+            事業適合度・連携実装性・信頼度・優先度は、台帳の各項目から<strong>算定式で自動計算した評価値</strong>です。算定基準は「API活用フロー」、個別の根拠は「API台帳」の各行詳細で確認できます。
+          </p>
 
           <section class="dashboardGrid">
             <article class="panel">
@@ -88,8 +170,13 @@
               <div class="opsGrid">
                 <div><strong id="importedAt">-</strong><span>取込日</span></div>
                 <div><strong id="sourceName">-</strong><span>取込元</span></div>
-                <div><strong id="verificationCount">-</strong><span>検証件数</span></div>
-                <div><strong id="productionCoverage">-</strong><span>Production反映</span></div>
+                <div>
+                  <strong id="verificationCount">-</strong><span>検証件数</span>
+                </div>
+                <div>
+                  <strong id="productionCoverage">-</strong
+                  ><span>Production反映</span>
+                </div>
               </div>
               <div id="categoryList" class="barList"></div>
             </article>
@@ -124,7 +211,9 @@
               <div class="panelHeader">
                 <div>
                   <h2>採用優先トップ</h2>
-                  <p>接続優先度・事業適合度の高い順トップ8。行クリックで台帳へ。</p>
+                  <p>
+                    接続優先度・事業適合度の高い順トップ8。行クリックで台帳へ。
+                  </p>
                 </div>
               </div>
               <div class="tableWrap">
@@ -148,13 +237,19 @@
             <div class="panelHeader">
               <div>
                 <h2>採用適合度マップ</h2>
-                <p>横軸=事業適合度（business_fit）／縦軸=連携実装容易性（integration）／点サイズ=接続優先度</p>
+                <p>
+                  横軸=事業適合度（business_fit）／縦軸=連携実装容易性（integration）／点サイズ=接続優先度
+                </p>
               </div>
               <span class="countPill" id="fitnessCount">-</span>
             </div>
             <div class="fitnessWrap">
               <span class="fitnessAxisY">連携実装容易性 →</span>
-              <div id="fitnessMap" class="fitnessMap" aria-label="採用適合度 散布図"></div>
+              <div
+                id="fitnessMap"
+                class="fitnessMap"
+                aria-label="採用適合度 散布図"
+              ></div>
               <span class="fitnessAxisX">事業適合度 →</span>
             </div>
           </section>
@@ -166,14 +261,28 @@
             <div class="panelHeader">
               <div>
                 <h2>API台帳</h2>
-                <p>検索、絞り込み、詳細確認、公式URL確認まで本番データで実行します。</p>
+                <p>
+                  検索、絞り込み、詳細確認、公式URL確認まで本番データで実行します。
+                </p>
               </div>
               <div class="controls">
-                <input id="searchInput" type="search" placeholder="キーワード検索" />
-                <select id="categoryFilter"><option value="">全カテゴリ</option></select>
-                <select id="statusFilter"><option value="">全ステータス</option></select>
-                <select id="regionFilter"><option value="">全地域</option></select>
-                <select id="trustRankFilter"><option value="">全信頼度</option></select>
+                <input
+                  id="searchInput"
+                  type="search"
+                  placeholder="キーワード検索"
+                />
+                <select id="categoryFilter">
+                  <option value="">全カテゴリ</option>
+                </select>
+                <select id="statusFilter">
+                  <option value="">全ステータス</option>
+                </select>
+                <select id="regionFilter">
+                  <option value="">全地域</option>
+                </select>
+                <select id="trustRankFilter">
+                  <option value="">全信頼度</option>
+                </select>
                 <select id="minPriorityFilter">
                   <option value="">全優先度</option>
                   <option value="2">2以上</option>
@@ -185,7 +294,9 @@
             </div>
             <div class="tableToolbar">
               <strong id="catalogResultCount">0件</strong>
-              <span>信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span>
+              <span
+                >信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span
+              >
             </div>
             <div class="tableWrap">
               <table>
@@ -222,27 +333,41 @@
               <div class="flowStep">
                 <span>STEP 1</span>
                 <strong>APIを選ぶ</strong>
-                <p>「API台帳」で用途・カテゴリから候補を探し、信頼度ランク・接続優先度・事業適合度で比較して選定します。</p>
+                <p>
+                  「API台帳」で用途・カテゴリから候補を探し、信頼度ランク・接続優先度・事業適合度で比較して選定します。
+                </p>
               </div>
               <div class="flowStep">
                 <span>STEP 2</span>
                 <strong>利用条件を確認</strong>
-                <p>APIキーの要否・認証方式・ライセンス・商用利用可否・最終確認日をチェック。商用は license_note を必読。</p>
+                <p>
+                  APIキーの要否・認証方式・ライセンス・商用利用可否・最終確認日をチェック。商用は
+                  license_note を必読。
+                </p>
               </div>
               <div class="flowStep">
                 <span>STEP 3</span>
                 <strong>接続方式を理解</strong>
-                <p>データ形式ごとに呼び出し方が異なります。下の「データ形式別 接続早見表」で方法を確認します。</p>
+                <p>
+                  データ形式ごとに呼び出し方が異なります。下の「データ形式別
+                  接続早見表」で方法を確認します。
+                </p>
               </div>
               <div class="flowStep">
                 <span>STEP 4</span>
                 <strong>試し接続で検証</strong>
-                <p>サンプルエンドポイントで疎通確認。台帳の検証結果（成功 / 応答時間 / 取得サイズ）も参照できます。</p>
+                <p>
+                  サンプルエンドポイントで疎通確認。台帳の検証結果（成功 /
+                  応答時間 / 取得サイズ）も参照できます。
+                </p>
               </div>
               <div class="flowStep">
                 <span>STEP 5</span>
                 <strong>アプリに実装</strong>
-                <p>endpoint_template を組み込み、属性表記・利用規約を遵守して本番運用へ。成果物エクスポートも活用できます。</p>
+                <p>
+                  endpoint_template
+                  を組み込み、属性表記・利用規約を遵守して本番運用へ。成果物エクスポートも活用できます。
+                </p>
               </div>
             </div>
           </section>
@@ -257,15 +382,46 @@
             <div class="tableWrap">
               <table class="refTable">
                 <thead>
-                  <tr><th>データ形式</th><th>典型的な使い方</th><th>代表的なAPI</th></tr>
+                  <tr>
+                    <th>データ形式</th>
+                    <th>典型的な使い方</th>
+                    <th>代表的なAPI</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr><td><strong>XYZ タイル (PNG/JPG)</strong></td><td>Leaflet / MapLibre にタイルURL <code>{z}/{x}/{y}</code> を登録して地図表示</td><td>地理院 地図・標高・ハザードタイル</td></tr>
-                  <tr><td><strong>ベクトルタイル (PBF)</strong></td><td>MapLibre / Mapbox GL でスタイル定義して参照</td><td>地理院 ベクトルタイル</td></tr>
-                  <tr><td><strong>GeoJSON / JSON</strong></td><td><code>fetch()</code> で取得し属性解析・地図描画</td><td>気象庁 予報・警報, USGS 地震</td></tr>
-                  <tr><td><strong>3D Tiles / CityGML</strong></td><td>CesiumJS など対応ビューア・SDK で読み込み</td><td>PLATEAU 3D都市モデル</td></tr>
-                  <tr><td><strong>Shapefile / GML</strong></td><td>QGIS / GDAL で変換し GIS で利用</td><td>国土数値情報 (KSJ)</td></tr>
-                  <tr><td><strong>CSV / 観測JSON</strong></td><td>ETL・時系列解析で取り込み</td><td>AMeDAS, USGS 水文, OpenAQ</td></tr>
+                  <tr>
+                    <td><strong>XYZ タイル (PNG/JPG)</strong></td>
+                    <td>
+                      Leaflet / MapLibre にタイルURL
+                      <code>{z}/{x}/{y}</code> を登録して地図表示
+                    </td>
+                    <td>地理院 地図・標高・ハザードタイル</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ベクトルタイル (PBF)</strong></td>
+                    <td>MapLibre / Mapbox GL でスタイル定義して参照</td>
+                    <td>地理院 ベクトルタイル</td>
+                  </tr>
+                  <tr>
+                    <td><strong>GeoJSON / JSON</strong></td>
+                    <td><code>fetch()</code> で取得し属性解析・地図描画</td>
+                    <td>気象庁 予報・警報, USGS 地震</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3D Tiles / CityGML</strong></td>
+                    <td>CesiumJS など対応ビューア・SDK で読み込み</td>
+                    <td>PLATEAU 3D都市モデル</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Shapefile / GML</strong></td>
+                    <td>QGIS / GDAL で変換し GIS で利用</td>
+                    <td>国土数値情報 (KSJ)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>CSV / 観測JSON</strong></td>
+                    <td>ETL・時系列解析で取り込み</td>
+                    <td>AMeDAS, USGS 水文, OpenAQ</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -284,7 +440,9 @@ L.tileLayer(
             <div class="panelHeader">
               <div>
                 <h2>スコア算定基準</h2>
-                <p>各スコアは台帳の項目から算定式で自動計算した<strong>評価値</strong>です（実測値ではありません）。個別の内訳は「API台帳」の各行詳細で確認できます。</p>
+                <p>
+                  各スコアは台帳の項目から算定式で自動計算した<strong>評価値</strong>です（実測値ではありません）。個別の内訳は「API台帳」の各行詳細で確認できます。
+                </p>
               </div>
             </div>
             <div class="rubricGrid">
@@ -340,8 +498,12 @@ L.tileLayer(
                 <p>本番台帳のAPI・公開データを地図上で確認します。</p>
               </div>
               <div class="controls">
-                <select id="mapCategoryFilter"><option value="">全カテゴリ</option></select>
-                <select id="mapStatusFilter"><option value="">全ステータス</option></select>
+                <select id="mapCategoryFilter">
+                  <option value="">全カテゴリ</option>
+                </select>
+                <select id="mapStatusFilter">
+                  <option value="">全ステータス</option>
+                </select>
               </div>
             </div>
             <div class="mapLayout">
@@ -359,20 +521,44 @@ L.tileLayer(
                   </div>
                   <div id="layerList" class="layerList"></div>
                   <label class="opacityControl">
-                    <span>透過度 <strong id="overlayOpacityValue">55%</strong></span>
-                    <input type="range" id="overlayOpacity" min="10" max="100" value="55" />
+                    <span
+                      >透過度
+                      <strong id="overlayOpacityValue">55%</strong></span
+                    >
+                    <input
+                      type="range"
+                      id="overlayOpacity"
+                      min="10"
+                      max="100"
+                      value="55"
+                    />
                   </label>
                 </div>
 
                 <div class="mapSideSection">
                   <h3>凡例（接続状態）</h3>
                   <ul class="legendList">
-                    <li><span class="legendDot statusColor-impl"></span>実装接続済</li>
-                    <li><span class="legendDot statusColor-full"></span>本格利用候補</li>
-                    <li><span class="legendDot statusColor-verified"></span>接続検証済</li>
-                    <li><span class="legendDot statusColor-candidate"></span>接続候補</li>
-                    <li><span class="legendDot statusColor-survey"></span>調査中</li>
-                    <li><span class="legendDot statusColor-hold"></span>保留</li>
+                    <li>
+                      <span class="legendDot statusColor-impl"></span>実装接続済
+                    </li>
+                    <li>
+                      <span class="legendDot statusColor-full"></span
+                      >本格利用候補
+                    </li>
+                    <li>
+                      <span class="legendDot statusColor-verified"></span
+                      >接続検証済
+                    </li>
+                    <li>
+                      <span class="legendDot statusColor-candidate"></span
+                      >接続候補
+                    </li>
+                    <li>
+                      <span class="legendDot statusColor-survey"></span>調査中
+                    </li>
+                    <li>
+                      <span class="legendDot statusColor-hold"></span>保留
+                    </li>
                   </ul>
                 </div>
 
@@ -385,7 +571,10 @@ L.tileLayer(
                 </div>
               </aside>
             </div>
-            <p class="mapAttribution">© OpenStreetMap contributors ／ ODbL ／ タイル利用ポリシーに従って利用</p>
+            <p class="mapAttribution">
+              © OpenStreetMap contributors ／ ODbL ／
+              タイル利用ポリシーに従って利用
+            </p>
           </section>
         </div>
 
@@ -395,16 +584,343 @@ L.tileLayer(
             <div class="panelHeader">
               <div>
                 <h2>成果物エクスポート</h2>
-                <p>Markdown、CSV、JSON、メタデータを開く・ダウンロードできます。</p>
+                <p>
+                  Markdown、CSV、JSON、メタデータを開く・ダウンロードできます。
+                </p>
               </div>
-              <a class="textButton" href="/api/export" target="_blank" rel="noreferrer">export index</a>
+              <a
+                class="textButton"
+                href="/api/export"
+                target="_blank"
+                rel="noreferrer"
+                >export index</a
+              >
             </div>
             <div id="exportList" class="exportGrid"></div>
-            <button type="button" class="downloadAllButton" id="downloadAllExports">⬇ すべて順次ダウンロード</button>
+            <button
+              type="button"
+              class="downloadAllButton"
+              id="downloadAllExports"
+            >
+              ⬇ すべて順次ダウンロード
+            </button>
+          </section>
+        </div>
+
+        <!-- ============ Manage (RBAC / workflow) ============ -->
+        <div class="view" hidden data-view="manage">
+          <section id="manage" class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>API台帳の登録・承認管理</h2>
+                <p>
+                  DB上の台帳エントリを編集し、レビュー・承認ワークフローを進めます。操作には変更理由の入力が必要です。
+                </p>
+              </div>
+              <button
+                type="button"
+                class="primaryButton"
+                id="newEntryButton"
+                hidden
+              >
+                ＋ 新規登録
+              </button>
+            </div>
+            <div id="manageNotice" class="manageNotice" hidden></div>
+            <div class="manageFilters">
+              <input
+                id="manageSearch"
+                type="search"
+                placeholder="ID・名称・提供元で検索"
+              />
+              <select id="manageStateFilter">
+                <option value="">全ワークフロー状態</option>
+                <option value="draft">draft（下書き）</option>
+                <option value="in_review">in_review（レビュー中）</option>
+                <option value="pending_approval">
+                  pending_approval（承認待ち）
+                </option>
+                <option value="published">published（公開中）</option>
+              </select>
+              <button type="button" class="textButton" id="manageReload">
+                ↻ 再読込
+              </button>
+            </div>
+            <div class="tableWrap">
+              <table class="manageTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>提供元</th>
+                    <th>ワークフロー状態</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="manageRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="entryFormPanel" class="panel" hidden>
+            <div class="panelHeader">
+              <div>
+                <h2 id="entryFormTitle">エントリ新規登録</h2>
+                <p>
+                  URL項目はSSRFガードで検証されます（プライベートIP・危険スキームは保存できません）。
+                </p>
+              </div>
+              <button type="button" class="textButton" id="entryFormClose">
+                ✕ 閉じる
+              </button>
+            </div>
+            <div id="entryFormError" class="manageNotice error" hidden></div>
+            <form id="entryForm">
+              <div class="entryFormGrid">
+                <label
+                  >ID（英大文字・数字・ハイフン）*
+                  <input
+                    name="id"
+                    required
+                    pattern="[A-Z0-9][A-Z0-9-]*"
+                    maxlength="100"
+                  />
+                </label>
+                <label
+                  >名称*
+                  <input name="name" required />
+                </label>
+                <label
+                  >カテゴリ*
+                  <input name="category" required />
+                </label>
+                <label
+                  >サブカテゴリ
+                  <input name="sub_category" />
+                </label>
+                <label
+                  >提供元*
+                  <input name="provider" required />
+                </label>
+                <label
+                  >提供元区分*
+                  <input
+                    name="provider_type"
+                    required
+                    placeholder="政府機関 / 自治体 / 民間 など"
+                  />
+                </label>
+                <label
+                  >地域
+                  <input name="region" placeholder="JP / US / Global など" />
+                </label>
+                <label
+                  >公式URL*
+                  <input
+                    name="official_url"
+                    required
+                    type="url"
+                    placeholder="https://"
+                  />
+                </label>
+                <label
+                  >ドキュメントURL*
+                  <input
+                    name="document_url"
+                    required
+                    type="url"
+                    placeholder="https://"
+                  />
+                </label>
+                <label
+                  >エンドポイントテンプレート
+                  <input
+                    name="endpoint_template"
+                    placeholder="https://.../{param}"
+                  />
+                </label>
+                <label
+                  >サンプルエンドポイント
+                  <input name="sample_endpoint" placeholder="https://" />
+                </label>
+                <label
+                  >データ形式（カンマ区切り）
+                  <input name="data_formats" placeholder="JSON, GeoJSON" />
+                </label>
+                <label
+                  >APIキー要否*
+                  <select name="api_key_required" required>
+                    <option value="not_required">not_required（不要）</option>
+                    <option value="required">required（必要）</option>
+                    <option value="unknown">unknown（不明）</option>
+                  </select>
+                </label>
+                <label
+                  >認証方式
+                  <input name="auth_type" placeholder="APIキー / OAuth など" />
+                </label>
+                <label
+                  >ライセンス
+                  <input name="license_note" />
+                </label>
+                <label
+                  >商用利用
+                  <input name="commercial_use" />
+                </label>
+                <label
+                  >更新頻度
+                  <input name="update_frequency" />
+                </label>
+                <label
+                  >接続状態*
+                  <select name="connection_status" required>
+                    <option value="実装接続済">実装接続済</option>
+                    <option value="本格利用候補">本格利用候補</option>
+                    <option value="接続検証済">接続検証済</option>
+                    <option value="接続候補">接続候補</option>
+                    <option value="調査中">調査中</option>
+                    <option value="保留">保留</option>
+                  </select>
+                </label>
+                <label
+                  >信頼ランク
+                  <select name="trust_rank">
+                    <option value="">未設定</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                  </select>
+                </label>
+                <label
+                  >接続優先度（数値）
+                  <input name="connection_priority" type="number" />
+                </label>
+                <label
+                  >業務適合スコア（数値）
+                  <input name="business_fit_score" type="number" />
+                </label>
+                <label
+                  >統合スコア（数値）
+                  <input name="integration_score" type="number" />
+                </label>
+                <label
+                  >タグ（カンマ区切り）
+                  <input name="tags" placeholder="地図, 防災" />
+                </label>
+                <label class="entryFormWide"
+                  >用途サマリ
+                  <textarea name="usage_summary" rows="2"></textarea>
+                </label>
+                <label class="entryFormWide"
+                  >利用ノート
+                  <textarea name="usage_notes" rows="2"></textarea>
+                </label>
+                <label class="entryFormWide"
+                  >リスクノート
+                  <textarea name="risk_note" rows="2"></textarea>
+                </label>
+                <label class="entryFormWide"
+                  >変更理由*（監査ログに記録されます）
+                  <textarea
+                    name="reason"
+                    rows="2"
+                    required
+                    maxlength="1000"
+                  ></textarea>
+                </label>
+              </div>
+              <div class="formActions">
+                <button
+                  type="submit"
+                  class="primaryButton"
+                  id="entryFormSubmit"
+                >
+                  保存
+                </button>
+                <button type="button" class="textButton" id="entryFormCancel">
+                  キャンセル
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section id="auditPanel" class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>監査ログ</h2>
+                <p>直近の変更履歴（append-only・改ざん不可）。</p>
+              </div>
+              <button type="button" class="textButton" id="auditReload">
+                ↻ 再読込
+              </button>
+            </div>
+            <div class="tableWrap">
+              <table class="manageTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>日時</th>
+                    <th>操作者</th>
+                    <th>アクション</th>
+                    <th>対象</th>
+                    <th>理由</th>
+                  </tr>
+                </thead>
+                <tbody id="auditRows"></tbody>
+              </table>
+            </div>
           </section>
         </div>
       </main>
     </div>
+
+    <dialog id="reasonDialog">
+      <form id="reasonForm">
+        <h3 id="reasonDialogTitle">操作の確認</h3>
+        <p id="reasonDialogText"></p>
+        <label
+          >変更理由*（監査ログに記録されます）
+          <textarea
+            id="reasonInput"
+            rows="3"
+            required
+            maxlength="1000"
+          ></textarea>
+        </label>
+        <div class="formActions">
+          <button type="submit" class="primaryButton" id="reasonConfirm">
+            実行
+          </button>
+          <button type="button" class="textButton" id="reasonCancel">
+            キャンセル
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="versionsDialog">
+      <div class="dialogHead">
+        <h3 id="versionsDialogTitle">版履歴</h3>
+        <button type="button" class="textButton" id="versionsClose">
+          ✕ 閉じる
+        </button>
+      </div>
+      <div class="tableWrap">
+        <table class="manageTable">
+          <thead>
+            <tr>
+              <th>版</th>
+              <th>作成日時</th>
+              <th>作成者</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="versionRows"></tbody>
+        </table>
+      </div>
+    </dialog>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

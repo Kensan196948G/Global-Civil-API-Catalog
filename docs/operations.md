@@ -11,6 +11,15 @@
 このサービスでは登録済みポート `49231` を基本とします。ホストIPがDHCP等で変わる場合でも、ポート番号は維持します。
 Windows ネイティブ起動（`--auto-port`）では、`49231` が他プロセスに占有されている場合のみ空きポートへ自動フォールバックし、実際のポートを `deploy/PORT.lock` に記録します。現在のポートは `.\deploy\register-windows-service.ps1 -Status` で確認できます。
 
+### 🔗 編集・承認UI（RBAC統合 / Issue #64）
+
+Web UI の「登録・承認管理」画面（ログイン・エントリCRUD・ワークフロー承認・監査ログ）は、静的サーバー（`web/server.py`）が `/api/v1/*` と `/auth/*` を FastAPI プロセス（`web/api_v1.py`）へ**リバースプロキシ**して実現します。ブラウザは常に単一オリジンで完結するため、CSP `connect-src 'self'`・SameSite Cookie・Origin検査（CSRF対策）はそのまま成立します。
+
+- プロキシ先の既定値: `http://127.0.0.1:49232`（環境変数 `CATALOG_API_UPSTREAM` で変更可）
+- API v1 起動: `uvicorn web.api_v1:app --host 127.0.0.1 --port 49232`（`CATALOG_DATABASE_URL` 必須）
+- **api_v1 未起動時の挙動**: 閲覧UIは従来どおり動作し、編集操作のみ `503`（「編集サービスに接続できません」）となる — graceful degradation
+- 外部公開時は `CATALOG_BASE_URL` を公開オリジン（例: `https://api.mirai-dx-platform.com`）へ一致させること（Origin検査・Secure Cookie 判定に使用）
+
 ---
 
 ## Linux（旧環境 / 参考）

@@ -295,3 +295,31 @@ def test_write_port_lock_writes_port_number(tmp_path: Path) -> None:
     lock = tmp_path / "port.lock"
     write_port_lock(str(lock), 12345)
     assert lock.read_text(encoding="utf-8") == "12345\n"
+
+
+def test_manage_ui_sections_are_available() -> None:
+    html = Path(ROOT / "web" / "static" / "index.html").read_text(encoding="utf-8")
+
+    assert 'id="navManage"' in html
+    assert 'id="authArea"' in html
+    assert 'id="loginButton"' in html
+    assert 'data-view="manage"' in html
+    assert 'id="manage"' in html
+    assert 'id="entryForm"' in html
+    assert 'id="reasonDialog"' in html
+    assert 'id="versionsDialog"' in html
+    assert 'id="auditRows"' in html
+
+
+def test_manage_js_wires_rbac_api() -> None:
+    js = Path(ROOT / "web" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert "/auth/me" in js
+    assert "/api/v1/entries" in js
+    assert "/transitions" in js
+    assert "/restore" in js
+    assert "/api/v1/audit" in js
+    # Client-side role checks are UX gating only; the server RBAC is
+    # authoritative. The manage table escapes every dynamic value.
+    assert "hasRole" in js
+    assert "escapeHtml(item.id)" in js
