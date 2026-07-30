@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import hmac
 import os
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -24,11 +25,12 @@ from urllib.parse import urlencode
 import httpx
 from authlib.jose import JsonWebKey, JsonWebToken
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from pydantic import BaseModel
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from db.audit import ACTION_LOGIN, ACTION_LOGIN_FAILED, ACTION_LOGOUT, record_audit
-from db.models import AuthRequest, UserSession
+from db.models import AuthRequest, LocalUser, UserSession
 
 SESSION_COOKIE = "catalog_session"
 # Binds the pending login to the browser that started it (login-CSRF
@@ -43,6 +45,68 @@ ROLE_EDITOR = "Catalog.Editor"
 ROLE_VERIFIER = "Catalog.Verifier"
 ROLE_APPROVER = "Catalog.Approver"
 ROLE_VIEWER = "Catalog.Viewer"
+ALL_ROLES = (ROLE_ADMIN, ROLE_EDITOR, ROLE_VERIFIER, ROLE_APPROVER, ROLE_VIEWER)
+
+# --- local username/password mode -------------------------------------------
+# scrypt (stdlib) keeps the dependency surface unchanged; parameters follow
+# the OWASP password-storage cheat sheet baseline for scrypt.
+_SCRYPT_N = 2**14
+_SCRYPT_R = 8
+_SCRYPT_P = 1
+_SCRYPT_DKLEN = 32
+MIN_PASSWORD_LENGTH = 12
+MAX_FAILED_LOGINS = 5
+LOCKOUT_WINDOW = timedelta(minutes=15)
+
+
+def auth_mode() -> str:
+    """``local`` (username/password) or ``oidc`` (Entra ID).
+
+    Explicit CATALOG_AUTH_MODE wins; otherwise the presence of the Entra
+    tenant decides, so an api.env without ENTRA_* falls back to local.
+    """
+    mode = os.environ.get("CATALOG_AUTH_MODE", "").strip().lower()
+    if mode in ("local", "oidc"):
+        return mode
+    return "oidc" if os.environ.get("ENTRA_TENANT_ID") else "local"
+
+
+def hash_password(password: str) -> str:
+    salt = secrets.token_bytes(16)
+    digest = hashlib.scrypt(
+        password.encode(), salt=salt, n=_SCRYPT_N, r=_SCRYPT_R, p=_SCRYPT_P, dklen=_SCRYPT_DKLEN
+    )
+    encoded_salt = base64.b64encode(salt).decode()
+    encoded_digest = base64.b64encode(digest).decode()
+    return f"scrypt${_SCRYPT_N}${_SCRYPT_R}${_SCRYPT_P}${encoded_salt}${encoded_digest}"
+
+
+def verify_password(password: str, stored: str) -> bool:
+    try:
+        scheme, n, r, p, encoded_salt, encoded_digest = stored.split("$")
+        if scheme != "scrypt":
+            return False
+        digest = hashlib.scrypt(
+            password.encode(),
+            salt=base64.b64decode(encoded_salt),
+            n=int(n),
+            r=int(r),
+            p=int(p),
+            dklen=_SCRYPT_DKLEN,
+        )
+        return hmac.compare_digest(digest, base64.b64decode(encoded_digest))
+    except (ValueError, TypeError):
+        return False
+
+
+# Verified against when the username does not exist, so the response time
+# does not reveal which usernames are registered.
+_DUMMY_HASH = hash_password(secrets.token_urlsafe(24))
+
+
+class LocalLoginBody(BaseModel):
+    username: str
+    password: str
 
 
 def _env(name: str) -> str:
@@ -159,8 +223,82 @@ def build_router(get_db) -> APIRouter:
     """Create the /auth router bound to the given DB session dependency."""
     router = APIRouter(prefix="/auth", tags=["auth"])
 
+    def _audit_login_failed(db: Session, actor: str, reason: str) -> None:
+        record_audit(
+            db,
+            actor=actor[:200],
+            actor_roles=[],
+            action=ACTION_LOGIN_FAILED,
+            reason=reason[:200],
+        )
+        db.commit()
+
+    @router.post("/login", name="auth_login_local")
+    def login_local(
+        payload: LocalLoginBody, response: Response, db: Session = Depends(get_db)
+    ) -> dict:
+        if auth_mode() != "local":
+            raise HTTPException(status_code=404, detail="local login is disabled")
+        username = payload.username.strip().lower()
+        if not username:
+            raise HTTPException(status_code=401, detail="invalid username or password")
+        user = db.get(LocalUser, username)
+        if user is None:
+            verify_password(payload.password, _DUMMY_HASH)  # equalize timing
+            _audit_login_failed(db, f"local:{username}", "unknown user")
+            raise HTTPException(status_code=401, detail="invalid username or password")
+        now = _now()
+        if user.locked_until is not None and user.locked_until > now:
+            _audit_login_failed(db, f"local:{username}", "account locked")
+            raise HTTPException(status_code=423, detail="account is temporarily locked")
+        if not user.is_active:
+            verify_password(payload.password, _DUMMY_HASH)  # equalize timing
+            # 401 (not 403): responses must not reveal that the name exists.
+            _audit_login_failed(db, f"local:{username}", "inactive account")
+            raise HTTPException(status_code=401, detail="invalid username or password")
+        if not verify_password(payload.password, user.password_hash):
+            user.failed_attempts += 1
+            reason = "wrong password"
+            if user.failed_attempts >= MAX_FAILED_LOGINS:
+                user.locked_until = now + LOCKOUT_WINDOW
+                user.failed_attempts = 0
+                reason = "wrong password; account locked"
+            _audit_login_failed(db, f"local:{username}", reason)
+            raise HTTPException(status_code=401, detail="invalid username or password")
+        user.failed_attempts = 0
+        user.locked_until = None
+        session = UserSession(
+            id=secrets.token_urlsafe(32),
+            user_sub=f"local:{username}",
+            display_name=user.display_name or username,
+            roles=[user.role],
+            expires_at=now + SESSION_TTL,
+        )
+        db.add(session)
+        record_audit(
+            db,
+            actor=session.user_sub,
+            actor_roles=session.roles,
+            action=ACTION_LOGIN,
+        )
+        db.commit()
+        response.set_cookie(
+            SESSION_COOKIE,
+            session.id,
+            max_age=int(SESSION_TTL.total_seconds()),
+            httponly=True,
+            secure=_cookie_secure(),
+            samesite="lax",
+            path="/",
+        )
+        return {"name": session.display_name, "roles": session.roles}
+
     @router.get("/login", name="auth_login")
     def login(db: Session = Depends(get_db)) -> Response:
+        if auth_mode() == "local":
+            # The static UI opens its login dialog when ?login=1 is present;
+            # this keeps old bookmarks and the no-JS anchor working.
+            return Response(status_code=302, headers={"Location": "/?login=1"})
         state = secrets.token_urlsafe(32)
         nonce = secrets.token_urlsafe(32)
         code_verifier = secrets.token_urlsafe(48)
@@ -273,9 +411,12 @@ def build_router(get_db) -> APIRouter:
                 )
             db.execute(delete(UserSession).where(UserSession.id == session_id))
             db.commit()
-        logout_url = f"{_authority()}/oauth2/v2.0/logout?" + urlencode(
-            {"post_logout_redirect_uri": _base_url()}
-        )
+        if auth_mode() == "local":
+            logout_url = "/"
+        else:
+            logout_url = f"{_authority()}/oauth2/v2.0/logout?" + urlencode(
+                {"post_logout_redirect_uri": _base_url()}
+            )
         response = Response(status_code=302, headers={"Location": logout_url})
         response.delete_cookie(SESSION_COOKIE, path="/")
         return response

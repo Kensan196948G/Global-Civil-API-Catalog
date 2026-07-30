@@ -150,7 +150,9 @@ small {
   font-family: var(--sans);
   font-weight: 500;
   font-size: 14px;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .navBtn::before {
@@ -417,7 +419,11 @@ code {
   padding: 30px;
   border-radius: var(--radius);
   background:
-    radial-gradient(120% 140% at 100% 0%, #f7f2e8 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(
+      120% 140% at 100% 0%,
+      #f7f2e8 0%,
+      rgba(255, 255, 255, 0) 60%
+    ),
     var(--panel);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
@@ -469,7 +475,9 @@ code {
   text-decoration: none;
   font-weight: 500;
   font-size: 13px;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
 .heroActions a:hover,
@@ -526,10 +534,18 @@ code {
   background: #6a7884;
 }
 
-.metric:nth-child(2)::before { background: #0b8a7c; }
-.metric:nth-child(3)::before { background: #1f9d5e; }
-.metric:nth-child(4)::before { background: #c08a2e; }
-.metric:nth-child(5)::before { background: #3f7fc0; }
+.metric:nth-child(2)::before {
+  background: #0b8a7c;
+}
+.metric:nth-child(3)::before {
+  background: #1f9d5e;
+}
+.metric:nth-child(4)::before {
+  background: #c08a2e;
+}
+.metric:nth-child(5)::before {
+  background: #3f7fc0;
+}
 
 .metricLabel {
   display: block;
@@ -975,13 +991,27 @@ details p {
 /* Six-status connection palette shared by map markers, feature dots, legend,
    status bars, fitness scatter and adoption pills.
    Kept as classes because the CSP blocks inline style attributes. */
-.statusColor-impl { background: #1f9d5e; }
-.statusColor-full { background: #0b8a7c; }
-.statusColor-verified { background: #3f7fc0; }
-.statusColor-candidate { background: #6a7884; }
-.statusColor-survey { background: #c0820f; }
-.statusColor-hold { background: #8a9096; }
-.statusColor-other { background: #8a9096; }
+.statusColor-impl {
+  background: #1f9d5e;
+}
+.statusColor-full {
+  background: #0b8a7c;
+}
+.statusColor-verified {
+  background: #3f7fc0;
+}
+.statusColor-candidate {
+  background: #6a7884;
+}
+.statusColor-survey {
+  background: #c0820f;
+}
+.statusColor-hold {
+  background: #8a9096;
+}
+.statusColor-other {
+  background: #8a9096;
+}
 
 .layerList {
   gap: 6px;
@@ -1102,10 +1132,22 @@ details p {
   pointer-events: none;
 }
 
-.fitnessTickYTop { top: 4px; left: 4px; }
-.fitnessTickYBottom { bottom: 4px; left: 4px; }
-.fitnessTickXLeft { bottom: 4px; left: 20px; }
-.fitnessTickXRight { bottom: 4px; right: 4px; }
+.fitnessTickYTop {
+  top: 4px;
+  left: 4px;
+}
+.fitnessTickYBottom {
+  bottom: 4px;
+  left: 4px;
+}
+.fitnessTickXLeft {
+  bottom: 4px;
+  left: 20px;
+}
+.fitnessTickXRight {
+  bottom: 4px;
+  right: 4px;
+}
 
 .fitnessDot {
   position: absolute;
@@ -1114,7 +1156,9 @@ details p {
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  transition: transform 0.12s ease, opacity 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    opacity 0.12s ease;
 }
 
 .fitnessDot:hover {
@@ -1206,7 +1250,9 @@ details p {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--bg-soft);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .exportItem:hover {
@@ -1268,11 +1314,19 @@ details p {
   color: var(--muted);
 }
 
-.trustCard-A { border-left-color: #1f9d5e; }
-.trustCard-B { border-left-color: #3f7fc0; }
-.trustCard-C { border-left-color: #c0820f; }
+.trustCard-A {
+  border-left-color: #1f9d5e;
+}
+.trustCard-B {
+  border-left-color: #3f7fc0;
+}
+.trustCard-C {
+  border-left-color: #c0820f;
+}
 
-.regionBar { background: #235789; }
+.regionBar {
+  background: #235789;
+}
 
 /* ---------- adoption top table ---------- */
 .adoptionTable {
@@ -1311,8 +1365,12 @@ details p {
   border-radius: inherit;
 }
 
-.miniBarFit { background: #0b6b61; }
-.miniBarInteg { background: #235789; }
+.miniBarFit {
+  background: #0b6b61;
+}
+.miniBarInteg {
+  background: #235789;
+}
 
 .statusPill {
   display: inline-flex;
@@ -1339,10 +1397,18 @@ details p {
   flex: none;
 }
 
-.layerDot-osm { background: #7ebc6f; }
-.layerDot-hot { background: #d06a4f; }
-.layerDot-cyclosm { background: #5a86c4; }
-.layerDot-gsi { background: #9a8f78; }
+.layerDot-osm {
+  background: #7ebc6f;
+}
+.layerDot-hot {
+  background: #d06a4f;
+}
+.layerDot-cyclosm {
+  background: #5a86c4;
+}
+.layerDot-gsi {
+  background: #9a8f78;
+}
 
 .currentLayerBadge {
   position: absolute;
@@ -1385,10 +1451,22 @@ details p {
   font-weight: 600;
 }
 
-.exportIcon-md { background: #e1f0ee; color: #0b8a7c; }
-.exportIcon-csv { background: #e6f4ea; color: #1f9d5e; }
-.exportIcon-json { background: #e7eef6; color: #3f7fc0; }
-.exportIcon-file { background: var(--chip); color: var(--muted); }
+.exportIcon-md {
+  background: #e1f0ee;
+  color: #0b8a7c;
+}
+.exportIcon-csv {
+  background: #e6f4ea;
+  color: #1f9d5e;
+}
+.exportIcon-json {
+  background: #e7eef6;
+  color: #3f7fc0;
+}
+.exportIcon-file {
+  background: var(--chip);
+  color: var(--muted);
+}
 
 .downloadAllButton {
   justify-self: start;
@@ -1912,6 +1990,22 @@ dialog textarea {
   color: var(--ink);
   font-family: var(--sans);
   min-width: min(520px, 80vw);
+}
+
+#loginDialog input {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-width: min(320px, 76vw);
+}
+
+.loginError {
+  color: #b3403a;
+  font-size: 0.82rem;
+  margin: 10px 0 0;
 }
 
 .dialogHead {

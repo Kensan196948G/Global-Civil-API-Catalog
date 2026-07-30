@@ -767,6 +767,67 @@ function updateNavForRoles() {
   if (newEntryButton) newEntryButton.hidden = !hasRole("Editor", "Admin");
 }
 
+// ===================== Local login (username/password) =====================
+
+function openLoginDialog() {
+  const dialog = byId("loginDialog");
+  if (!dialog) return;
+  byId("loginError").hidden = true;
+  byId("loginForm").reset();
+  dialog.showModal();
+  byId("loginUsername").focus();
+}
+
+function wireLoginUI() {
+  const loginButton = byId("loginButton");
+  const dialog = byId("loginDialog");
+  if (!loginButton || !dialog) return;
+  // The anchor keeps /auth/login as a no-JS fallback (the server redirects
+  // back to /?login=1 in local mode); with JS we open the dialog directly.
+  loginButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    openLoginDialog();
+  });
+  byId("loginCancel").addEventListener("click", () => dialog.close());
+  byId("loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const error = byId("loginError");
+    const submit = byId("loginSubmit");
+    error.hidden = true;
+    submit.disabled = true;
+    try {
+      const response = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: byId("loginUsername").value,
+          password: byId("loginPassword").value,
+        }),
+      });
+      if (response.ok) {
+        dialog.close();
+        window.location.reload();
+        return;
+      }
+      error.textContent =
+        response.status === 423
+          ? "アカウントが一時的にロックされています。15分ほど待って再試行してください"
+          : response.status === 503
+            ? "編集サービスに接続できません（api_v1 未起動）"
+            : "ユーザー名またはパスワードが違います";
+      error.hidden = false;
+    } catch {
+      error.textContent = "通信に失敗しました";
+      error.hidden = false;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  if (new URLSearchParams(window.location.search).has("login") && !state.user) {
+    openLoginDialog();
+  }
+}
+
 // ===================== Manage view (Issue #64) =====================
 
 const WORKFLOW_LABELS = {
@@ -1405,6 +1466,7 @@ async function boot() {
   initTheme();
   renderAuthArea();
   updateNavForRoles();
+  wireLoginUI();
   initManage();
   [
     "searchInput",

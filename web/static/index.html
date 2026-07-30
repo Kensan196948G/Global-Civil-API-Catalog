@@ -900,6 +900,42 @@ L.tileLayer(
       </form>
     </dialog>
 
+    <dialog id="loginDialog">
+      <form id="loginForm">
+        <h3>ログイン</h3>
+        <label
+          >ユーザー名
+          <input
+            id="loginUsername"
+            name="username"
+            autocomplete="username"
+            required
+            maxlength="100"
+          />
+        </label>
+        <label
+          >パスワード
+          <input
+            id="loginPassword"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            maxlength="200"
+          />
+        </label>
+        <p id="loginError" class="loginError" role="alert" hidden></p>
+        <div class="formActions">
+          <button type="submit" class="primaryButton" id="loginSubmit">
+            ログイン
+          </button>
+          <button type="button" class="textButton" id="loginCancel">
+            キャンセル
+          </button>
+        </div>
+      </form>
+    </dialog>
+
     <dialog id="versionsDialog">
       <div class="dialogHead">
         <h3 id="versionsDialogTitle">版履歴</h3>
