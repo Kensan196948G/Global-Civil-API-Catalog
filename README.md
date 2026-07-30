@@ -118,16 +118,17 @@ flowchart LR
 
 このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。本番は **Windows ネイティブ Python + Task Scheduler** で OS 起動時に自動起動します（Docker は開発・検証用の代替手段）。
 
-**Linux（旧環境 / 参考。本番は Windows 完結）**
+**Linux（検証 origin / 参考。本番は Windows 完結）**
 
 - 稼働URL: `http://192.168.0.185:49231`
-- 起動方式: systemd ユーザーサービス (`global-civil-api-catalog-web.service`)
-- コンテナ名: `global-civil-api-catalog-web`
+- 起動方式: systemd ユーザーサービス2本（ネイティブ Python / Docker 不使用）
+  - `global-civil-api-catalog-web.service` — Web UI（`:49231`）
+  - `global-civil-api-catalog-api.service` — 編集用 API v1（`127.0.0.1:49232`、環境変数は `deploy/api.env.example` 参照）
 - ヘルスチェック: `curl http://127.0.0.1:49231/api/health`
 
 **Windows 11（ネイティブ Python + 自動起動 / 推奨）**
 
-Docker 不要。OS 起動時に自動でWeb UIが立ち上がります。ポートは既定 `49231`、競合時は空きポートへ自動移行し `deploy/PORT.lock` に記録されます。
+Docker 不要。OS 起動時に自動でWeb UIが立ち上がります。ポートは既定 `49231`、競合時は空きポートへ自動移行し `deploy/PORT.lock` に記録されます。編集・承認UI（ログイン/CRUD/承認）を使う場合は、追加で api_v1 バックエンドの常駐が必要です（[運用メモ](docs/operations.md) 参照）。
 
 ```powershell
 # 起動サービス登録（OS起動時に自動起動）
@@ -170,12 +171,13 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-  A["Linux: systemd user service"] --> C["Docker container"]
-  B["Windows 11: Docker Desktop WSL2"] --> C
-  C --> D["Web UI :49231"]
-  C --> E["JSON API"]
+  A["Linux: systemd user units (ネイティブ Python)"] --> C["web/server.py :49231"]
+  B["Windows 11: Task Scheduler (ネイティブ Python)"] --> C
+  C --> D["Web UI / JSON API"]
+  C -->|"/api/v1・/auth をプロキシ"| E["web/api_v1.py (FastAPI) 127.0.0.1:49232"]
+  E --> N[("Neon PostgreSQL")]
   D --> F["利用者"]
-  E --> G["後続システム"]
+  D --> G["後続システム"]
 ```
 
 ## 🖥️ Web UI の主な画面

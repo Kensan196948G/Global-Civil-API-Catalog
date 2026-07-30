@@ -1,0 +1,16 @@
+[Unit]
+Description=Global Civil API Catalog API v1 (FastAPI/uvicorn, 127.0.0.1:49232)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/kensan/Projects/Mirai-DX-Project/Global-Civil-API-Catalog
+# Secrets (CATALOG_DATABASE_URL / ENTRA_*) live outside the repo.
+# Create from deploy/api.env.example — never commit the real file.
+EnvironmentFile=%h/.config/global-civil-api-catalog/api.env
+ExecStart=/usr/bin/python3 -m uvicorn web.api_v1:app --host 127.0.0.1 --port 49232
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

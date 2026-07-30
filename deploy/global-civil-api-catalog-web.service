@@ -1,18 +1,13 @@
 [Unit]
-Description=Global Civil API Catalog WebUI
-After=default.target
+Description=Global Civil API Catalog WebUI (native python, port 49231)
+After=network-online.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/kensan/Projects/Global-Civil-API-Catalog
-EnvironmentFile=/home/kensan/Projects/Global-Civil-API-Catalog/deploy/service.env
-ExecStartPre=-/usr/bin/docker rm -f ${SERVICE_NAME}
-ExecStartPre=/usr/bin/docker build -t ${IMAGE_NAME} .
-ExecStart=/usr/bin/docker run --rm --name ${SERVICE_NAME} -p ${HOST_PORT}:${CONTAINER_PORT} ${IMAGE_NAME}
-ExecStop=/usr/bin/docker stop ${SERVICE_NAME}
+WorkingDirectory=/home/kensan/Projects/Mirai-DX-Project/Global-Civil-API-Catalog
+ExecStart=/usr/bin/python3 web/server.py --host 0.0.0.0 --port 49231 --port-lock-file deploy/PORT.lock
 Restart=always
 RestartSec=5
-TimeoutStartSec=300
 
 [Install]
 WantedBy=default.target

@@ -2,11 +2,10 @@
 
 ## Web UI
 
-- URL: `http://192.168.0.185:49231`
-- 固定ポート: `49231`
+- URL: `http://192.168.0.185:49231`（LAN）/ `https://api.mirai-dx-platform.com`（Cloudflare Tunnel + Access 経由）
+- 固定ポート: `49231`（Web UI）・`49232`（api_v1 / `127.0.0.1` 限定・プロキシ経由でのみ到達）
 - ポート定義: `deploy/PORT.lock`
-- Dockerコンテナ名: `global-civil-api-catalog-web`
-- Dockerイメージ名: `global-civil-api-catalog-web:local`
+- 稼働方式: ネイティブ Python（Windows: Task Scheduler / Linux: systemd ユーザーサービス）。Docker は開発・検証用の代替（コンテナ名 `global-civil-api-catalog-web` / イメージ `global-civil-api-catalog-web:local`）
 
 このサービスでは登録済みポート `49231` を基本とします。ホストIPがDHCP等で変わる場合でも、ポート番号は維持します。
 Windows ネイティブ起動（`--auto-port`）では、`49231` が他プロセスに占有されている場合のみ空きポートへ自動フォールバックし、実際のポートを `deploy/PORT.lock` に記録します。現在のポートは `.\deploy\register-windows-service.ps1 -Status` で確認できます。
@@ -22,22 +21,50 @@ Web UI の「登録・承認管理」画面（ログイン・エントリCRUD・
 
 ---
 
-## Linux（旧環境 / 参考）
+## Linux（検証 origin / 参考）
 
-> ⚠️ 本番は Windows 完結（Task Scheduler 自動起動）へ移行済み。以下は旧 Linux 環境の参考情報です。
+> ⚠️ 本番は Windows 完結（Task Scheduler 自動起動）へ移行済み。Linux はリリース前検証・待機系として維持する（ネイティブ Python / Docker 不使用）。
+
+### 構成（systemd ユーザーサービス2本）
+
+| unit                                   | 役割                                                      |
+| -------------------------------------- | --------------------------------------------------------- |
+| `global-civil-api-catalog-web.service` | Web UI（`:49231`、`--port-lock-file deploy/PORT.lock`）   |
+| `global-civil-api-catalog-api.service` | 編集用 api_v1（uvicorn、`127.0.0.1:49232`、要 `api.env`） |
+
+### 初回セットアップ
+
+```bash
+# 1) api_v1 の環境変数（deploy/api.env.example を基に作成。実値は Git 管理しない）
+mkdir -p ~/.config/global-civil-api-catalog
+cp deploy/api.env.example ~/.config/global-civil-api-catalog/api.env
+chmod 600 ~/.config/global-civil-api-catalog/api.env
+# api.env を編集して実値を設定（CATALOG_BASE_URL は「UI のオリジン」にする）
+
+# 2) 依存導入（api_v1 のみ必要。Web UI は stdlib のみで動作）
+pip install -e ".[db]"
+
+# 3) unit 配置と有効化
+mkdir -p ~/.config/systemd/user
+cp deploy/global-civil-api-catalog-web.service ~/.config/systemd/user/
+cp deploy/global-civil-api-catalog-api.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now global-civil-api-catalog-web.service
+systemctl --user enable --now global-civil-api-catalog-api.service
+```
 
 ### 状態確認
 
 ```bash
-systemctl --user status global-civil-api-catalog-web.service
-docker ps --filter name=global-civil-api-catalog-web
+systemctl --user status global-civil-api-catalog-web.service global-civil-api-catalog-api.service
 curl http://127.0.0.1:49231/api/health
+curl http://127.0.0.1:49231/api/v1/metadata   # プロキシ経由で api_v1 まで疎通確認
 ```
 
 ### 再起動
 
 ```bash
-systemctl --user restart global-civil-api-catalog-web.service
+systemctl --user restart global-civil-api-catalog-web.service global-civil-api-catalog-api.service
 ```
 
 ### 常駐条件
@@ -164,6 +191,26 @@ python web\server.py --port 49231 --auto-port --port-lock-file deploy\PORT.lock
 # -> Global Civil API Catalog WebUI listening on 0.0.0.0:49231 (LAN: http://192.168.x.x:49231)
 ```
 
+### 🧩 api_v1 バックエンド（編集・承認 UI 用 / Windows）
+
+編集・承認 UI（`/api/v1/*`・`/auth/*`）を本番で有効にするには、Web UI と同一ホストで api_v1 を常駐させる。
+未起動でも閲覧 UI は従来どおり動作し、編集操作のみ 503 になる（graceful degradation）。
+
+```powershell
+# 1) 依存導入（初回のみ）
+pip install -e ".[db]"
+
+# 2) 環境変数ファイル（deploy/api.env.example を基に作成。実値は Git 管理しない）
+#    %APPDATA%\global-civil-api-catalog\api.env に配置し、ACL を自ユーザーのみに限定する
+
+# 3) 手動起動（動作確認。api.env の内容をプロセス環境へ読み込んでから実行）
+python -m uvicorn web.api_v1:app --host 127.0.0.1 --port 49232
+```
+
+- 常駐化は Web UI と同様に Task Scheduler（`-Principal S4U` 相当）で行う。専用登録スクリプト
+  （`register-windows-api-service.ps1`）は未整備のため Issue で追跡する
+- ⚠️ この手順の Windows 実機検証は本番反映時に実施する（開発機が Linux のため、Windows 上では NOT RUN）
+
 ### 自動起動（Docker Desktop 方式 / 代替）
 
 Docker Desktop 自体の「Start Docker Desktop when you log in」を有効にした上で、
@@ -181,9 +228,47 @@ Register-ScheduledTask -TaskName "GlobalCivilAPICatalog" -Action $action -Trigge
 
 ### 注意事項
 
-- `deploy/global-civil-api-catalog-web.service`（systemd）は Linux 専用。Windows では使用しません。
+- `deploy/global-civil-api-catalog-web.service` / `deploy/global-civil-api-catalog-api.service`（systemd）は Linux 専用。Windows では使用しません。
 - `Makefile` の `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q` はbash構文のため Windows CMD では動作しません。`.\make.ps1 test` を使用してください。
 - ファイルパスに日本語が含まれる場合、Docker Desktop の設定で「Use the WSL 2 based engine」を有効にしてください。
+
+---
+
+## 🚀 リリース反映手順（本番 origin = Windows）
+
+GitHub 上で main へマージし tag を作成した後、本番 origin（Windows ホスト）で以下を実施して反映する。
+Linux 開発機から本番 origin は操作できないため、この手順は**人手で実行**する。
+
+```powershell
+cd C:\path\to\Global-Civil-API-Catalog
+git fetch --tags origin
+git checkout main
+git pull --ff-only origin main
+
+# 該当リリースに migration がある場合のみ、再起動前に適用する
+#（v1.2.0 は追加 migration なし）
+# 例: CATALOG_DATABASE_URL を読み込んだ上で python -m alembic upgrade head
+
+# サービス再起動
+.\deploy\register-windows-service.ps1 -Stop
+.\deploy\register-windows-service.ps1 -Start
+# api_v1 を常駐化済みの場合は api_v1 も再起動する
+
+# smoke
+Invoke-WebRequest http://localhost:49231/api/health | Select-Object -ExpandProperty Content
+# ブラウザ: 「登録・承認管理」画面 → ログイン導線 → 一覧表示を確認
+```
+
+### ⏪ rollback（事前検証済み・非破壊）
+
+```powershell
+git checkout <直前の tag または commit SHA>
+.\deploy\register-windows-service.ps1 -Stop
+.\deploy\register-windows-service.ps1 -Start
+```
+
+- 📌 DB: migration を含まないリリース（v1.2.0 など）は DB rollback 不要。migration を含むリリースは各 PR 記載の downgrade 手順（例: `alembic downgrade -1`）に従う
+- ✅ 反映後は Cloudflare Access 経由（`https://api.mirai-dx-platform.com`）で 302 → ログイン → UI 表示、および編集 UI の疎通を確認する
 
 ---
 
