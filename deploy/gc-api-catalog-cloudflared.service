@@ -1,0 +1,12 @@
+[Unit]
+Description=Global Civil API Catalog Cloudflare Tunnel (api.mirai-dx-platform.com)
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/cloudflared --no-autoupdate --config %h/.cloudflared/gc-api-catalog-config.yml tunnel run gc-api-catalog
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
