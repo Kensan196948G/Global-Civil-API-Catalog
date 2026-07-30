@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import socket
@@ -25,6 +26,35 @@ _CSP = (
     "img-src 'self' data: https:; "
     "connect-src 'self'"
 )
+
+# Paths forwarded to the FastAPI process (web/api_v1.py). Keeping the browser
+# on a single origin means the CSP connect-src 'self', the SameSite session
+# cookie and the api_v1 Origin check all hold without any CORS relaxation.
+_PROXY_PREFIXES = ("/api/v1/", "/auth/")
+
+# RFC 9110 hop-by-hop headers must not be forwarded in either direction.
+# date/server are stripped from upstream responses because BaseHTTPRequestHandler
+# emits its own copies and duplicates would be ambiguous.
+_HOP_BY_HOP_HEADERS = {
+    "connection",
+    "keep-alive",
+    "proxy-authenticate",
+    "proxy-authorization",
+    "te",
+    "trailers",
+    "transfer-encoding",
+    "upgrade",
+}
+
+
+def api_upstream() -> tuple[str, str, int]:
+    """Return (scheme, host, port) of the api_v1 process from env config."""
+    raw = os.environ.get("CATALOG_API_UPSTREAM", "http://127.0.0.1:49232")
+    parsed = urlparse(raw)
+    scheme = parsed.scheme or "http"
+    port = parsed.port or (443 if scheme == "https" else 80)
+    return scheme, parsed.hostname or "127.0.0.1", port
+
 
 _json_cache: dict[str, tuple[float, object]] = {}
 _cache_lock = threading.Lock()
@@ -177,8 +207,73 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(encoded)
 
+    def is_proxied_path(self) -> bool:
+        return urlparse(self.path).path.startswith(_PROXY_PREFIXES)
+
+    def proxy_api(self) -> None:
+        """Forward the request to the api_v1 (FastAPI) process unchanged.
+
+        Redirects (e.g. /auth/login -> Entra ID) are passed through, never
+        followed. Set-Cookie headers are relayed one-by-one so the session
+        cookie survives. When the upstream is down the UI receives a JSON 503
+        and the read-only catalog keeps working untouched.
+        """
+        length = int(self.headers.get("Content-Length") or 0)
+        body = self.rfile.read(length) if length else None
+        scheme, host, port = api_upstream()
+        conn_cls = http.client.HTTPSConnection if scheme == "https" else http.client.HTTPConnection
+        conn = conn_cls(host, port, timeout=30)
+        request_headers = {
+            key: value
+            for key, value in self.headers.items()
+            if key.lower() not in _HOP_BY_HOP_HEADERS and key.lower() != "host"
+        }
+        try:
+            conn.request(self.command, self.path, body=body, headers=request_headers)
+            response = conn.getresponse()
+            payload = response.read()
+        except (OSError, http.client.HTTPException):
+            self.write_json({"detail": "catalog editing service is unavailable"}, status=503)
+            return
+        finally:
+            conn.close()
+        self.send_response(response.status)
+        for key, value in response.getheaders():
+            if key.lower() in _HOP_BY_HOP_HEADERS or key.lower() in {
+                "content-length",
+                "date",
+                "server",
+            }:
+                continue
+            self.send_header(key, value)
+        self.send_header("Content-Length", str(len(payload)))
+        self.end_headers()
+        if self.command != "HEAD":
+            self.wfile.write(payload)
+
+    def do_POST(self) -> None:  # noqa: N802 - stdlib handler method name.
+        if self.is_proxied_path():
+            self.proxy_api()
+            return
+        self.send_error(404)
+
+    def do_PATCH(self) -> None:  # noqa: N802 - stdlib handler method name.
+        if self.is_proxied_path():
+            self.proxy_api()
+            return
+        self.send_error(404)
+
+    def do_DELETE(self) -> None:  # noqa: N802 - stdlib handler method name.
+        if self.is_proxied_path():
+            self.proxy_api()
+            return
+        self.send_error(404)
+
     def do_GET(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
+        if self.is_proxied_path():
+            self.proxy_api()
+            return
         if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=True)
             return
@@ -213,6 +308,9 @@ class CatalogHandler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler method name.
         parsed = urlparse(self.path)
+        if self.is_proxied_path():
+            self.proxy_api()
+            return
         if parsed.path in {"/design.html", "/claude-design.html"} and DESIGN_HTML_PATH.exists():
             self.handle_design_html(include_body=False)
             return

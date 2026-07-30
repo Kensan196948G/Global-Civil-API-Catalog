@@ -1583,3 +1583,352 @@ details p {
     justify-content: flex-start;
   }
 }
+
+/* ===================== Auth / Manage (Issue #64) ===================== */
+
+.viewHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.viewHeadText {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.authArea {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.authButton {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: var(--radius);
+  background: var(--gold);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+}
+
+.authButton:hover {
+  background: var(--gold-deep);
+}
+
+.userBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.userName {
+  font-weight: 600;
+  color: var(--head);
+  font-size: 0.92rem;
+}
+
+.roleChips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.roleChip {
+  font-size: 0.68rem;
+  font-family: var(--mono);
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--chip);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+}
+
+.roleChip.role-admin {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.roleChip.role-approver,
+.roleChip.role-verifier {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+.roleChip.role-editor {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.primaryButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--gold);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.primaryButton:hover {
+  background: var(--gold-deep);
+}
+
+.manageNotice {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--chip);
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.manageNotice.error {
+  background: var(--warn-bg);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.manageNotice.success {
+  background: var(--good-bg);
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.manageFilters {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+
+.manageFilters input[type="search"] {
+  flex: 1 1 220px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  color: var(--ink);
+}
+
+.manageFilters select {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  color: var(--ink);
+}
+
+.manageTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.manageTable th,
+.manageTable td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--line-2);
+  text-align: left;
+  vertical-align: top;
+}
+
+.manageTable th {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+.manageTable .mono {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.manageTable .emptyCell {
+  color: var(--muted);
+  text-align: center;
+  padding: 22px;
+}
+
+.rowActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rowButton {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.rowButton:hover {
+  border-color: var(--gold);
+  color: var(--gold-deep);
+}
+
+.rowButton.danger {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.rowButton.danger:hover {
+  background: var(--warn-bg);
+}
+
+.wfBadge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--chip);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+.wfBadge.wf-draft {
+  background: var(--chip);
+  color: var(--muted);
+}
+
+.wfBadge.wf-in_review {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+.wfBadge.wf-pending_approval {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.wfBadge.wf-published {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.entryFormGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px 16px;
+  margin-top: 12px;
+}
+
+.entryFormGrid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.entryFormGrid input,
+.entryFormGrid select,
+.entryFormGrid textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+
+.entryFormGrid input:focus,
+.entryFormGrid select:focus,
+.entryFormGrid textarea:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.entryFormWide {
+  grid-column: 1 / -1;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+dialog {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  padding: 20px;
+  max-width: min(640px, 92vw);
+  box-shadow: var(--shadow);
+}
+
+dialog::backdrop {
+  background: rgba(24, 38, 46, 0.45);
+}
+
+dialog h3 {
+  margin: 0 0 8px;
+  color: var(--head);
+  font-family: var(--serif);
+}
+
+dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+dialog textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-width: min(520px, 80vw);
+}
+
+.dialogHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 760px) {
+  .authArea {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .entryFormGrid {
+    grid-template-columns: 1fr;
+  }
+}
