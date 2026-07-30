@@ -2,13 +2,14 @@
 
 ## Web UI
 
-- URL: `http://192.168.0.185:49231`（LAN）/ `https://api.mirai-dx-platform.com`（Cloudflare Tunnel + Access 経由）
+- URL: `https://api.mirai-dx-platform.com`（本番・Cloudflare Tunnel + Access 経由）/ `http://192.168.0.185:49231`（LAN 直接）
 - 固定ポート: `49231`（Web UI）・`49232`（api_v1 / `127.0.0.1` 限定・プロキシ経由でのみ到達）
 - ポート定義: `deploy/PORT.lock`
-- 稼働方式: ネイティブ Python（Windows: Task Scheduler / Linux: systemd ユーザーサービス）。Docker は開発・検証用の代替（コンテナ名 `global-civil-api-catalog-web` / イメージ `global-civil-api-catalog-web:local`）
+- 稼働方式: **Linux ネイティブ Python + systemd ユーザーサービス（本番）**。Docker は開発・検証用の代替（コンテナ名 `global-civil-api-catalog-web` / イメージ `global-civil-api-catalog-web:local`）
+- 📅 2026-07-30: 本番 origin を Windows から Linux へ切替え。旧 Windows 環境は撤去済み（後述の撤去記録参照）
 
 このサービスでは登録済みポート `49231` を基本とします。ホストIPがDHCP等で変わる場合でも、ポート番号は維持します。
-Windows ネイティブ起動（`--auto-port`）では、`49231` が他プロセスに占有されている場合のみ空きポートへ自動フォールバックし、実際のポートを `deploy/PORT.lock` に記録します。現在のポートは `.\deploy\register-windows-service.ps1 -Status` で確認できます。
+本番 unit は `--auto-port` を使わず固定ポートで起動します（Tunnel ingress が `localhost:49231` を指すため、ポートが取れない場合はドリフトさせずに fail させる設計）。
 
 ### 🔗 編集・承認UI（RBAC統合 / Issue #64）
 
@@ -21,16 +22,15 @@ Web UI の「登録・承認管理」画面（ログイン・エントリCRUD・
 
 ---
 
-## Linux（検証 origin / 参考）
+## 🐧 Linux（本番 origin）
 
-> ⚠️ 本番は Windows 完結（Task Scheduler 自動起動）へ移行済み。Linux はリリース前検証・待機系として維持する（ネイティブ Python / Docker 不使用）。
+### 構成（systemd ユーザーサービス3本）
 
-### 構成（systemd ユーザーサービス2本）
-
-| unit                                   | 役割                                                      |
-| -------------------------------------- | --------------------------------------------------------- |
-| `global-civil-api-catalog-web.service` | Web UI（`:49231`、`--port-lock-file deploy/PORT.lock`）   |
-| `global-civil-api-catalog-api.service` | 編集用 api_v1（uvicorn、`127.0.0.1:49232`、要 `api.env`） |
+| unit                                   | 役割                                                                 |
+| -------------------------------------- | -------------------------------------------------------------------- |
+| `global-civil-api-catalog-web.service` | Web UI（`:49231`、`--port-lock-file deploy/PORT.lock`）              |
+| `global-civil-api-catalog-api.service` | 編集用 api_v1（uvicorn、`127.0.0.1:49232`、要 `api.env`）            |
+| `gc-api-catalog-cloudflared.service`   | Cloudflare Tunnel コネクタ（`api.mirai-dx-platform.com` の外部公開） |
 
 ### 初回セットアップ
 
@@ -44,27 +44,39 @@ chmod 600 ~/.config/global-civil-api-catalog/api.env
 # 2) 依存導入（api_v1 のみ必要。Web UI は stdlib のみで動作）
 pip install -e ".[db]"
 
-# 3) unit 配置と有効化
+# 3) Cloudflare Tunnel コネクタ（cert.pem = `cloudflared tunnel login` 済みが前提）
+#    credentials は cert.pem からいつでも再生成できる（値は表示しないこと）:
+cloudflared tunnel token --cred-file ~/.cloudflared/370aef2d-fb96-4ec8-89c4-c7a16bd3e147.json gc-api-catalog
+#    config を ~/.cloudflared/gc-api-catalog-config.yml に作成
+#    （tunnel ID・credentials-file・ingress: api.mirai-dx-platform.com → http://localhost:49231、その他 404。
+#      雛形: deploy/cloudflare/config.yml.example）
+cloudflared tunnel --config ~/.cloudflared/gc-api-catalog-config.yml ingress validate
+
+# 4) unit 配置と有効化
 mkdir -p ~/.config/systemd/user
 cp deploy/global-civil-api-catalog-web.service ~/.config/systemd/user/
 cp deploy/global-civil-api-catalog-api.service ~/.config/systemd/user/
+cp deploy/gc-api-catalog-cloudflared.service ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable --now global-civil-api-catalog-web.service
 systemctl --user enable --now global-civil-api-catalog-api.service
+systemctl --user enable --now gc-api-catalog-cloudflared.service
 ```
 
 ### 状態確認
 
 ```bash
-systemctl --user status global-civil-api-catalog-web.service global-civil-api-catalog-api.service
+systemctl --user status global-civil-api-catalog-web.service global-civil-api-catalog-api.service gc-api-catalog-cloudflared.service
 curl http://127.0.0.1:49231/api/health
 curl http://127.0.0.1:49231/api/v1/metadata   # プロキシ経由で api_v1 まで疎通確認
+cloudflared tunnel info 370aef2d-fb96-4ec8-89c4-c7a16bd3e147   # コネクタ接続状況
 ```
 
 ### 再起動
 
 ```bash
 systemctl --user restart global-civil-api-catalog-web.service global-civil-api-catalog-api.service
+systemctl --user restart gc-api-catalog-cloudflared.service   # トンネルは通常触らなくてよい
 ```
 
 ### 常駐条件
@@ -73,201 +85,39 @@ systemctl --user restart global-civil-api-catalog-web.service global-civil-api-c
 
 ---
 
-## Windows 11（移設先）
+## 🚀 リリース反映手順（本番 origin = Linux）
 
-### 前提条件
+GitHub 上で main へマージし tag を作成した後、本番 origin（この Linux 機）で以下を実施して反映する。
+開発機と本番 origin が同一のため、**承認済み PR の範囲で Claude Code（CTO代行）が自律実行できる**。
 
-| 必須           | バージョン目安               |
-| -------------- | ---------------------------- |
-| Docker Desktop | 4.30+ (WSL2 バックエンド)    |
-| Python         | 3.12+                        |
-| PowerShell     | 7.4+（Windows 11 25H2 標準） |
-
-WSL2 が有効であれば Docker Desktop が Linux コンテナをそのまま動かすため、`Dockerfile` と `docker-compose.yml` は変更不要です。
-
-### 起動（PowerShell 推奨）
-
-```powershell
-# 初回 or イメージ再ビルド
-.\deploy\start.ps1
-
-# 停止
-.\deploy\start.ps1 -Stop
-
-# ログ確認
-.\deploy\start.ps1 -Logs
-```
-
-### 起動（CMD）
-
-```cmd
-deploy\start.bat
-```
-
-### docker compose 直接操作
-
-```powershell
-# 起動
-docker compose up -d --build
-
-# 状態確認
-docker compose ps
-docker compose logs web
-
-# 停止
-docker compose down
-```
-
-### 動作確認
-
-```powershell
-Invoke-WebRequest http://localhost:49231/api/health | Select-Object -ExpandProperty Content
-# -> {"status": "ok"}
-```
-
-### 開発コマンド（Makefile 代替）
-
-Linux では `make check` を使いますが、Windows では PowerShell スクリプトを使用します。
-
-```powershell
-.\make.ps1 check     # compile + validate + test + export（全て）
-.\make.ps1 test      # テストのみ
-.\make.ps1 validate  # カタログ検証のみ
-.\make.ps1 export    # Markdown エクスポートのみ
-```
-
-### 自動起動（ネイティブ Python + タスクスケジューラ / 推奨）
-
-Docker Desktop に依存せず、ネイティブ Python で OS 起動時に自動起動する方式です。
-サーバは標準ライブラリのみで動作するため、Python 3.12+ があれば追加インストール不要です。
-
-```powershell
-# 登録（既定ポート 49231。使用中なら空きポートへ自動フォールバック）
-.\deploy\register-windows-service.ps1 -Register
-
-# 状態確認（登録状態・現在ポート・アクセスURLを表示）
-.\deploy\register-windows-service.ps1 -Status
-
-# 手動起動 / 停止
-.\deploy\register-windows-service.ps1 -Start
-.\deploy\register-windows-service.ps1 -Stop
-
-# 登録解除
-.\deploy\register-windows-service.ps1 -Unregister
-```
-
-| 項目        | 内容                                                                                        |
-| ----------- | ------------------------------------------------------------------------------------------- |
-| 🗓️ タスク名 | `GlobalCivilApiCatalog-Web`                                                                 |
-| 🔌 ポート   | 既定 `49231`。競合時は `--auto-port` により空きポートへ自動移行し `deploy/PORT.lock` に記録 |
-| 🌐 IP       | DHCP 自動割当の LAN IP を起動ログと `-Status` で表示                                        |
-| ⏰ トリガー | OS 起動時（管理者権限が無い場合はログオン時へ自動フォールバック）                           |
-| 🔓 認証     | なし（社内 LAN 限定公開が前提）                                                             |
-
-### 🔐 実行プリンシパル（-Principal / Issue #22）
-
-既定 (`Interactive`) はタスクが対話ユーザーのトークンで動作するため、**ログオフ/切断で常駐プロセスごと終了する**上、
-`GlobalCivilApiCatalog-Tunnel`（後述）は powershell ラッパー越しの起動になり Task Scheduler の `RestartCount` が機能しない欠陥がありました
-（2026-07-05 に Cloudflare Tunnel Error 1033 のダウンタイムとして顕在化・復旧済み）。
-
-`-Principal` パラメータで実行方式を切り替えられます。
-
-| 値                                | 説明                                                                                                                                                                                                                                                                                                            | 用途                                              |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `Interactive`（既定）             | 現ユーザーの対話セッション依存。後方互換のため既定値のまま維持                                                                                                                                                                                                                                                  | 旧構成との互換性が必要な場合のみ                  |
-| `S4U`（**本番採用・推奨**）       | 現ユーザー権限のままログオン非依存で常駐。Task Scheduler がプロセスを直接監視するため `RestartCount`/`RestartInterval` が実際に機能する                                                                                                                                                                         | 24/7 公開サービス（本プロジェクトの本番機はこれ） |
-| `LocalService` / `NetworkService` | Windows 組み込みサービスアカウントによる最小権限実行。⚠️ 現状のフォルダ ACL は `Authenticated Users:(M)`（Modify）を継承しており**最小権限の根拠にはならない**。採用時は実行ファイル・設定を Read/Execute に限定し、書込は data/・log 専用ディレクトリへ分離した ACL を設定すること（本番未適用・追加検証必須） | さらなる権限最小化が必要な場合                    |
-
-```powershell
-# 本番で採用している再登録コマンド（ログオフ非依存・再発防止）
-.\deploy\register-windows-service.ps1 -Register -Principal S4U
-.\deploy\register-cloudflared.ps1 -Register -Principal S4U
-```
-
-サーバを直接起動する場合:
-
-```powershell
-python web\server.py --port 49231 --auto-port --port-lock-file deploy\PORT.lock
-# -> Global Civil API Catalog WebUI listening on 0.0.0.0:49231 (LAN: http://192.168.x.x:49231)
-```
-
-### 🧩 api_v1 バックエンド（編集・承認 UI 用 / Windows）
-
-編集・承認 UI（`/api/v1/*`・`/auth/*`）を本番で有効にするには、Web UI と同一ホストで api_v1 を常駐させる。
-未起動でも閲覧 UI は従来どおり動作し、編集操作のみ 503 になる（graceful degradation）。
-
-```powershell
-# 1) 依存導入（初回のみ）
-pip install -e ".[db]"
-
-# 2) 環境変数ファイル（deploy/api.env.example を基に作成。実値は Git 管理しない）
-#    %APPDATA%\global-civil-api-catalog\api.env に配置し、ACL を自ユーザーのみに限定する
-
-# 3) 手動起動（動作確認。api.env の内容をプロセス環境へ読み込んでから実行）
-python -m uvicorn web.api_v1:app --host 127.0.0.1 --port 49232
-```
-
-- 常駐化は Web UI と同様に Task Scheduler（`-Principal S4U` 相当）で行う。専用登録スクリプト
-  （`register-windows-api-service.ps1`）は未整備のため Issue で追跡する
-- ⚠️ この手順の Windows 実機検証は本番反映時に実施する（開発機が Linux のため、Windows 上では NOT RUN）
-
-### 自動起動（Docker Desktop 方式 / 代替）
-
-Docker Desktop 自体の「Start Docker Desktop when you log in」を有効にした上で、
-以下のコマンドでタスクを登録することで OS 起動時に自動起動できます。
-
-```powershell
-$action  = New-ScheduledTaskAction -Execute "powershell.exe" `
-           -Argument "-NonInteractive -File C:\path\to\deploy\start.ps1" `
-           -WorkingDirectory "C:\path\to\Global-Civil-API-Catalog"
-$trigger = New-ScheduledTaskTrigger -AtLogOn
-Register-ScheduledTask -TaskName "GlobalCivilAPICatalog" -Action $action -Trigger $trigger -RunLevel Highest
-```
-
-パスは実際のクローン先に合わせて変更してください。
-
-### 注意事項
-
-- `deploy/global-civil-api-catalog-web.service` / `deploy/global-civil-api-catalog-api.service`（systemd）は Linux 専用。Windows では使用しません。
-- `Makefile` の `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q` はbash構文のため Windows CMD では動作しません。`.\make.ps1 test` を使用してください。
-- ファイルパスに日本語が含まれる場合、Docker Desktop の設定で「Use the WSL 2 based engine」を有効にしてください。
-
----
-
-## 🚀 リリース反映手順（本番 origin = Windows）
-
-GitHub 上で main へマージし tag を作成した後、本番 origin（Windows ホスト）で以下を実施して反映する。
-Linux 開発機から本番 origin は操作できないため、この手順は**人手で実行**する。
-
-```powershell
-cd C:\path\to\Global-Civil-API-Catalog
+```bash
+cd ~/Projects/Mirai-DX-Project/Global-Civil-API-Catalog
 git fetch --tags origin
 git checkout main
 git pull --ff-only origin main
+# state.json 等のローカル変更が pull を塞ぐ場合は、先に退避する:
+#   git stash push -m "pre-release local state" -- state.json
 
 # 該当リリースに migration がある場合のみ、再起動前に適用する
-#（v1.2.0 は追加 migration なし）
 # 例: CATALOG_DATABASE_URL を読み込んだ上で python -m alembic upgrade head
 
-# サービス再起動
-.\deploy\register-windows-service.ps1 -Stop
-.\deploy\register-windows-service.ps1 -Start
-# api_v1 を常駐化済みの場合は api_v1 も再起動する
+# サービス再起動（web/api のみ。トンネルは対象外）
+systemctl --user restart global-civil-api-catalog-web.service global-civil-api-catalog-api.service
 
 # smoke
-Invoke-WebRequest http://localhost:49231/api/health | Select-Object -ExpandProperty Content
-# ブラウザ: 「登録・承認管理」画面 → ログイン導線 → 一覧表示を確認
+curl http://127.0.0.1:49231/api/health
+curl http://127.0.0.1:49231/api/v1/metadata
+# ブラウザ: https://api.mirai-dx-platform.com → Access ログイン → UI 表示・編集導線を確認
 ```
 
 ### ⏪ rollback（事前検証済み・非破壊）
 
-```powershell
+```bash
 git checkout <直前の tag または commit SHA>
-.\deploy\register-windows-service.ps1 -Stop
-.\deploy\register-windows-service.ps1 -Start
+systemctl --user restart global-civil-api-catalog-web.service global-civil-api-catalog-api.service
 ```
 
-- 📌 DB: migration を含まないリリース（v1.2.0 など）は DB rollback 不要。migration を含むリリースは各 PR 記載の downgrade 手順（例: `alembic downgrade -1`）に従う
+- 📌 DB: migration を含まないリリースは DB rollback 不要。migration を含むリリースは各 PR 記載の downgrade 手順（例: `alembic downgrade -1`）に従う
 - ✅ 反映後は Cloudflare Access 経由（`https://api.mirai-dx-platform.com`）で 302 → ログイン → UI 表示、および編集 UI の疎通を確認する
 
 ---
@@ -276,24 +126,17 @@ git checkout <直前の tag または commit SHA>
 
 Named Tunnel + **Cloudflare Access（認証ゲート必須）** で Web UI をサブドメイン公開します。
 
-### 人間側で必要な初期設定（1回のみ）
+- トンネル: `gc-api-catalog`（ID: `370aef2d-fb96-4ec8-89c4-c7a16bd3e147`）
+- コネクタ: Linux の user unit `gc-api-catalog-cloudflared.service`（テンプレート: `deploy/gc-api-catalog-cloudflared.service`）
+- config: `~/.cloudflared/gc-api-catalog-config.yml`（ingress: `api.mirai-dx-platform.com` → `http://localhost:49231`、その他は 404）
+- credentials: `~/.cloudflared/<TUNNEL_ID>.json`（`cloudflared tunnel token --cred-file` で cert.pem から再生成可。**値の表示・Git 管理は禁止**）
 
-```powershell
-cloudflared tunnel login                       # ブラウザで Cloudflare 認証
-cloudflared tunnel create catalog              # Tunnel 作成
-cloudflared tunnel route dns catalog <サブドメイン>  # DNS ルート作成
-Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
-# config.yml の <TUNNEL_ID> と hostname を編集
-```
+### 状態確認
 
-### サービス登録（OS 起動時自動起動）
-
-```powershell
-.\deploy\register-cloudflared.ps1 -Register -Principal S4U   # 推奨（ログオフ非依存）
-.\deploy\register-cloudflared.ps1 -Status
-.\deploy\register-cloudflared.ps1 -Start
-.\deploy\register-cloudflared.ps1 -Stop
-.\deploy\register-cloudflared.ps1 -Unregister
+```bash
+systemctl --user status gc-api-catalog-cloudflared.service
+cloudflared tunnel info 370aef2d-fb96-4ec8-89c4-c7a16bd3e147
+journalctl --user -u gc-api-catalog-cloudflared -n 20 --no-pager
 ```
 
 ### ⚠️ セキュリティ必須事項
@@ -310,6 +153,14 @@ Copy-Item deploy\cloudflare\config.yml.example deploy\cloudflare\config.yml
 | 許可ポリシー       | ドメイン `@mirai-const.co.jp` 全体 + 個別許可メールアドレス（いずれか一致・One-Time PIN 認証）。個別アドレスは Cloudflare Access ダッシュボード側でのみ管理し、本文書には記載しない（PII/標的型対策） |
 | 動作確認           | 未認証アクセスは Cloudflare Access ログインページへ 302 リダイレクトされることを確認済み                                                                                                              |
 | 変更方法           | Cloudflare Zero Trust ダッシュボード → Access → Applications → `Global Civil API Catalog` からポリシー編集可能                                                                                        |
+
+---
+
+## 🪦 旧 Windows 環境（2026-07-30 撤去済み / 記録）
+
+- 旧構成: Task Scheduler（`GlobalCivilApiCatalog-Web` / `GlobalCivilApiCatalog-Tunnel`、`-Principal S4U`）+ ネイティブ Python + cloudflared。2026-07-30 にタスク解除・プロセス停止・クローン（`D:\Mirai-Projects\Global-Civil-API-Catalog`）削除まで完了し、本番は Linux へ一本化
+- 🔍 撤去時の知見: タスクを Unregister しても**起動済みプロセスは残る**。停止漏れの定番は **`pythonw.exe`**（`python.exe` 名指しの `Stop-Process` では捕捉できない）。`Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like "*<リポジトリ名>*" }` で全変種を列挙してから停止する。フォルダ削除が「使用中」で失敗する場合の犯人もこれ
+- Windows 用スクリプト（`deploy/register-windows-service.ps1` / `register-cloudflared.ps1` / `start.ps1` / `start.bat` / `make.ps1`）と Docker 構成（`Dockerfile` / `docker-compose.yml`）は、開発・検証用の代替および将来の再展開の土台として残置
 
 ---
 
