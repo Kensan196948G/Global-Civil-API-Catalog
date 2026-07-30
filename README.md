@@ -116,63 +116,27 @@ flowchart LR
 
 ### 🖥️ 社内IT部門・システム運用管理者向け
 
-このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。本番は **Windows ネイティブ Python + Task Scheduler** で OS 起動時に自動起動します（Docker は開発・検証用の代替手段）。
+このリポジトリは、後続システムが外部APIを安全に使うための基礎台帳です。APIキー、秘密情報、本番データは保存しません。本番は **Linux ネイティブ Python + systemd ユーザーサービス + Cloudflare Tunnel** で稼働します（2026-07-30 に Windows から移行。Docker は開発・検証用の代替手段）。
 
-**Linux（検証 origin / 参考。本番は Windows 完結）**
+**Linux（本番 origin）**
 
-- 稼働URL: `http://192.168.0.185:49231`
-- 起動方式: systemd ユーザーサービス2本（ネイティブ Python / Docker 不使用）
+- 公開URL: `https://api.mirai-dx-platform.com`（Cloudflare Tunnel + Access 経由）/ LAN: `http://192.168.0.185:49231`
+- 起動方式: systemd ユーザーサービス3本（ネイティブ Python / Docker 不使用）
   - `global-civil-api-catalog-web.service` — Web UI（`:49231`）
   - `global-civil-api-catalog-api.service` — 編集用 API v1（`127.0.0.1:49232`、環境変数は `deploy/api.env.example` 参照）
+  - `gc-api-catalog-cloudflared.service` — Cloudflare Tunnel コネクタ
 - ヘルスチェック: `curl http://127.0.0.1:49231/api/health`
 
-**Windows 11（ネイティブ Python + 自動起動 / 推奨）**
+**Windows 11（旧本番 / 2026-07-30 撤去済み）**
 
-Docker 不要。OS 起動時に自動でWeb UIが立ち上がります。ポートは既定 `49231`、競合時は空きポートへ自動移行し `deploy/PORT.lock` に記録されます。編集・承認UI（ログイン/CRUD/承認）を使う場合は、追加で api_v1 バックエンドの常駐が必要です（[運用メモ](docs/operations.md) 参照）。
+旧 Windows 本番環境（Task Scheduler + ネイティブ Python + cloudflared）は 2026-07-30 に撤去し、本番は Linux へ一本化しました。Windows 用スクリプト（`deploy/register-windows-service.ps1` ほか）と Docker 構成は、開発・検証用の代替手段として残置しています（詳細と撤去記録: [運用メモ](docs/operations.md)）。
 
-```powershell
-# 起動サービス登録（OS起動時に自動起動）
-.\deploy\register-windows-service.ps1 -Register
-
-# 状態・アクセスURL確認
-.\deploy\register-windows-service.ps1 -Status
-
-# 登録解除
-.\deploy\register-windows-service.ps1 -Unregister
-```
-
-```mermaid
-flowchart LR
-  A["🖥️ OS 起動"] --> B["🗓️ Task Scheduler"]
-  B --> C["🐍 python web/server.py --auto-port"]
-  C --> D{"🔌 49231 空き?"}
-  D -- はい --> E["49231 で待受"]
-  D -- いいえ --> F["空きポートへ自動移行"]
-  E --> G["📄 PORT.lock 更新"]
-  F --> G
-  G --> H["🌐 http://<自動割当IP>:<ポート>"]
-```
-
-**Windows 11（Docker Desktop WSL2 / 代替）**
-
-```powershell
-# 起動
-.\deploy\start.ps1
-
-# 停止
-.\deploy\start.ps1 -Stop
-
-# 開発コマンド（Makefile代替）
-.\make.ps1 check
-```
-
-ダッシュボード: `http://localhost:49231`（同一端末から）/ 別端末からは `-Status` で表示される自動割当IPのURL  
-詳細: [運用メモ](docs/operations.md)
+編集・承認UI（ログイン/CRUD/承認）を使う場合は、Web UI に加えて api_v1 バックエンドの常駐が必要です（[運用メモ](docs/operations.md) 参照）。
 
 ```mermaid
 flowchart TD
-  A["Linux: systemd user units (ネイティブ Python)"] --> C["web/server.py :49231"]
-  B["Windows 11: Task Scheduler (ネイティブ Python)"] --> C
+  T["☁️ Cloudflare Access + Tunnel<br/>api.mirai-dx-platform.com"] --> C
+  A["🐧 Linux: systemd user units (ネイティブ Python)"] --> C["web/server.py :49231"]
   C --> D["Web UI / JSON API"]
   C -->|"/api/v1・/auth をプロキシ"| E["web/api_v1.py (FastAPI) 127.0.0.1:49232"]
   E --> N[("Neon PostgreSQL")]
