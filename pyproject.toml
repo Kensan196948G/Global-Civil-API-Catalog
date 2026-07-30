@@ -1,6 +1,6 @@
 [project]
 name = "global-civil-api-catalog"
-version = "0.1.0"
+version = "1.2.0"
 description = "Catalog and verification toolkit for civil engineering public APIs and open data."
 requires-python = ">=3.12"
 dependencies = []
