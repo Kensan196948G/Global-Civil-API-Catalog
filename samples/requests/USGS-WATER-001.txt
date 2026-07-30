@@ -1,1 +1,1 @@
-curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060"
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060'

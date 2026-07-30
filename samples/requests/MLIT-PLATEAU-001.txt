@@ -1,1 +1,1 @@
-curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://www.geospatial.jp/ckan/dataset/plateau"
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" https://www.geospatial.jp/ckan/dataset/plateau

@@ -47,7 +47,7 @@
 | JCG-UMISHIRU-001 | 海上保安庁 海しる | 海象 | 海上保安庁 | API, 地図, データ | unknown | B | 3 | 調査中 | - | 海洋、波浪、潮位などを確認し、港湾・海洋土木の施工判断や安全確認に利用します。観測地点と利用条件を確認します。 |
 | NOWPHAS-WAVE-001 | NOWPHAS 港湾波浪情報 | 海象 | 港湾空港技術研究所等 | Web, CSV相当 | unknown | B | 3 | 調査中 | - | 海洋、波浪、潮位などを確認し、港湾・海洋土木の施工判断や安全確認に利用します。観測地点と利用条件を確認します。 |
 | MOE-AIR-POLLUTION-001 | 環境省 大気汚染物質広域監視 | 環境 | 環境省 | Web, CSV相当 | not_required | B | 3 | 調査中 | - | 大気、水質、環境監視などを確認し、環境影響や安全配慮の参考情報として利用します。公式データの取得条件を確認します。 |
-| OSM-OVERPASS-001 | OpenStreetMap Overpass API | 国際地図 | OSM | Overpass QL, JSON, XML | not_required | A | 4 | 接続候補 | failure | 海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。 |
+| OSM-OVERPASS-001 | OpenStreetMap Overpass API | 国際地図 | OSM | Overpass QL, JSON, XML | not_required | A | 4 | 接続候補 | success | 海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。 |
 | OSM-TILE-001 | OSM Tile | 国際地図 | OSM | XYZ Tile, PNG | not_required | A | 3 | 調査中 | - | 海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。 |
 | OPENTOPOGRAPHY-API-001 | OpenTopography API | 国際地形 | OpenTopography | REST, GeoTIFF | unknown | B | 3 | 調査中 | - | 海外の標高・地形データを取得し、広域地形解析や比較研究に利用します。データセットごとのライセンスを確認します。 |
 | OVERTURE-MAPS-001 | Overture Maps | 国際建物 | Overture Maps Foundation | Parquet, GeoParquet | not_required | A | 4 | 調査中 | - | 海外の建物・基盤地物データを使い、都市分析や海外案件の初期調査に利用します。大容量データの抽出設計が必要です。 |

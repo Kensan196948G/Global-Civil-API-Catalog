@@ -1,1 +1,1 @@
-curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://api.weather.gov/points/38.8894,-77.0352"
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" https://api.weather.gov/points/38.8894,-77.0352

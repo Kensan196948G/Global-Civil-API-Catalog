@@ -1,1 +1,1 @@
-curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3Bnode(35.68,139.76,35.69,139.77)%3Bout%201%3B"
+curl -L -H "User-Agent: Global-Civil-API-Catalog/0.1" 'https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3Bnode(35.68,139.76,35.69,139.77)%3Bout%201%3B'
