@@ -92,15 +92,15 @@
         "timeZone": "America/New_York",
         "radarStation": "KLWX",
         "astronomicalData": {
-            "sunrise": "2026-07-27T06:03:38-04:00",
-            "sunset": "2026-07-27T20:25:45-04:00",
-            "transit": "2026-07-27T13:14:41-04:00",
-            "civilTwilightBegin": "2026-07-27T05:35:03-04:00",
-            "civilTwilightEnd": "2026-07-27T20:54:20-04:00",
-            "nauticalTwilightBegin": "2026-07-27T04:57:59-04:00",
-            "nauticalTwilightEnd": "2026-07-27T21:31:24-04:00",
-            "astronomicalTwilightBegin": "2026-07-27T04:17:14-04:00",
-            "astronomicalTwilightEnd": "2026-07-27T22:12:08-04:00"
+            "sunrise": "2026-08-09T06:16:35-04:00",
+            "sunset": "2026-08-09T20:10:41-04:00",
+            "transit": "2026-08-09T13:13:38-04:00",
+            "civilTwilightBegin": "2026-08-09T05:47:43-04:00",
+            "civilTwilightEnd": "2026-08-09T20:39:33-04:00",
+            "nauticalTwilightBegin": "2026-08-09T05:12:32-04:00",
+            "nauticalTwilightEnd": "2026-08-09T21:14:44-04:00",
+            "astronomicalTwilightBegin": "2026-08-09T04:34:45-04:00",
+            "astronomicalTwilightEnd": "2026-08-09T21:52:31-04:00"
         },
         "nwr": {
             "transmitter": "WNG736",

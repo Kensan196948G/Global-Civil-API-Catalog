@@ -2277,9 +2277,9 @@
     "last_checked_at": "2026-06-18",
     "connection_status": "接続検証済",
     "trust_rank": "A",
-    "connection_priority": 5,
+    "connection_priority": 4,
     "business_fit_score": 91,
-    "integration_score": 97,
+    "integration_score": 87,
     "risk_note": "ファイルサイズが大きいためメタデータ優先で扱う。",
     "target_projects": [
       "Open BIM/CIM Dictionary Assistant",
@@ -2307,35 +2307,33 @@
         ]
       },
       "integration": {
-        "score": 97,
+        "score": 87,
         "factors": [
           "APIキー(not_required) +30",
           "認証方式(none) +15",
           "扱いやすい形式(JSON/タイル等) +20",
           "具体的エンドポイント +12",
-          "公式ドキュメントあり +10",
-          "実接続検証 成功 +10"
+          "公式ドキュメントあり +10"
         ]
       },
       "trust": {
-        "score": 100,
+        "score": 90,
         "rank": "A",
         "factors": [
           "公的/国際/公式/財団 提供元 +30",
           "公式ドキュメントあり +20",
           "ライセンス明記 +20",
           "更新頻度あり +10",
-          "データ形式あり +10",
-          "実接続検証 成功 +10"
+          "データ形式あり +10"
         ]
       },
       "priority": {
-        "score": 88.8,
-        "rank": 5,
+        "score": 83.8,
+        "rank": 4,
         "factors": [
-          "信頼度 100×0.30",
+          "信頼度 90×0.30",
           "事業適合度 91×0.35",
-          "連携実装性 97×0.20",
+          "連携実装性 87×0.20",
           "対象案件 50×0.15"
         ]
       }
