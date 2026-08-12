@@ -1781,7 +1781,7 @@
     "connection_status": "接続候補",
     "trust_rank": "B",
     "connection_priority": 3,
-    "business_fit_score": 62,
+    "business_fit_score": 59,
     "integration_score": 60,
     "risk_note": "APIキー要否と商用利用条件の確定が必要。",
     "target_projects": [
@@ -1799,13 +1799,13 @@
     "production_imported_at": "2026-07-04",
     "score_breakdown": {
       "business_fit": {
-        "score": 62,
+        "score": 59,
         "factors": [
           "提供元種別(government) +30",
           "商用利用(unknown) +8",
           "更新頻度(年次) +10",
           "対象案件 1件 +7",
-          "接続状態(接続検証済) +7"
+          "接続状態(接続候補) +4"
         ]
       },
       "integration": {
@@ -1829,11 +1829,11 @@
         ]
       },
       "priority": {
-        "score": 58.5,
+        "score": 57.4,
         "rank": 3,
         "factors": [
           "信頼度 70×0.30",
-          "事業適合度 62×0.35",
+          "事業適合度 59×0.35",
           "連携実装性 60×0.20",
           "対象案件 25×0.15"
         ]
