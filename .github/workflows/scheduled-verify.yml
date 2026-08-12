@@ -78,3 +78,41 @@ jobs:
             --head "$BRANCH" \
             --title "chore: weekly verification ${DATE}" \
             --body "$BODY"
+      - name: Create alert issue on verification failures
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ ! -f data/verification_results.json ]; then
+            echo "verification_results.json missing; skipping alert."
+            exit 0
+          fi
+          python - <<'PY'
+          import json
+          results = json.load(open("data/verification_results.json", encoding="utf-8"))
+          failures = [
+              {
+                  "api_id": r["api_id"],
+                  "verified_at": r.get("verified_at"),
+                  "note": r.get("note") or r.get("error_message") or "",
+              }
+              for r in results
+              if r.get("result") == "failure"
+          ]
+          with open("verification_alerts.json", "w", encoding="utf-8") as fh:
+              json.dump({"date": __import__("datetime").date.today().isoformat(), "failures": failures}, fh, ensure_ascii=False, indent=2)
+          PY
+          if python -c "import json; d=json.load(open('verification_alerts.json')); exit(0 if d['failures'] else 1)"; then
+            OPEN="$(gh issue list --label verification-alert --state open --json number --jq 'length')"
+            if [ "$OPEN" = "0" ]; then
+              gh issue create \
+                --title "週次検証 failure 検出 ($(date -u +%Y-%m-%d))" \
+                --label verification-alert \
+                --body "$(cat verification_alerts.json)"
+            else
+              echo "verification-alert issue already open ($OPEN); skipping."
+            fi
+          else
+            echo "No verification failures to report."
+          fi
