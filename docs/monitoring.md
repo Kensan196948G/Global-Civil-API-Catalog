@@ -8,7 +8,7 @@
 | API v1 プロセス | `systemctl --user status global-civil-api-catalog-api.service` | active (running) |
 | Cloudflare Tunnel | `systemctl --user status gc-api-catalog-cloudflared.service` / `cloudflared tunnel info <ID>` | active、connector 接続あり |
 | Web UI ヘルス | `curl http://127.0.0.1:49231/api/health` | `{"status":"ok"}` |
-| API/DB ヘルス | `curl http://127.0.0.1:49231/api/v1/health` | `{"status":"ok","database":"ok"}` |
+| API/DB ヘルス | `python scripts/health_check.py http://127.0.0.1:49231` | 出力末尾が `HEALTH: OK`（Web+API+DB の一括確認） |
 | 外部公開 | `curl -s -o /dev/null -w '%{http_code}' https://api.mirai-dx-platform.com/api/health` | 302（Access ログインへリダイレクト） |
 | 週次検証 | GitHub Actions `scheduled-verify`（毎週月曜 02:00 UTC） | 検証 PR が作成される |
 | 台帳データ鮮度 | `python scripts/validate_catalog.py` | WARNING が無い（180日超の未確認データ無し） |
@@ -30,6 +30,8 @@ journalctl --user -u gc-api-catalog-cloudflared -n 100 --no-pager
 1. 週次検証失敗時: `scheduled-verify` から GitHub Issue（ラベル `verification-alert`）を自動起票
 2. ヘルスチェック失敗時: cron + メール/Teams 通知（HENNGE/SharePoint 連携は将来）
 3. データ鮮度警告: `validate_catalog.py` の WARNING を CI で検知
+
+即時運用では `python scripts/health_check.py` を cron で毎分実行し、exit code を監視する。失敗時に通知する仕組み（メール/Teams）は次のフェーズで導入する。
 
 ## 4. 障害対応フロー（インシデント手順）
 

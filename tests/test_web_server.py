@@ -135,6 +135,22 @@ def test_pwa_manifest_and_service_worker_available() -> None:
     assert '"/api/catalog"' in sw
 
 
+def test_try_it_ui_and_accessibility_quick_wins_available() -> None:
+    static = ROOT / "web" / "static"
+    html = (static / "index.html").read_text(encoding="utf-8")
+    js = (static / "app.js").read_text(encoding="utf-8")
+    css = (static / "styles.css").read_text(encoding="utf-8")
+
+    assert "runTryIt" in js
+    assert 'data-try-url="' in js
+    assert '"/api/v1/try-it"' in js
+    assert ".tryItResult" in css
+    assert 'class="skipLink" href="#mainContent"' in html
+    assert 'id="mainContent"' in html
+    assert (static / "icon.svg").exists()
+    assert '"/icon.svg"' in (static / "manifest.webmanifest").read_text(encoding="utf-8")
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {

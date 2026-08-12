@@ -11,9 +11,9 @@ Global Civil API Catalog は「条件付き利用可」から、本報告の改�
 | # | 項目 | 改善前 | 改善後 | 主な変化の根拠 |
 |---|---:|---:|---:|---|
 | 1 | 業務適合性 | 65 | 65 | 台帳範囲は据え置き（将来拡張） |
-| 2 | 機能完成度 | 62 | 66 | DB ヘルス・Try-it API・PWA 基盤を追加 |
-| 3 | UI/UX | 68 | 70 | PWA（manifest/SW）・オフライン閲覧の基盤を追加 |
-| 4 | アクセシビリティ | 55 | 55 | 自動監査・E2E は未実施 |
+| 2 | 機能完成度 | 62 | 68 | DB ヘルス・Try-it（API+UI）・PWA 基盤・運用スクリプトを追加 |
+| 3 | UI/UX | 68 | 72 | PWA（manifest/SW/アイコン）・Try-it 導線を追加 |
+| 4 | アクセシビリティ | 55 | 58 | スキップリンクを追加（自動監査・E2E は未実施） |
 | 5 | データ品質 | 70 | 74 | LANDPRICE 不整合修正＋整合警告を追加 |
 | 6 | AI有効性 | 20 | 20 | ロードマップのみ |
 | 7 | 設計 | 72 | 73 | lifespan/ヘルス設計を追加 |
@@ -21,14 +21,14 @@ Global Civil API Catalog は「条件付き利用可」から、本報告の改�
 | 9 | 性能・拡張性 | 55 | 55 | ベンチマーク未実施 |
 | 10 | セキュリティ | 73 | 80 | レート制限・権限変更時セッション失効・セキュリティヘッダー追加 |
 | 11 | 可用性・バックアップ | 45 | 55 | バックアップ/復旧 runbook 追加 |
-| 12 | 監視・障害対応 | 30 | 42 | 監視 runbook＋DB ヘルス＋週次検証 failure 自動 Issue 化 |
-| 13 | テスト | 48 | 74 | 167 テスト（DB 4 スイート含む）を CI で実行・カバレッジ 76% |
+| 12 | 監視・障害対応 | 30 | 45 | 監視 runbook＋health_check.py＋週次検証 failure 自動 Issue 化 |
+| 13 | テスト | 48 | 75 | 173 テスト（DB 4 スイート含む）を CI で実行・カバレッジ 76% |
 | 14 | CI/CD・リリース | 48 | 55 | DB CI ジョブ・mypy 追加、週次 PR 修復はマージ待ち |
-| 15 | 運用保守性 | 55 | 60 | runbook 追加・README 矛盾解消 |
+| 15 | 運用保守性 | 55 | 64 | runbook・health_check/backup スクリプト追加・README 矛盾解消 |
 | 16 | 文書 | 62 | 72 | README 修正・評価/改善計画/runbook 追加 |
 | 17 | 費用対効果 | 70 | 70 | 追加コストほぼゼロ |
 | 18 | 競合代替性 | 52 | 54 | 実用カバー範囲の拡大 |
-| | 等配分平均 | 56.1 | 61.8 | +5.7 |
+| | 等配分平均 | 56.1 | 62.5 | +6.4 |
 
 ## 3. 総合判定
 
@@ -73,6 +73,10 @@ Global Civil API Catalog は「条件付き利用可」から、本報告の改�
 - `web/auth.py`・`scripts/create_local_user.py`: ローカルユーザー権限/状態変更時に既存セッションを即時失効（#61 ローカル分）
 - `web/api_v1.py`: `POST /api/v1/try-it`（Editor 限定・SSRF ガード・応答 64KB 上限・監査 `try_it`）
 - PWA: `web/static/manifest.webmanifest`・`web/static/sw.js`（読取 API のオフラインキャッシュ）
+- Try-it UI: 台帳詳細に「接続テスト」ボタン（staff のみ・テンプレート URL は非表示）と結果表示
+- PWA アイコン（`icon.svg`）・manifest 登録、a11y スキップリンク
+- `scripts/health_check.py`（Web/API/DB 一括ヘルス、cron 用 exit code）
+- `scripts/backup_catalog.py`（台帳 JSON + export の日次スナップショット、JSON 検証付き）
 - `scripts/run_verification.py`: 401/403×unknown を failure→warning に変更（APIキー要否確認を明示）
 - `scripts/validate_catalog.py`: ステータス/検証整合・鮮度（180日超）の WARNING 追加
 - `scripts/score_catalog.py` / `scripts/url_guard.py` / `web/server.py`: mypy 修正
@@ -106,7 +110,9 @@ Global Civil API Catalog は「条件付き利用可」から、本報告の改�
 | mypy（web/scripts/db 25 ファイル） | PASS |
 | compileall | PASS |
 | validate_catalog.py | PASS（50 件・30 結果・WARNING 0） |
-| pytest 167 件（DB 4 スイート含む） | PASS |
+| pytest 173 件（DB 4 スイート含む） | PASS |
+| health_check.py（新コードのローカル起動に対して） | PASS（HEALTH: OK） |
+| backup_catalog.py（一時ディレクトリ） | PASS（JSON 検証込み 4 ファイル） |
 | migration 5 本（新規 PostGIS DB） | PASS |
 | JSON→DB seed + round-trip | PASS |
 | API スモーク（health/metadata/entries） | PASS（200） |
@@ -132,8 +138,8 @@ Global Civil API Catalog は「条件付き利用可」から、本報告の改�
 | P1 | レート制限 | 実装済み（運用閾値の調整余地あり） |
 | P1 | E2E（Playwright） | 未実装 |
 | P1 | AD-6 監査ログ DB ロール強制 | 未適用（DB 正本切替時に実施） |
-| P1 | Try-it console（#66）・OpenAPI import（#65） | API 実装済み・UI 導線は次フェーズ |
-| P2 | モバイル/PWA・オフライン | 基盤実装済み・アイコン/インストール最適化は次フェーズ |
+| P1 | Try-it console（#66）・OpenAPI import（#65） | Try-it は API+UI 実装済み・OpenAPI import は未実装 |
+| P2 | モバイル/PWA・オフライン | 基盤・アイコン実装済み・オフライン検証/インストール最適化は次フェーズ |
 | P2 | AI 検索・異常検知 | 未実装（設計のみ） |
 | 低 | 24 件の official_url==document_url の見直し | 要確認 |
 | 低 | 旧 Windows スクリプトの整理 | 保留 |

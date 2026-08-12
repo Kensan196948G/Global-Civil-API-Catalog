@@ -78,6 +78,18 @@ curl http://127.0.0.1:49231/api/v1/metadata   # プロキシ経由で api_v1 ま
 cloudflared tunnel info 370aef2d-fb96-4ec8-89c4-c7a16bd3e147   # コネクタ接続状況
 ```
 
+### ヘルスチェック・台帳スナップショット（自動化の最小セット）
+
+```bash
+# Web/API/DB の一括ヘルスチェック（cron 例: 毎分。両方が ok なら exit 0）
+python scripts/health_check.py http://127.0.0.1:49231
+
+# 台帳 JSON と export 一式の日次スナップショット（cron 例: 毎晩 01:00）
+python scripts/backup_catalog.py --dest ~/backups/global-civil-api-catalog
+```
+
+詳細は [監視・障害対応](monitoring.md) と [バックアップ・復旧](backup-restore.md) を参照。
+
 ### 再起動
 
 ```bash
