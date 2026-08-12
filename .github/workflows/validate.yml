@@ -85,4 +85,5 @@ jobs:
             tests/test_db_phase_a.py \
             tests/test_auth_rbac.py \
             tests/test_workflow_audit.py \
-            tests/test_local_auth.py
+            tests/test_local_auth.py \
+            tests/test_migrate_json_to_db.py

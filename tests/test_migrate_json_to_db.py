@@ -2,6 +2,10 @@
 
 from datetime import date, datetime, timezone
 
+import pytest
+
+pytest.importorskip("sqlalchemy")
+
 from scripts.migrate_json_to_db import entry_row, result_row
 
 
