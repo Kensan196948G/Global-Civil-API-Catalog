@@ -8,6 +8,7 @@ from scripts.catalog_utils import (
     validate_catalog,
     validate_verification_results,
 )
+from scripts.validate_catalog import consistency_warnings
 
 
 def test_catalog_has_required_initial_scope() -> None:
@@ -65,3 +66,33 @@ def test_no_secret_like_values_are_committed() -> None:
     for path in searchable_files:
         text = path.read_text(encoding="utf-8", errors="ignore").lower()
         assert not any(token in text for token in suspicious_tokens), path
+
+
+def test_consistency_warnings_flags_status_verification_mismatch() -> None:
+    catalog = [
+        {"id": "A", "connection_status": "接続検証済", "last_checked_at": "2026-08-01"}
+    ]
+    results = [{"api_id": "A", "result": "failure", "verified_at": "2026-08-01T00:00:00+00:00"}]
+
+    warnings = consistency_warnings(catalog, results)
+
+    assert any("A" in warning and "failure" in warning for warning in warnings)
+
+
+def test_consistency_warnings_clean_for_verified_success() -> None:
+    catalog = [
+        {"id": "A", "connection_status": "接続検証済", "last_checked_at": "2026-08-01"}
+    ]
+    results = [{"api_id": "A", "result": "success", "verified_at": "2026-08-01T00:00:00+00:00"}]
+
+    assert consistency_warnings(catalog, results) == []
+
+
+def test_consistency_warnings_flags_stale_last_checked() -> None:
+    catalog = [
+        {"id": "A", "connection_status": "接続候補", "last_checked_at": "2025-01-01"}
+    ]
+
+    warnings = consistency_warnings(catalog, [])
+
+    assert any(">180 days" in warning for warning in warnings)

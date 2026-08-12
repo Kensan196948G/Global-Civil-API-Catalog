@@ -124,10 +124,22 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
         result["http_status"] = status
         result["response_time_ms"] = elapsed_ms
         result["response_size_bytes"] = len(body)
-        result["result"] = "success" if status and 200 <= status < 300 else "failure"
-        if result["result"] == "success":
+        if status and 200 <= status < 300:
+            result["result"] = "success"
             result["record_count"] = extract_record_count(body)
-        result["note"] = "live verification executed"
+            result["note"] = "live verification executed"
+        elif status in (401, 403) and item.get("api_key_required") == "unknown":
+            # A 401/403 on an unknown-key endpoint means authentication is
+            # required but unconfirmed — mark warning, not failure, so the
+            # catalog status does not silently drift to "verified".
+            result["result"] = "warning"
+            result["note"] = (
+                f"authentication required (HTTP {status}); "
+                "API key requirement needs confirmation"
+            )
+        else:
+            result["result"] = "failure"
+            result["note"] = "live verification executed"
         if truncated:
             result["sample_truncated"] = True
             result["note"] += f"; sample truncated to {MAX_SAMPLE_BYTES // 1024}KB"

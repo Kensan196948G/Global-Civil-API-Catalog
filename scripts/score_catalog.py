@@ -59,12 +59,12 @@ def integration_breakdown(item: dict, verified: bool) -> tuple[int, list[str]]:
     factors: list[str] = []
     score = 0
 
-    key = item.get("api_key_required")
+    key = item.get("api_key_required") or ""
     pts = {"not_required": 30, "unknown": 12, "required": 8}.get(key, 8)
     score += pts
     factors.append(f"APIキー({key}) +{pts}")
 
-    auth = item.get("auth_type")
+    auth = item.get("auth_type") or ""
     pts = {"none": 15, "api_key": 8, "oauth2": 6, "other": 4, "unknown": 6}.get(auth, 4)
     score += pts
     factors.append(f"認証方式({auth}) +{pts}")
@@ -116,12 +116,12 @@ def business_fit_breakdown(item: dict) -> tuple[int, list[str]]:
     score += pts
     factors.append(f"提供元種別({provider}) +{pts}")
 
-    commercial = item.get("commercial_use")
+    commercial = item.get("commercial_use") or ""
     pts = {"allowed": 25, "restricted": 12, "unknown": 8}.get(commercial, 8)
     score += pts
     factors.append(f"商用利用({commercial}) +{pts}")
 
-    freq = item.get("update_frequency")
+    freq = item.get("update_frequency") or ""
     if freq in FREQUENT_UPDATES:
         score += 15
         factors.append(f"更新頻度({freq}) +15")
@@ -135,7 +135,7 @@ def business_fit_breakdown(item: dict) -> tuple[int, list[str]]:
         score += pts
         factors.append(f"対象案件 {len(projects)}件 +{pts}")
 
-    status = item.get("connection_status")
+    status = item.get("connection_status") or ""
     pts = STATUS_MATURITY.get(status, 0)
     if pts:
         score += pts

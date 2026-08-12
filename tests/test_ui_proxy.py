@@ -195,6 +195,16 @@ def test_non_proxied_api_paths_stay_local(ui_port) -> None:
     assert json.loads(data) == {"status": "ok"}
 
 
+def test_security_headers_are_present(ui_port) -> None:
+    response, _ = request(ui_port, "GET", "/api/health")
+
+    assert response.getheader("Referrer-Policy") == "no-referrer"
+    assert "geolocation=()" in response.getheader("Permissions-Policy", "")
+    assert response.getheader("X-Content-Type-Options") == "nosniff"
+    assert response.getheader("X-Frame-Options") == "DENY"
+    assert "default-src 'self'" in response.getheader("Content-Security-Policy", "")
+
+
 def test_head_is_proxied_without_body(ui_port) -> None:
     response, data = request(ui_port, "HEAD", "/api/v1/entries")
 

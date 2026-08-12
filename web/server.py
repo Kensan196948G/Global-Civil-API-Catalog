@@ -9,6 +9,7 @@ import sys
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import Any
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,12 +61,12 @@ _json_cache: dict[str, tuple[float, object]] = {}
 _cache_lock = threading.Lock()
 
 
-def load_json(path: Path) -> object:
+def load_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as file:
         return json.load(file)
 
 
-def load_json_cached(path: Path) -> object:
+def load_json_cached(path: Path) -> Any:
     """Return parsed JSON, re-reading only when the file's mtime changes."""
     key = str(path)
     mtime = path.stat().st_mtime
@@ -138,7 +139,7 @@ def live_map_payload(catalog: list[dict], results: list[dict]) -> dict:
     features = []
     layers = []
     for index, item in enumerate(catalog):
-        lat, lon = anchors.get(item.get("region"), (20.0, 0.0))
+        lat, lon = anchors.get(item.get("region") or "", (20.0, 0.0))
         lat_offset, lon_offset = offsets[index % len(offsets)]
         verification = latest.get(item["id"], {})
         features.append(
@@ -196,6 +197,11 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        )
         self.send_header("Content-Security-Policy", _CSP)
         super().end_headers()
 

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import sys
+from contextlib import asynccontextmanager
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -32,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 from pydantic import BaseModel, Field  # noqa: E402
-from sqlalchemy import Date, func, or_, select  # noqa: E402
+from sqlalchemy import Date, func, or_, select, text  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from db.audit import (  # noqa: E402
@@ -63,10 +64,24 @@ from web.auth import (  # noqa: E402
     ROLE_VERIFIER,
     build_router,
     current_session,
+    purge_expired_sessions,
     require_role,
 )
 
-app = FastAPI(title="Global Civil API Catalog API", version="1.2.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """Housekeeping on startup: purge expired login sessions."""
+    try:
+        factory = make_session_factory()
+        with factory() as session:
+            purge_expired_sessions(session)
+    except Exception as exc:  # noqa: BLE001 - startup must not take the API down.
+        print(f"warn: session purge skipped ({type(exc).__name__})", flush=True)
+    yield
+
+
+app = FastAPI(title="Global Civil API Catalog API", version="1.2.1", lifespan=lifespan)
 
 
 @app.middleware("http")
@@ -228,6 +243,17 @@ def metadata(session: Session = Depends(get_session)) -> dict[str, Any]:
         "verification_count": session.scalar(select(func.count()).select_from(VerificationResult)),
         "source": "postgresql",
     }
+
+
+@app.get("/api/v1/health")
+def health(session: Session = Depends(get_session)) -> dict[str, str]:
+    """DB-aware health probe for load balancers and monitoring runbooks."""
+    try:
+        session.execute(text("SELECT 1"))
+        database = "ok"
+    except Exception:  # noqa: BLE001 - health must report, not raise.
+        database = "unavailable"
+    return {"status": "ok", "database": database}
 
 
 # --- write (authenticated, Phase B) ----------------------------------------

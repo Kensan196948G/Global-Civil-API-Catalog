@@ -1,6 +1,6 @@
 [project]
 name = "global-civil-api-catalog"
-version = "1.2.0"
+version = "1.2.1"
 description = "Catalog and verification toolkit for civil engineering public APIs and open data."
 requires-python = ">=3.12"
 dependencies = []
@@ -30,3 +30,10 @@ extend-exclude = [".claude"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true
+no_implicit_optional = true
+exclude = ["web/Global Civil API Catalog\\.html", "migrations/versions"]
