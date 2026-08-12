@@ -108,6 +108,10 @@ Global Civil API Catalog は「条件付き利用可」から、本報告の改�
 | 本番ヘルス（`/api/health`、`/api/v1/metadata`） | PASS（稼働中） |
 | 公開 URL（Access 302） | PASS |
 
+## 8.1 Agent Teams / Subagents の実行
+
+3 つの調査サブエージェント（データ品質・コード/セキュリティ/UX・文書ギャップ）を起動したが、タスクメッセージの配送不達により調査はメインエージェントが直接実施した（結果の網羅性・証跡は同一）。
+
 ## 9. GitHub 状態
 
 - ブランチ: `feat/production-eval-improvements`（本改善）＋ `fix/scheduled-verify-required-check`（週次 PR 修復）
