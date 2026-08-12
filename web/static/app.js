@@ -1484,6 +1484,12 @@ async function boot() {
   });
 }
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {
+    // Offline support is progressive enhancement only.
+  });
+}
+
 boot().catch((error) => {
   document.body.innerHTML = `<main><section class="panel"><h1>Load failed</h1><p>${escapeHtml(error.message)}</p></section></main>`;
 });

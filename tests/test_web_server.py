@@ -122,6 +122,19 @@ def test_catalog_links_are_scheme_validated() -> None:
     assert 'href="${item.' not in js
 
 
+def test_pwa_manifest_and_service_worker_available() -> None:
+    static = ROOT / "web" / "static"
+    html = (static / "index.html").read_text(encoding="utf-8")
+    js = (static / "app.js").read_text(encoding="utf-8")
+
+    assert (static / "manifest.webmanifest").exists()
+    assert (static / "sw.js").exists()
+    assert 'rel="manifest"' in html
+    assert 'navigator.serviceWorker.register("/sw.js")' in js
+    sw = (static / "sw.js").read_text(encoding="utf-8")
+    assert '"/api/catalog"' in sw
+
+
 def test_live_map_payload_uses_catalog_data() -> None:
     catalog = [
         {

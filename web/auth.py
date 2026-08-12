@@ -219,6 +219,13 @@ def purge_expired_sessions(db: Session) -> int:
     return result.rowcount or 0
 
 
+def revoke_user_sessions(db: Session, user_sub: str) -> int:
+    """Immediately invalidate every session of a user (role-change / disable)."""
+    result = db.execute(delete(UserSession).where(UserSession.user_sub == user_sub))
+    db.commit()
+    return result.rowcount or 0
+
+
 def build_router(get_db) -> APIRouter:
     """Create the /auth router bound to the given DB session dependency."""
     router = APIRouter(prefix="/auth", tags=["auth"])

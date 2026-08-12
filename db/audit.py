@@ -24,6 +24,7 @@ ACTION_TRANSITION = "workflow_transition"
 ACTION_LOGIN = "login"
 ACTION_LOGIN_FAILED = "login_failed"
 ACTION_LOGOUT = "logout"
+ACTION_TRY_IT = "try_it"
 
 
 def entry_snapshot_dict(entry: CatalogEntry) -> dict[str, Any]:

@@ -39,6 +39,7 @@ from web.auth import (  # noqa: E402
     SESSION_COOKIE,
     validate_id_token,
 )
+from web.ratelimit import RateLimiter  # noqa: E402
 
 TENANT = "test-tenant-0000"
 CLIENT = "test-client-0000"
@@ -50,6 +51,13 @@ def entra_env(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("ENTRA_TENANT_ID", TENANT)
     monkeypatch.setenv("ENTRA_CLIENT_ID", CLIENT)
     monkeypatch.setenv("ENTRA_CLIENT_SECRET", "test-secret-not-real")
+
+
+@pytest.fixture(autouse=True)
+def unlimited_write_limiter(monkeypatch: pytest.MonkeyPatch):
+    import web.api_v1
+
+    monkeypatch.setattr(web.api_v1, "write_limiter", RateLimiter(limit=10**6, window_seconds=1))
 
 
 @pytest.fixture(scope="module")
@@ -291,6 +299,63 @@ def test_me_reports_roles(client, db) -> None:
     body = client.get("/auth/me", cookies=cookies).json()
     assert body["roles"] == [ROLE_VIEWER]
     assert client.get("/auth/me").status_code == 401
+
+
+def test_write_rate_limit_returns_429(client, monkeypatch: pytest.MonkeyPatch) -> None:
+    import web.api_v1
+
+    monkeypatch.setattr(web.api_v1, "write_limiter", RateLimiter(limit=1, window_seconds=60))
+
+    assert client.post("/api/v1/entries", json=NEW_ENTRY).status_code == 401
+    assert client.post("/api/v1/entries", json=NEW_ENTRY).status_code == 429
+
+
+def test_try_it_requires_authentication(client) -> None:
+    assert (
+        client.post("/api/v1/try-it", json={"url": "https://example.test/data.json"}).status_code
+        == 401
+    )
+
+
+def test_try_it_blocks_private_url(client, db) -> None:
+    cookies = {SESSION_COOKIE: make_session(db, [ROLE_EDITOR])}
+    response = client.post(
+        "/api/v1/try-it",
+        json={"url": "http://169.254.169.254/latest/meta-data/"},
+        cookies=cookies,
+    )
+    assert response.status_code == 422
+    assert "blocked by URL policy" in response.json()["detail"]
+
+
+def test_try_it_success_is_audited(client, db, monkeypatch: pytest.MonkeyPatch) -> None:
+    from sqlalchemy import select
+
+    import web.api_v1
+    from db.models import AuditLog
+
+    url = "https://example.test/data.json"
+    monkeypatch.setattr(web.api_v1, "validate_public_url", lambda *a, **k: None)
+    monkeypatch.setattr(
+        web.api_v1, "fetch_public_url", lambda *a, **k: (200, b'{"ok": true}', url)
+    )
+    cookies = {SESSION_COOKIE: make_session(db, [ROLE_EDITOR])}
+
+    response = client.post("/api/v1/try-it", json={"url": url}, cookies=cookies)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == 200
+    assert body["preview"] == '{"ok": true}'
+    row = db.execute(
+        select(AuditLog)
+        .where(AuditLog.action == "try_it")
+        .order_by(AuditLog.seq.desc())
+        .limit(1)
+    ).scalar_one()
+    assert row.diff["url"] == url
+    db.execute(AuditLog.__table__.delete().where(AuditLog.seq == row.seq))  # test cleanup
+    db.commit()
 
 
 def test_login_failure_audit_never_stores_raw_exception_text(

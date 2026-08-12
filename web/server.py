@@ -234,6 +234,12 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             for key, value in self.headers.items()
             if key.lower() not in _HOP_BY_HOP_HEADERS and key.lower() != "host"
         }
+        # The api_v1 rate limiter keys login attempts by the real client IP.
+        forwarded = self.headers.get("X-Forwarded-For")
+        client = self.client_address[0]
+        request_headers["X-Forwarded-For"] = (
+            f"{forwarded}, {client}" if forwarded else client
+        )
         try:
             conn.request(self.command, self.path, body=body, headers=request_headers)
             response = conn.getresponse()

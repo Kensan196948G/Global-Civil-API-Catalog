@@ -36,6 +36,7 @@ class StubUpstreamHandler(BaseHTTPRequestHandler):
                 "path": self.path,
                 "origin": self.headers.get("Origin"),
                 "cookie": self.headers.get("Cookie"),
+                "x_forwarded_for": self.headers.get("X-Forwarded-For"),
                 "body": body.decode("utf-8"),
             }
         ).encode("utf-8")
@@ -113,6 +114,7 @@ def test_get_auth_me_is_proxied_with_cookie(ui_port) -> None:
     assert response.status == 200
     assert echo["path"] == "/auth/me"
     assert echo["cookie"] == "catalog_session=abc"
+    assert echo["x_forwarded_for"] == "127.0.0.1"
 
 
 def test_post_api_v1_forwards_body_and_origin(ui_port) -> None:
