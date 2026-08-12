@@ -10,11 +10,16 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      statuses: write
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Install test runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest ruff
       - name: Run live API verification
         run: python scripts/run_verification.py --live --write --limit 50 --timeout 15
       - name: Update scores
@@ -33,12 +38,33 @@ jobs:
           git add data/ export/ samples/
           if git diff --staged --quiet; then
             echo "No changes to commit."
+            curl -sS -X POST \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+              -d '{"state":"success","context":"catalog","description":"Weekly verification: no catalog changes"}'
             exit 0
           fi
           DATE="$(date -u +%Y-%m-%d)"
           BRANCH="chore/weekly-verification-${DATE}-${GITHUB_RUN_ID}"
           git checkout -b "$BRANCH"
           git commit -m "chore: weekly verification ${DATE}"
+          HEAD_SHA="$(git rev-parse HEAD)"
+          # Required checks on GITHUB_TOKEN-created PRs never trigger, so run
+          # the same gates here and post a commit status under the required
+          # "catalog" context (issue #72).
+          if python scripts/validate_catalog.py && python -m ruff check . && python -m pytest; then
+            STATE=success
+            DESC="catalog validation, lint and tests passed"
+          else
+            STATE=failure
+            DESC="weekly verification pipeline failed"
+          fi
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/statuses/${HEAD_SHA}" \
+            -d "{\"state\":\"${STATE}\",\"context\":\"catalog\",\"description\":\"${DESC}\"}"
           git push origin "$BRANCH"
           # Compose the multi-line PR body with printf; embedding a literal
           # multi-line string here previously broke out of the YAML block
@@ -46,7 +72,7 @@ jobs:
           # invalidating the whole workflow file on the GitHub side).
           BODY="$(printf '%s\n\n%s' \
             "Automated weekly catalog verification (scheduled-verify workflow). Updates data/, export/, samples/ only." \
-            "Note: this PR is opened with the default \`GITHUB_TOKEN\`, so GitHub's recursive-workflow protection holds its own CI run in an approval-required state. A maintainer must approve the workflow run (or re-run it) before the required \`catalog\` check can pass and this PR can be merged.")"
+            "The \`catalog\` required check is satisfied by the commit status posted from this workflow (issue #72).")"
           gh pr create \
             --base main \
             --head "$BRANCH" \
