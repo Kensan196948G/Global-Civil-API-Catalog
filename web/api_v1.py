@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import sys
+from contextlib import asynccontextmanager
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -32,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response  # noqa: E402
 from fastapi.responses import JSONResponse  # noqa: E402
 from pydantic import BaseModel, Field  # noqa: E402
-from sqlalchemy import Date, func, or_, select  # noqa: E402
+from sqlalchemy import Date, func, or_, select, text  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from db.audit import (  # noqa: E402
@@ -40,6 +41,7 @@ from db.audit import (  # noqa: E402
     ACTION_DELETE,
     ACTION_RESTORE,
     ACTION_TRANSITION,
+    ACTION_TRY_IT,
     ACTION_UPDATE,
     entry_snapshot_dict,
     field_diff,
@@ -55,18 +57,68 @@ from db.models import (  # noqa: E402
     VerificationResult,
 )
 from db.session import make_session_factory  # noqa: E402
-from scripts.url_guard import validate_public_url  # noqa: E402
+from scripts.url_guard import URLPolicyError, fetch_public_url, validate_public_url  # noqa: E402
 from web.auth import (  # noqa: E402
     ROLE_ADMIN,
     ROLE_APPROVER,
     ROLE_EDITOR,
     ROLE_VERIFIER,
+    SESSION_COOKIE,
     build_router,
     current_session,
+    purge_expired_sessions,
     require_role,
 )
+from web.ratelimit import RateLimiter  # noqa: E402
 
-app = FastAPI(title="Global Civil API Catalog API", version="1.2.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """Housekeeping on startup: purge expired login sessions."""
+    try:
+        factory = make_session_factory()
+        with factory() as session:
+            purge_expired_sessions(session)
+    except Exception as exc:  # noqa: BLE001 - startup must not take the API down.
+        print(f"warn: session purge skipped ({type(exc).__name__})", flush=True)
+    yield
+
+
+app = FastAPI(title="Global Civil API Catalog API", version="1.2.1", lifespan=lifespan)
+
+# --- rate limiting ----------------------------------------------------------
+LOGIN_LIMIT = 10
+LOGIN_WINDOW_SECONDS = 300  # 10 attempts / 5 minutes per client IP
+WRITE_LIMIT = 60
+WRITE_WINDOW_SECONDS = 60  # 60 mutations / minute per session (or IP)
+
+login_limiter = RateLimiter(LOGIN_LIMIT, LOGIN_WINDOW_SECONDS)
+write_limiter = RateLimiter(WRITE_LIMIT, WRITE_WINDOW_SECONDS)
+
+
+def _client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for", "")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+@app.middleware("http")
+async def rate_limit_middleware(request, call_next):
+    """Login is limited per client IP; mutations per session (fallback IP)."""
+    path = request.url.path
+    if request.method == "POST" and path == "/auth/login":
+        if not login_limiter.allow(_client_ip(request)):
+            return JSONResponse(
+                status_code=429, content={"detail": "rate limit exceeded; retry later"}
+            )
+    elif request.method in ("POST", "PUT", "PATCH", "DELETE") and path.startswith("/api/v1/"):
+        key = request.cookies.get(SESSION_COOKIE) or _client_ip(request)
+        if not write_limiter.allow(key):
+            return JSONResponse(
+                status_code=429, content={"detail": "rate limit exceeded; retry later"}
+            )
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -227,6 +279,75 @@ def metadata(session: Session = Depends(get_session)) -> dict[str, Any]:
         ),
         "verification_count": session.scalar(select(func.count()).select_from(VerificationResult)),
         "source": "postgresql",
+    }
+
+
+@app.get("/api/v1/health")
+def health(session: Session = Depends(get_session)) -> dict[str, str]:
+    """DB-aware health probe for load balancers and monitoring runbooks."""
+    try:
+        session.execute(text("SELECT 1"))
+        database = "ok"
+    except Exception:  # noqa: BLE001 - health must report, not raise.
+        database = "unavailable"
+    return {"status": "ok", "database": database}
+
+
+MAX_TRY_BYTES = 64 * 1024
+
+
+class TryItRequest(BaseModel):
+    url: str = Field(min_length=1, max_length=2000, pattern=r"^https?://")
+    timeout: int = Field(default=10, ge=3, le=30)
+
+
+@app.post("/api/v1/try-it")
+def try_it(
+    payload: TryItRequest,
+    actor: UserSession = Depends(require_editor),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    """Editor-only safe execution of a public endpoint (issue #66 backend).
+
+    The URL passes the same validate-resolve-pin SSRF guard as the weekly
+    verifier, responses are capped, and every call is audit-logged.
+    """
+    blocked = validate_public_url(payload.url, resolve=True)
+    if blocked is not None:
+        raise HTTPException(status_code=422, detail=f"blocked by URL policy ({blocked})")
+    try:
+        status, body, final_url = fetch_public_url(
+            payload.url,
+            timeout=payload.timeout,
+            max_bytes=MAX_TRY_BYTES,
+            user_agent="Global-Civil-API-Catalog/0.1 try-it",
+        )
+    except URLPolicyError as exc:
+        raise HTTPException(status_code=422, detail=f"blocked by URL policy ({exc})") from exc
+    except Exception as exc:  # noqa: BLE001 - surface a stable 502 for CLI/UI.
+        raise HTTPException(
+            status_code=502, detail=f"request failed: {type(exc).__name__}"
+        ) from exc
+    preview = body[:4096].decode("utf-8", errors="replace")
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_TRY_IT,
+        diff={
+            "url": payload.url,
+            "http_status": status,
+            "response_size_bytes": len(body),
+        },
+        reason="try-it console",
+    )
+    session.commit()
+    return {
+        "status": status,
+        "final_url": final_url,
+        "response_size_bytes": len(body),
+        "truncated": len(body) >= MAX_TRY_BYTES,
+        "preview": preview,
     }
 
 

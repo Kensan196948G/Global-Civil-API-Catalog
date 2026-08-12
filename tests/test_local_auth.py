@@ -29,8 +29,10 @@ from web.auth import (  # noqa: E402
     ROLE_EDITOR,
     SESSION_COOKIE,
     hash_password,
+    revoke_user_sessions,
     verify_password,
 )
+from web.ratelimit import RateLimiter  # noqa: E402
 
 # Test-only credential (not a real secret).
 PASSWORD = "correct-horse-battery-st4ple"
@@ -39,6 +41,11 @@ PASSWORD = "correct-horse-battery-st4ple"
 @pytest.fixture(autouse=True)
 def local_mode(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("CATALOG_AUTH_MODE", "local")
+    import web.api_v1
+
+    # All TestClient requests share one client IP; disable the login limiter
+    # for the suite (the 429 behaviour is covered by its own test).
+    monkeypatch.setattr(web.api_v1, "login_limiter", RateLimiter(limit=10**6, window_seconds=1))
 
 
 @pytest.fixture(scope="module")
@@ -157,3 +164,28 @@ def test_local_login_disabled_in_oidc_mode(monkeypatch: pytest.MonkeyPatch, clie
     monkeypatch.setenv("ENTRA_TENANT_ID", "test-tenant-0000")
     response = client.post("/auth/login", json={"username": "test-local-ok", "password": PASSWORD})
     assert response.status_code == 404
+
+
+def test_login_rate_limit_returns_429(
+    db, client, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import web.api_v1
+
+    put_user(db, "test-local-rate")
+    monkeypatch.setattr(web.api_v1, "login_limiter", RateLimiter(limit=1, window_seconds=300))
+    body = {"username": "test-local-rate", "password": PASSWORD}
+
+    assert client.post("/auth/login", json=body).status_code == 200
+    assert client.post("/auth/login", json=body).status_code == 429
+
+
+def test_revoke_user_sessions_invalidates_existing_logins(db, client) -> None:
+    put_user(db, "test-local-revoke")
+    login = client.post("/auth/login", json={"username": "test-local-revoke", "password": PASSWORD})
+    cookie = login.cookies[SESSION_COOKIE]
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: cookie}).status_code == 200
+
+    revoked = revoke_user_sessions(db, "local:test-local-revoke")
+
+    assert revoked >= 1
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: cookie}).status_code == 401

@@ -27,7 +27,7 @@
 | GSI-HAZARD-LANDSLIDE-001 | ハザードマップ土砂災害タイル | 防災 | 国土地理院/国土交通省 | XYZ Tile, PNG | not_required | A | 4 | 接続候補 | success | 洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。 |
 | GSI-HAZARD-TSUNAMI-001 | ハザードマップ津波タイル | 防災 | 国土地理院/国土交通省 | XYZ Tile, PNG | not_required | A | 4 | 接続候補 | success | 洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。 |
 | GSI-HAZARD-STORM-SURGE-001 | ハザードマップ高潮タイル | 防災 | 国土地理院/国土交通省 | XYZ Tile, PNG | not_required | A | 4 | 接続候補 | success | 洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。 |
-| MLIT-REINFOLIB-LANDPRICE-001 | 不動産情報ライブラリ 地価公示 | 不動産 | 国土交通省 | API, GeoJSON, PBF | unknown | B | 3 | 接続検証済 | failure | 地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。 |
+| MLIT-REINFOLIB-LANDPRICE-001 | 不動産情報ライブラリ 地価公示 | 不動産 | 国土交通省 | API, GeoJSON, PBF | unknown | B | 3 | 接続候補 | failure | 地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。 |
 | MLIT-REINFOLIB-LANDPRICE-LOCAL-001 | 不動産情報ライブラリ 地価調査 | 不動産 | 国土交通省 | API, GeoJSON, PBF | unknown | B | 3 | 調査中 | - | 地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。 |
 | MLIT-REINFOLIB-TRADE-001 | 不動産情報ライブラリ 不動産取引価格 | 不動産 | 国土交通省 | API, JSON | unknown | B | 3 | 調査中 | - | 地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。 |
 | MLIT-REINFOLIB-CITYPLAN-001 | 不動産情報ライブラリ 都市計画 | 都市 | 国土交通省 | API, GeoJSON, PBF | unknown | B | 3 | 調査中 | - | 都市計画、用途地域、規制確認の入口として利用します。詳細判断では自治体の公式資料と照合してください。 |

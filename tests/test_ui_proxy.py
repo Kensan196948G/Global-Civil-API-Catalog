@@ -36,6 +36,7 @@ class StubUpstreamHandler(BaseHTTPRequestHandler):
                 "path": self.path,
                 "origin": self.headers.get("Origin"),
                 "cookie": self.headers.get("Cookie"),
+                "x_forwarded_for": self.headers.get("X-Forwarded-For"),
                 "body": body.decode("utf-8"),
             }
         ).encode("utf-8")
@@ -113,6 +114,7 @@ def test_get_auth_me_is_proxied_with_cookie(ui_port) -> None:
     assert response.status == 200
     assert echo["path"] == "/auth/me"
     assert echo["cookie"] == "catalog_session=abc"
+    assert echo["x_forwarded_for"] == "127.0.0.1"
 
 
 def test_post_api_v1_forwards_body_and_origin(ui_port) -> None:
@@ -193,6 +195,16 @@ def test_non_proxied_api_paths_stay_local(ui_port) -> None:
 
     assert response.status == 200
     assert json.loads(data) == {"status": "ok"}
+
+
+def test_security_headers_are_present(ui_port) -> None:
+    response, _ = request(ui_port, "GET", "/api/health")
+
+    assert response.getheader("Referrer-Policy") == "no-referrer"
+    assert "geolocation=()" in response.getheader("Permissions-Policy", "")
+    assert response.getheader("X-Content-Type-Options") == "nosniff"
+    assert response.getheader("X-Frame-Options") == "DENY"
+    assert "default-src 'self'" in response.getheader("Content-Security-Policy", "")
 
 
 def test_head_is_proxied_without_body(ui_port) -> None:

@@ -23,7 +23,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from db.models import LocalUser  # noqa: E402
 from db.session import make_session_factory  # noqa: E402
-from web.auth import ALL_ROLES, MIN_PASSWORD_LENGTH, hash_password  # noqa: E402
+from web.auth import (  # noqa: E402
+    ALL_ROLES,
+    MIN_PASSWORD_LENGTH,
+    hash_password,
+    revoke_user_sessions,
+)
 
 
 def read_password() -> str:
@@ -71,9 +76,15 @@ def main(argv: list[str] | None = None) -> int:
         user.failed_attempts = 0
         user.locked_until = None
         db.commit()
+        # A role/status change must take effect immediately: existing login
+        # sessions are revoked so the next request re-authenticates (issue #61).
+        revoked = revoke_user_sessions(db, f"local:{username}")
 
     action = "created" if created else "updated"
-    print(f"OK: {action} local user '{username}' (role={args.role}, active={not args.inactive})")
+    print(
+        f"OK: {action} local user '{username}' (role={args.role}, "
+        f"active={not args.inactive}, revoked_sessions={revoked})"
+    )
     return 0
 
 

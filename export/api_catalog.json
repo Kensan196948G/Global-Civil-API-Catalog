@@ -1778,7 +1778,7 @@
     "commercial_use": "unknown",
     "update_frequency": "年次",
     "last_checked_at": "2026-06-18",
-    "connection_status": "接続検証済",
+    "connection_status": "接続候補",
     "trust_rank": "B",
     "connection_priority": 3,
     "business_fit_score": 62,

@@ -37,6 +37,12 @@ def test_metadata_counts_match_json(client) -> None:
     assert body["source"] == "postgresql"
 
 
+def test_health_endpoint_reports_db_ok(client) -> None:
+    body = client.get("/api/v1/health").json()
+    assert body["status"] == "ok"
+    assert body["database"] == "ok"
+
+
 def test_list_entries_returns_all_records(client) -> None:
     body = client.get("/api/v1/entries", params={"limit": 500}).json()
     assert body["total"] == len(load_catalog())

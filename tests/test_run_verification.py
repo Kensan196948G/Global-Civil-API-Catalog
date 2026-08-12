@@ -75,6 +75,39 @@ def test_build_result_live_failure_leaves_record_count_none(
     assert result["record_count"] is None
 
 
+def test_build_result_live_401_on_unknown_key_is_warning(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    item = {**_ITEM, "id": "TEST-UNKNOWN-AUTH-001", "api_key_required": "unknown"}
+    monkeypatch.setattr(
+        "scripts.run_verification.request_url",
+        lambda url, timeout: (401, b"unauthorized", 15),
+    )
+
+    result = build_result(item, live=True, timeout=10)
+
+    assert result["result"] == "warning"
+    assert result["http_status"] == 401
+    assert "authentication required" in result["note"]
+    assert "needs confirmation" in result["note"]
+
+
+def test_build_result_live_401_on_not_required_key_is_failure(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        "scripts.run_verification.request_url",
+        lambda url, timeout: (401, b"unauthorized", 15),
+    )
+
+    result = build_result(_ITEM, live=True, timeout=10)
+
+    assert result["result"] == "failure"
+    assert result["http_status"] == 401
+
+
 def test_build_result_truncated_payload_notes_missing_record_count(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

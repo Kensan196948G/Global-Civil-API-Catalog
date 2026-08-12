@@ -111,8 +111,10 @@ class _PinnedHTTPSConnection(http.client.HTTPSConnection):
     """HTTPS connection pinned to a validated IP; SNI/cert use the hostname."""
 
     def __init__(self, host: str, port: int, pinned_ip: str, timeout: float):
-        super().__init__(host, port, timeout=timeout, context=ssl.create_default_context())
+        context = ssl.create_default_context()
+        super().__init__(host, port, timeout=timeout, context=context)
         self._pinned_ip = pinned_ip
+        self._context = context
 
     def connect(self) -> None:
         raw = socket.create_connection((self._pinned_ip, self.port), self.timeout)

@@ -386,6 +386,11 @@ function renderCatalog() {
             <a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer">公式</a>
             <a href="${safeUrl(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
             ${item.sample_endpoint ? `<a href="${safeUrl(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
+            ${
+              item.sample_endpoint && !item.sample_endpoint.includes("{") && isStaff()
+                ? `<button type="button" class="tryItButton" data-try-url="${escapeHtml(item.sample_endpoint)}" data-try-id="${escapeHtml(item.id)}">接続テスト</button>`
+                : ""
+            }
           </div>
           <small>形式: ${escapeHtml((item.data_formats || []).join(", "))}</small>
           ${scoreBreakdownHtml(item)}
@@ -395,6 +400,29 @@ function renderCatalog() {
   `,
     )
     .join("");
+}
+
+async function runTryIt(url, id, button) {
+  const details = button.closest("details");
+  const existing = details.querySelector(".tryItResult");
+  if (existing) existing.remove();
+  const box = document.createElement("pre");
+  box.className = "tryItResult";
+  box.textContent = `${id}: 接続テスト実行中…`;
+  details.appendChild(box);
+  try {
+    const data = await apiV1("/api/v1/try-it", {
+      method: "POST",
+      body: { url },
+    });
+    const preview = (data.preview || "").slice(0, 2000);
+    box.textContent =
+      `HTTP ${data.status} / ${data.response_size_bytes} bytes` +
+      (data.truncated ? " (truncated)" : "") +
+      `\n${preview}`;
+  } catch (error) {
+    box.textContent = error.message;
+  }
 }
 
 function renderVerification() {
@@ -1325,6 +1353,10 @@ async function onManageRowAction(event) {
 function initManage() {
   const manageRows = byId("manageRows");
   if (!manageRows) return;
+  byId("catalogRows").addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-try-url]");
+    if (button) runTryIt(button.dataset.tryUrl, button.dataset.tryId, button);
+  });
   manageRows.addEventListener("click", onManageRowAction);
   byId("versionRows").addEventListener("click", onVersionRowAction);
   byId("versionsClose").addEventListener("click", () =>
@@ -1481,6 +1513,12 @@ async function boot() {
   });
   ["mapCategoryFilter", "mapStatusFilter"].forEach((id) => {
     byId(id).addEventListener("change", renderMapFeatures);
+  });
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {
+    // Offline support is progressive enhancement only.
   });
 }
 
