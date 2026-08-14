@@ -16,11 +16,12 @@ ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 DESIGN_HTML_PATH = Path(__file__).resolve().parent / "Global Civil API Catalog.html"
 
-# CSP allows Leaflet (unpkg.com), Google Fonts, and HTTPS tile images for the map UI.
+# CSP allows Google Fonts and HTTPS tile images for the map UI; Leaflet is
+# vendored under web/static/vendor so no third-party script origin is needed.
 _CSP = (
     "default-src 'self'; "
-    "script-src 'self' https://unpkg.com; "
-    "style-src 'self' https://unpkg.com https://fonts.googleapis.com; "
+    "script-src 'self'; "
+    "style-src 'self' https://fonts.googleapis.com; "
     "font-src 'self' https://fonts.gstatic.com; "
     "img-src 'self' data: https:; "
     "connect-src 'self'"

@@ -45,7 +45,7 @@ def test_catalog_search_filter_and_compare(app_page, static_server_url) -> None:
     assert page.locator("#compareButton").is_enabled()
     page.click("#compareButton")
     page.wait_for_selector("#compareDialog[open] table.compareTable")
-    assert page.locator("#compareDialog .compareTable th").count() == 3
+    assert page.locator("#compareDialog .compareTable thead th").count() == 3
     page.click("#compareClose")
 
 

@@ -74,6 +74,9 @@ jobs:
           nohup python scripts/demo_webhook_echo.py --port 49339 > /tmp/echo.log 2>&1 &
           nohup python -m uvicorn web.api_v1:app --host 127.0.0.1 --port 49332 \
             > /tmp/api.log 2>&1 &
+          CATALOG_API_UPSTREAM=http://127.0.0.1:49332 \
+          CATALOG_DATA_DIR=data/demo \
+          CATALOG_EXPORT_DIR=export-demo \
           nohup python web/server.py --host 127.0.0.1 --port 49331 \
             > /tmp/web.log 2>&1 &
           for i in $(seq 1 40); do
