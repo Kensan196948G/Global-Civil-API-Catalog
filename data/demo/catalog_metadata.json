@@ -1,0 +1,13 @@
+{
+  "dataset_name": "Global Civil API Catalog demo dataset (all values fictional)",
+  "catalog_mode": "demo",
+  "source": "demo-seed",
+  "source_path": "data/demo/api_catalog.json",
+  "imported_at": "2026-08-14",
+  "record_count": 8,
+  "verification_count": 10,
+  "merge_policy": "Demo dataset is self-contained and never merges production records.",
+  "design_html_sha256": "",
+  "catalog_sha256": "",
+  "verification_sha256": ""
+}

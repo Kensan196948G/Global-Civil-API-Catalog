@@ -34,3 +34,7 @@ deploy/cloudflare/config.yml
 # Playwright MCP scratch data (session-scoped, not repo content)
 .playwright-mcp/
 docs/EntraID-info.txt
+
+# MVP demo environment generated artifacts (fictional data only)
+export-demo/
+data/demo/webhook_deliveries.jsonl

@@ -1,0 +1,2 @@
+curl -sS "https://example.test/demo/landslide/api/v1/areas?format=csv" \
+  -H "Accept: text/csv"

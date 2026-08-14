@@ -1,0 +1,2 @@
+curl -sS "https://example.test/demo/river-level/api/v1/stations/999901" \
+  -H "Accept: application/json"
