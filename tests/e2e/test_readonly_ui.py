@@ -20,6 +20,7 @@ def test_dashboard_shows_demo_counts(app_page, static_server_url) -> None:
 def test_catalog_search_filter_and_compare(app_page, static_server_url) -> None:
     page = app_page
     page.goto(static_server_url)
+    page.wait_for_selector("#catalogCount:not(:has-text('-'))")
     page.click('[data-view="catalog"]')
     page.wait_for_selector("#catalogRows tr")
     assert page.locator("#catalogRows tr").count() == 8
@@ -65,6 +66,7 @@ def test_exports_and_print_report_link(app_page, static_server_url) -> None:
 def test_live_map_and_theme(app_page, static_server_url) -> None:
     page = app_page
     page.goto(static_server_url)
+    page.wait_for_selector("#catalogCount:not(:has-text('-'))")
     page.click('[data-view="map"]')
     page.wait_for_selector("#map .leaflet-container")
     assert page.locator("#baseMapList .baseMapItem, #baseMapList label").count() > 0

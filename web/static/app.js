@@ -1444,7 +1444,8 @@ function openCompare() {
       .join("");
     return `<tr><th>${escapeHtml(label)}</th>${cells}</tr>`;
   }).join("");
-  byId("compareBody").innerHTML = `<table class="compareTable">${head}${body}</table>`;
+  byId("compareBody").innerHTML =
+    `<table class="compareTable"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   byId("compareDialog").showModal();
 }
 
