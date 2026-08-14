@@ -811,12 +811,15 @@ L.tileLayer(
                 <label
                   >接続状態*
                   <select name="connection_status" required>
+                    <option value="未調査">未調査</option>
+                    <option value="調査中">調査中</option>
                     <option value="実装接続済">実装接続済</option>
                     <option value="本格利用候補">本格利用候補</option>
                     <option value="接続検証済">接続検証済</option>
                     <option value="接続候補">接続候補</option>
-                    <option value="調査中">調査中</option>
                     <option value="保留">保留</option>
+                    <option value="除外">除外</option>
+                    <option value="利用終了">利用終了</option>
                   </select>
                 </label>
                 <label

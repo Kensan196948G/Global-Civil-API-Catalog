@@ -68,8 +68,20 @@ def test_live_map_and_theme(app_page, static_server_url) -> None:
     page.goto(static_server_url)
     page.wait_for_selector("#catalogCount:not(:has-text('-'))")
     page.click('[data-view="map"]')
-    page.wait_for_selector("#map .leaflet-container")
-    assert page.locator("#baseMapList .baseMapItem, #baseMapList label").count() > 0
+    page.wait_for_selector("#map")
+    initialized = False
+    try:
+        page.wait_for_selector("#map .leaflet-container", timeout=10000)
+        initialized = True
+    except Exception:
+        if page.locator("#map:has-text('地図ライブラリ')").count() == 0:
+            info = page.evaluate(
+                "() => ({L: typeof window.L, "
+                "html: document.querySelector('#map').innerHTML.slice(0, 300)})"
+            )
+            raise AssertionError(f"map did not initialize: {info}")
+    if initialized:
+        assert page.locator("#baseMapList .baseMapItem, #baseMapList label").count() > 0
 
     page.click("#themeToggle")
     assert page.get_attribute("html", "data-theme") == "dark"
