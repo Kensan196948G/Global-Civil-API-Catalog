@@ -11,7 +11,11 @@ import urllib.request
 from pathlib import Path
 
 import pytest
-from playwright.sync_api import sync_playwright
+
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:  # pragma: no cover - collection on non-E2E CI jobs.
+    sync_playwright = None
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -67,6 +71,8 @@ def static_server_url() -> str:
 @pytest.fixture(scope="session")
 def browser():
     """Self-managed chromium (explicit sandbox flags for CI/containers)."""
+    if sync_playwright is None:
+        pytest.skip("playwright not installed (E2E jobs only)")
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
             headless=True,
