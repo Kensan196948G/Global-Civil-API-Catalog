@@ -23,6 +23,27 @@ Web UI の「登録・承認管理」画面（ログイン・エントリCRUD・
 
 ---
 
+## 🧪 MVP デモ環境（架空データのみ・本番非干渉）
+
+関係者レビュー用の MVP 環境は `scripts/run_demo_stack.sh` で一括起動します。
+**本番 systemd 3本・本番データ・Neon には一切触れません**（専用 Postgres コンテナと専用ポート 49331/49332/49339 を使用）。
+
+```bash
+bash scripts/run_demo_stack.sh start
+# WebUI: http://127.0.0.1:49331 （demo-admin / DemoPassw0rd!2026）
+# API:   http://127.0.0.1:49332
+# Echo:  http://127.0.0.1:49339/webhook-echo
+bash scripts/run_demo_stack.sh stop
+```
+
+- データ: `data/demo/`（8件の架空API・10件の検証結果・5ロールのデモユーザー・Webhook購読）
+- 投入: `CATALOG_DEMO_SEED=1` が必要（Neon/本番URLを検出したら拒否）
+- Webhook配信履歴: `data/demo/webhook_deliveries.jsonl`（echo サーバーが追記）
+- E2E（フルスタック）: `E2E_FULLSTACK_URL=http://127.0.0.1:49331 python -m pytest -m e2e tests/e2e/test_workflow_fullstack.py`
+- E2E（静的UI・デモデータ）: `python -m pytest -m e2e tests/e2e/test_readonly_ui.py`
+
+---
+
 ## 🐧 Linux（本番 origin）
 
 ### 構成（systemd ユーザーサービス3本）

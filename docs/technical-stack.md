@@ -25,7 +25,9 @@ samples/requests/     curl等のサンプルリクエスト
 samples/responses/    最小化したサンプルレスポンス
 scripts/              検証・出力・接続サンプル
 tests/                自動テスト
+tests/e2e/            Playwright ブラウザ E2E（`-m e2e` で実行・通常CIでは除外）
 web/                  Web UIとJSON API
+data/demo/            MVPデモ用の架空データ（本番台帳とは分離）
 deploy/               固定ポート、systemdユーザーサービス設定
 ```
 
@@ -82,6 +84,9 @@ Exportファイルは `/api/export` で一覧を返し、`/exports/<filename>` �
 ## CI
 
 GitHub Actionsは `.github/workflows/validate.yml` で定義しています。
+
+追加で `.github/workflows/e2e.yml` が Playwright E2E（静的UI + フルスタック承認フロー）を実行します。
+E2E はデフォルトの pytest から除外され、`python -m pytest -m e2e` で明示実行します。
 
 ```mermaid
 flowchart LR
