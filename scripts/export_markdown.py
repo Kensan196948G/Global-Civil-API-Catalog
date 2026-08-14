@@ -142,6 +142,108 @@ def build_candidate_markdown(catalog: list[dict]) -> str:
     ) + "\n"
 
 
+def build_catalog_report_html(
+    catalog: list[dict],
+    verification_by_api: dict[str, dict],
+    metadata: dict,
+) -> str:
+    """Print-friendly 帳票 (one page per entry, browser print/PDF export)."""
+    is_demo = metadata.get("catalog_mode") == "demo"
+    banner = (
+        '<p class="demoBanner">⚠ デモ用（全て架空データ）</p>'
+        if is_demo
+        else ""
+    )
+    rows = []
+    for item in sorted(catalog, key=lambda row: row["id"]):
+        latest = verification_by_api.get(item["id"], {})
+        formats = ", ".join(item.get("data_formats", []) or [])
+        key_line = f"{item.get('api_key_required', '-')} / {item.get('auth_type', '-')}"
+        license_line = (
+            f"{item.get('license_note', '-')}（商用: {item.get('commercial_use', '-')}）"
+        )
+        rank_line = (
+            f"{item.get('trust_rank', '-')} / {item.get('connection_priority', '-')}"
+        )
+        score_line = (
+            f"{item.get('business_fit_score', '-')} / "
+            f"{item.get('integration_score', '-')}"
+        )
+        verification_line = (
+            f"{latest.get('result', '未検証')}（{latest.get('verified_at', '-')}）"
+        )
+        rows.append(
+            f"""<section class="entry">
+  <h2>{item['name']} <span class="mono">{item['id']}</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>{item.get('category', '-')} / {item.get('sub_category', '-')}</td></tr>
+    <tr><th>提供元</th><td>{item.get('provider', '-')}（{item.get('provider_type', '-')}）</td></tr>
+    <tr><th>地域</th><td>{item.get('region', '-')}</td></tr>
+    <tr><th>データ形式</th><td>{formats}</td></tr>
+    <tr><th>APIキー</th><td>{key_line}</td></tr>
+    <tr><th>利用条件</th><td>{license_line}</td></tr>
+    <tr><th>更新頻度</th><td>{item.get('update_frequency', '-')}</td></tr>
+    <tr><th>接続状態</th><td>{item.get('connection_status', '-')}</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>{rank_line}</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>{score_line}</td></tr>
+    <tr><th>最新検証</th><td>{verification_line}</td></tr>
+    <tr><th>公式URL</th><td>{item.get('official_url', '-')}</td></tr>
+    <tr><th>ドキュメント</th><td>{item.get('document_url', '-')}</td></tr>
+    <tr><th>利用説明</th><td>{item.get('usage_summary', '-')}</td></tr>
+    <tr><th>注意点・リスク</th><td>{item.get('risk_note', '-')}</td></tr>
+    <tr><th>最終確認</th><td>{item.get('last_checked_at', '-')}</td></tr>
+  </table>
+</section>"""
+        )
+    today = __import__("datetime").date.today().isoformat()
+    mode = metadata.get("catalog_mode", "-")
+    source = metadata.get("source", "-")
+    imported_at = metadata.get("imported_at", "-")
+    verification_count = metadata.get("verification_count", "-")
+    meta_line = (
+        f"データ状態: {mode} ／ 取込元: {source} ／ 取込日: {imported_at} ／ "
+        f"登録: {len(catalog)}件 ／ 検証: {verification_count}件"
+    )
+    print_note = (
+        "印刷: ブラウザの「印刷 → PDFに保存」で出力できます。"
+        f"生成: {today}"
+    )
+    style = (
+        "body { font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; "
+        "margin: 24px; color: #1b1f23; } "
+        "h1 { border-bottom: 3px solid #2563eb; padding-bottom: 8px; } "
+        ".meta { color: #57606a; font-size: 13px; } "
+        ".demoBanner { background: #fff3cd; border: 1px solid #e0a800; "
+        "padding: 8px 12px; border-radius: 6px; } "
+        ".entry { page-break-inside: avoid; margin: 24px 0; } "
+        ".entry h2 { font-size: 16px; margin: 0 0 8px; } "
+        ".mono { font-family: monospace; font-size: 12px; color: #57606a; } "
+        "table { border-collapse: collapse; width: 100%; font-size: 12px; } "
+        "th, td { border: 1px solid #d0d7de; padding: 4px 8px; "
+        "text-align: left; vertical-align: top; } "
+        "th { width: 140px; background: #f6f8fa; } "
+        "a { color: #0969da; word-break: break-all; } "
+        "@media print { body { margin: 0; } "
+        "a { color: inherit; text-decoration: none; } }"
+    )
+    return f"""<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>API台帳 帳票（{mode}）</title>
+  <style>{style}</style>
+</head>
+<body>
+  <h1>API・公開データ台帳 帳票</h1>
+  <p class="meta">{meta_line}</p>
+  {banner}
+  <p class="meta">{print_note}</p>
+  {''.join(rows)}
+</body>
+</html>
+"""
+
+
 def export_all() -> list[str]:
     catalog = load_catalog()
     verification_results = load_verification_results()
@@ -153,6 +255,9 @@ def export_all() -> list[str]:
         "接続優先度.md": build_priority_markdown(catalog, verification_by_api),
         "接続検証結果.md": build_verification_markdown(verification_results),
         "本格利用候補.md": build_candidate_markdown(catalog),
+        "API台帳_帳票.html": build_catalog_report_html(
+            catalog, verification_by_api, load_catalog_metadata()
+        ),
     }
 
     for filename, content in outputs.items():
