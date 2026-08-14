@@ -255,3 +255,51 @@ class LocalUser(Base):
             name="ck_local_users_role",
         ),
     )
+
+
+# Event vocabulary shared by the webhook API and the demo seed.  Keep flat
+# and greppable; new events are added here and in the UI checkbox list.
+WEBHOOK_EVENTS = (
+    "entry.created",
+    "entry.updated",
+    "entry.deleted",
+    "entry.restored",
+    "entry.workflow_transition",
+    "verification.completed",
+)
+
+
+class WebhookSubscription(Base):
+    """Outbound event subscription (MVP: workflow/entry events to an URL).
+
+    ``secret`` is only ever returned once (at creation); the stored value
+    is used to sign deliveries with HMAC-SHA256 so receivers can verify
+    authenticity.  The secret is deliberately not hashed here: signing needs
+    the raw value, and the table lives in the trusted application database.
+    """
+
+    __tablename__ = "webhook_subscriptions"
+
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    url: Mapped[str] = mapped_column(Text, nullable=False)
+    events: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), nullable=False, server_default=text("'{}'")
+    )
+    secret: Mapped[str | None] = mapped_column(Text)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    created_by: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("now()"),
+        onupdate=text("now()"),
+    )
+    last_delivery_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_delivery_status: Mapped[str | None] = mapped_column(Text)
+    failure_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))

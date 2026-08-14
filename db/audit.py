@@ -25,6 +25,11 @@ ACTION_LOGIN = "login"
 ACTION_LOGIN_FAILED = "login_failed"
 ACTION_LOGOUT = "logout"
 ACTION_TRY_IT = "try_it"
+ACTION_WEBHOOK_SUBSCRIBE = "webhook_subscribe"
+ACTION_WEBHOOK_UPDATE = "webhook_update"
+ACTION_WEBHOOK_UNSUBSCRIBE = "webhook_unsubscribe"
+ACTION_WEBHOOK_TEST = "webhook_test"
+ACTION_OPENAPI_IMPORT = "openapi_import"
 
 
 def entry_snapshot_dict(entry: CatalogEntry) -> dict[str, Any]:

@@ -21,7 +21,11 @@ Run locally:
 
 from __future__ import annotations
 
+import csv
+import io
+import json
 import os
+import secrets
 import sys
 from contextlib import asynccontextmanager
 from datetime import date
@@ -39,24 +43,32 @@ from sqlalchemy.orm import Session  # noqa: E402
 from db.audit import (  # noqa: E402
     ACTION_CREATE,
     ACTION_DELETE,
+    ACTION_OPENAPI_IMPORT,
     ACTION_RESTORE,
     ACTION_TRANSITION,
     ACTION_TRY_IT,
     ACTION_UPDATE,
+    ACTION_WEBHOOK_SUBSCRIBE,
+    ACTION_WEBHOOK_TEST,
+    ACTION_WEBHOOK_UNSUBSCRIBE,
+    ACTION_WEBHOOK_UPDATE,
     entry_snapshot_dict,
     field_diff,
     record_audit,
     snapshot_entry,
 )
 from db.models import (  # noqa: E402
+    WEBHOOK_EVENTS,
     AuditLog,
     CatalogEntry,
     CatalogEntryVersion,
     EntryWorkflow,
     UserSession,
     VerificationResult,
+    WebhookSubscription,
 )
 from db.session import make_session_factory  # noqa: E402
+from scripts.openapi_import import build_candidates  # noqa: E402
 from scripts.url_guard import URLPolicyError, fetch_public_url, validate_public_url  # noqa: E402
 from web.auth import (  # noqa: E402
     ROLE_ADMIN,
@@ -70,6 +82,7 @@ from web.auth import (  # noqa: E402
     require_role,
 )
 from web.ratelimit import RateLimiter  # noqa: E402
+from web.webhooks import deliver, dispatch_webhooks  # noqa: E402
 
 
 @asynccontextmanager
@@ -84,7 +97,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="Global Civil API Catalog API", version="1.2.1", lifespan=lifespan)
+app = FastAPI(title="Global Civil API Catalog API", version="1.3.0", lifespan=lifespan)
 
 # --- rate limiting ----------------------------------------------------------
 LOGIN_LIMIT = 10
@@ -218,14 +231,25 @@ def list_entries(
     if api_key_required:
         stmt = stmt.where(CatalogEntry.api_key_required == api_key_required)
     if keyword:
-        pattern = f"%{keyword}%"
-        stmt = stmt.where(
-            or_(
-                CatalogEntry.name.ilike(pattern),
-                CatalogEntry.provider.ilike(pattern),
-                CatalogEntry.usage_summary.ilike(pattern),
+        tokens = [token for token in keyword.replace(",", " ").split() if token]
+        for token in tokens:
+            pattern = f"%{token}%"
+            stmt = stmt.where(
+                or_(
+                    CatalogEntry.id.ilike(pattern),
+                    CatalogEntry.name.ilike(pattern),
+                    CatalogEntry.sub_category.ilike(pattern),
+                    CatalogEntry.provider.ilike(pattern),
+                    CatalogEntry.region.ilike(pattern),
+                    CatalogEntry.official_url.ilike(pattern),
+                    CatalogEntry.document_url.ilike(pattern),
+                    CatalogEntry.usage_summary.ilike(pattern),
+                    CatalogEntry.usage_notes.ilike(pattern),
+                    CatalogEntry.risk_note.ilike(pattern),
+                    func.array_to_string(CatalogEntry.tags, " ").ilike(pattern),
+                    func.array_to_string(CatalogEntry.data_formats, " ").ilike(pattern),
+                )
             )
-        )
     total = session.scalar(select(func.count()).select_from(stmt.subquery()))
     rows = session.execute(stmt.order_by(CatalogEntry.id).limit(limit).offset(offset)).all()
     return {
@@ -443,12 +467,12 @@ class EntryPatch(BaseModel):
     risk_note: str | None = None
 
 
-@app.post("/api/v1/entries", status_code=201)
-def create_entry(
+def _create_entry_record(
+    session: Session,
     payload: EntryCreate,
-    actor: UserSession = Depends(require_editor),
-    session: Session = Depends(get_session),
-) -> dict[str, Any]:
+    actor: UserSession,
+) -> CatalogEntry:
+    """Shared create path: validation, draft workflow, snapshot, audit."""
     if session.get(CatalogEntry, payload.id) is not None:
         raise HTTPException(status_code=409, detail=f"entry {payload.id} already exists")
     data = payload.model_dump(exclude={"reason"})
@@ -469,9 +493,150 @@ def create_entry(
         diff=field_diff({}, entry_snapshot_dict(entry)),
         reason=payload.reason,
     )
+    return entry
+
+
+@app.post("/api/v1/entries", status_code=201)
+def create_entry(
+    payload: EntryCreate,
+    actor: UserSession = Depends(require_editor),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    entry = _create_entry_record(session, payload, actor)
     session.commit()
+    dispatch_webhooks(
+        session,
+        "entry.created",
+        {
+            "record_id": entry.id,
+            "name": entry.name,
+            "actor": actor.user_sub,
+            "reason": payload.reason,
+        },
+    )
     session.refresh(entry)
     return entry_to_dict(entry, "draft")
+
+
+class OpenApiImportRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    spec: dict[str, Any]
+    reason: str = Field(min_length=1, max_length=1000)
+    max_candidates: int = Field(default=10, ge=1, le=50)
+
+
+def _find_duplicate(session: Session, candidate: dict[str, Any]) -> str | None:
+    if session.get(CatalogEntry, candidate["id"]) is not None:
+        return "id"
+    same_endpoint = session.scalar(
+        select(CatalogEntry)
+        .where(
+            CatalogEntry.official_url == candidate["official_url"],
+            CatalogEntry.endpoint_template == candidate["endpoint_template"],
+        )
+        .limit(1)
+    )
+    if same_endpoint is not None:
+        return "official_url+endpoint"
+    same_name = session.scalar(
+        select(CatalogEntry)
+        .where(func.lower(CatalogEntry.name) == candidate["name"].lower())
+        .limit(1)
+    )
+    if same_name is not None:
+        return "name"
+    return None
+
+
+@app.post("/api/v1/import/openapi", status_code=201)
+def import_openapi(
+    payload: OpenApiImportRequest,
+    actor: UserSession = Depends(require_editor),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    """Import an OpenAPI 3.x document as draft entries (issue #65, MVP)."""
+    candidates, errors = build_candidates(payload.spec, max_candidates=payload.max_candidates)
+    created: list[dict[str, str]] = []
+    skipped: list[dict[str, str]] = []
+    seen_ids: set[str] = set()
+    seen_endpoints: set[tuple[str, str]] = set()
+    seen_names: set[str] = set()
+    for candidate in candidates:
+        if candidate["id"] in seen_ids:
+            skipped.append(
+                {
+                    "id": candidate["id"],
+                    "name": candidate["name"],
+                    "reason": "duplicate within import (id)",
+                }
+            )
+            continue
+        endpoint_key = (candidate["official_url"], candidate["endpoint_template"])
+        if endpoint_key in seen_endpoints:
+            skipped.append(
+                {
+                    "id": candidate["id"],
+                    "name": candidate["name"],
+                    "reason": "duplicate within import (endpoint)",
+                }
+            )
+            continue
+        normalized_name = candidate["name"].lower()
+        if normalized_name in seen_names:
+            skipped.append(
+                {
+                    "id": candidate["id"],
+                    "name": candidate["name"],
+                    "reason": "duplicate within import (name)",
+                }
+            )
+            continue
+        duplicate = _find_duplicate(session, candidate)
+        if duplicate is not None:
+            skipped.append(
+                {
+                    "id": candidate["id"],
+                    "name": candidate["name"],
+                    "reason": f"duplicate by {duplicate}",
+                }
+            )
+            continue
+        seen_ids.add(candidate["id"])
+        seen_endpoints.add(endpoint_key)
+        seen_names.add(normalized_name)
+        create = EntryCreate(
+            **{
+                **candidate,
+                "reason": f"{payload.reason} (OpenAPI import: {payload.name})",
+            }
+        )
+        entry = _create_entry_record(session, create, actor)
+        created.append({"id": entry.id, "name": entry.name, "workflow_state": "draft"})
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_OPENAPI_IMPORT,
+        diff={
+            "source_name": payload.name,
+            "created": len(created),
+            "skipped_duplicates": len(skipped),
+        },
+        reason=payload.reason,
+    )
+    session.commit()
+    for item in created:
+        dispatch_webhooks(
+            session,
+            "entry.created",
+            {
+                "record_id": item["id"],
+                "name": item["name"],
+                "actor": actor.user_sub,
+                "reason": f"{payload.reason} (OpenAPI import)",
+            },
+        )
+    return {"created": created, "skipped_duplicates": skipped, "errors": errors}
 
 
 @app.patch("/api/v1/entries/{entry_id}")
@@ -519,6 +684,17 @@ def update_entry(
         reason=payload.reason,
     )
     session.commit()
+    dispatch_webhooks(
+        session,
+        "entry.updated",
+        {
+            "record_id": entry.id,
+            "name": entry.name,
+            "changed_fields": sorted(changes),
+            "actor": actor.user_sub,
+            "reason": payload.reason,
+        },
+    )
     return entry_to_dict(entry, _workflow_state(session, entry_id))
 
 
@@ -561,6 +737,16 @@ def delete_entry(
         reason=reason,
     )
     session.commit()
+    dispatch_webhooks(
+        session,
+        "entry.deleted",
+        {
+            "record_id": entry.id,
+            "name": entry.name,
+            "actor": actor.user_sub,
+            "reason": reason,
+        },
+    )
 
 
 # --- workflow / versions / audit (Phase C) ---------------------------------
@@ -636,6 +822,18 @@ def transition_entry(
         reason=payload.reason,
     )
     session.commit()
+    dispatch_webhooks(
+        session,
+        "entry.workflow_transition",
+        {
+            "record_id": entry_id,
+            "name": entry.name,
+            "from": before_state,
+            "to": rule["to"],
+            "actor": actor.user_sub,
+            "reason": payload.reason,
+        },
+    )
     return {"record_id": entry_id, "state": rule["to"]}
 
 
@@ -731,6 +929,17 @@ def restore_entry(
         reason=payload.reason,
     )
     session.commit()
+    dispatch_webhooks(
+        session,
+        "entry.restored",
+        {
+            "record_id": entry.id,
+            "name": entry.name,
+            "version": payload.version,
+            "actor": actor.user_sub,
+            "reason": payload.reason,
+        },
+    )
     return entry_to_dict(entry, _workflow_state(session, entry_id))
 
 
@@ -751,3 +960,272 @@ def list_audit(
     return {
         "items": [{c.name: getattr(r, c.name) for c in AuditLog.__table__.columns} for r in rows]
     }
+
+
+# --- in-app tasks / notifications (epic #49 step 2) ------------------------
+
+
+def _task_groups_for_roles(roles: set[str]) -> list[tuple[str, str]]:
+    """(workflow_state, task_type) pairs visible to the session's roles."""
+    groups: list[tuple[str, str]] = []
+    if roles & {ROLE_VERIFIER, ROLE_ADMIN}:
+        groups.append(("in_review", "review"))
+    if roles & {ROLE_APPROVER, ROLE_ADMIN}:
+        groups.append(("pending_approval", "approval"))
+    if roles & {ROLE_EDITOR, ROLE_ADMIN}:
+        groups.append(("rejected", "fix"))
+    return groups
+
+
+@app.get("/api/v1/tasks")
+def list_tasks(
+    actor: UserSession = Depends(require_staff),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    """Role-aware task queue: entries waiting for this user's role."""
+    groups = _task_groups_for_roles(set(actor.roles))
+    states = [state for state, _ in groups]
+    if not states:
+        return {"tasks": [], "counts": {}}
+    rows = session.execute(
+        select(CatalogEntry, EntryWorkflow)
+        .join(EntryWorkflow, EntryWorkflow.record_id == CatalogEntry.id)
+        .where(CatalogEntry.deleted_at.is_(None))
+        .where(EntryWorkflow.state.in_(states))
+        .order_by(EntryWorkflow.updated_at.desc())
+    ).all()
+    tasks = []
+    for entry, workflow in rows:
+        tasks.append(
+            {
+                "record_id": entry.id,
+                "name": entry.name,
+                "state": workflow.state,
+                "updated_at": (
+                    workflow.updated_at.isoformat() if workflow.updated_at is not None else None
+                ),
+                "task_type": next(
+                    (kind for state, kind in groups if state == workflow.state),
+                    "other",
+                ),
+            }
+        )
+    counts: dict[str, int] = {}
+    for task in tasks:
+        counts[task["task_type"]] = counts.get(task["task_type"], 0) + 1
+    return {"tasks": tasks, "counts": counts}
+
+
+@app.get("/api/v1/audit/export.csv")
+def export_audit_csv(
+    limit: int = Query(5000, ge=1, le=10000),
+    actor: UserSession = Depends(require_staff),
+    session: Session = Depends(get_session),
+) -> Response:
+    """Staff CSV export of the audit log (for review/evidence files)."""
+    rows = session.scalars(select(AuditLog).order_by(AuditLog.seq.desc()).limit(limit)).all()
+    buffer = io.StringIO()
+    writer = csv.writer(buffer, lineterminator="\n")
+    writer.writerow(["seq", "at", "actor", "actor_roles", "action", "record_id", "reason", "diff"])
+    for row in rows:
+        writer.writerow(
+            [
+                row.seq,
+                row.at.isoformat() if row.at is not None else "",
+                row.actor,
+                ",".join(row.actor_roles or []),
+                row.action,
+                row.record_id or "",
+                row.reason or "",
+                json.dumps(row.diff, ensure_ascii=False) if row.diff else "",
+            ]
+        )
+    return Response(
+        content=buffer.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": 'attachment; filename="catalog_audit_log.csv"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+# --- webhook subscriptions (outbound notifications) -------------------------
+
+
+class WebhookCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    url: str = Field(min_length=1, max_length=2000, pattern=r"^https?://")
+    events: list[str] = Field(min_length=1)
+    secret: str | None = Field(default=None, max_length=200)
+    reason: str = Field(min_length=1, max_length=1000)
+
+
+class WebhookPatch(BaseModel):
+    reason: str = Field(min_length=1, max_length=1000)
+    name: str | None = None
+    url: str | None = None
+    events: list[str] | None = None
+    is_active: bool | None = None
+    reset_secret: bool = False
+
+
+def _webhook_to_dict(
+    subscription: WebhookSubscription, include_secret: bool = False
+) -> dict[str, Any]:
+    payload = {
+        c.name: getattr(subscription, c.name)
+        for c in WebhookSubscription.__table__.columns
+    }
+    if payload.get("last_delivery_at") is not None:
+        payload["last_delivery_at"] = payload["last_delivery_at"].isoformat()
+    if not include_secret:
+        payload.pop("secret", None)
+    return payload
+
+
+def _validate_webhook_events(events: list[str]) -> None:
+    unknown = [event for event in events if event not in WEBHOOK_EVENTS]
+    if unknown:
+        raise HTTPException(status_code=422, detail=f"unknown events: {', '.join(unknown)}")
+
+
+@app.get("/api/v1/webhooks")
+def list_webhooks(
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    rows = session.scalars(
+        select(WebhookSubscription).order_by(WebhookSubscription.created_at.desc())
+    ).all()
+    return {"items": [_webhook_to_dict(row) for row in rows]}
+
+
+@app.post("/api/v1/webhooks", status_code=201)
+def create_webhook(
+    payload: WebhookCreate,
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    _validate_webhook_events(payload.events)
+    reason = validate_public_url(payload.url, resolve=False)
+    if reason is not None:
+        raise HTTPException(status_code=422, detail=f"url: blocked by URL policy ({reason})")
+    subscription = WebhookSubscription(
+        id=f"wh_{secrets.token_urlsafe(8)}",
+        name=payload.name,
+        url=payload.url,
+        events=payload.events,
+        secret=payload.secret,
+        is_active=True,
+        created_by=actor.user_sub,
+    )
+    session.add(subscription)
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_WEBHOOK_SUBSCRIBE,
+        record_id=subscription.id,
+        diff={"name": payload.name, "url": payload.url, "events": payload.events},
+        reason=payload.reason,
+    )
+    session.commit()
+    return _webhook_to_dict(subscription, include_secret=True)
+
+
+@app.patch("/api/v1/webhooks/{webhook_id}")
+def update_webhook(
+    webhook_id: str,
+    payload: WebhookPatch,
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    subscription = session.get(WebhookSubscription, webhook_id, with_for_update=True)
+    if subscription is None:
+        raise HTTPException(status_code=404, detail="webhook not found")
+    changes: dict[str, Any] = {}
+    if payload.name is not None:
+        subscription.name = payload.name
+        changes["name"] = payload.name
+    if payload.url is not None:
+        reason = validate_public_url(payload.url, resolve=False)
+        if reason is not None:
+            raise HTTPException(status_code=422, detail=f"url: blocked by URL policy ({reason})")
+        subscription.url = payload.url
+        changes["url"] = payload.url
+    if payload.events is not None:
+        _validate_webhook_events(payload.events)
+        subscription.events = payload.events
+        changes["events"] = payload.events
+    if payload.is_active is not None:
+        subscription.is_active = payload.is_active
+        changes["is_active"] = payload.is_active
+    reset_secret = None
+    if payload.reset_secret:
+        reset_secret = secrets.token_urlsafe(24)
+        subscription.secret = reset_secret
+        changes["secret"] = "rotated"
+    if not changes:
+        raise HTTPException(status_code=422, detail="no fields to update")
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_WEBHOOK_UPDATE,
+        record_id=subscription.id,
+        diff=changes,
+        reason=payload.reason,
+    )
+    session.commit()
+    return _webhook_to_dict(subscription, include_secret=reset_secret is not None)
+
+
+@app.delete("/api/v1/webhooks/{webhook_id}", status_code=204, response_model=None)
+def delete_webhook(
+    webhook_id: str,
+    reason: str = Query(min_length=1, max_length=1000),
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> None:
+    subscription = session.get(WebhookSubscription, webhook_id)
+    if subscription is None:
+        raise HTTPException(status_code=404, detail="webhook not found")
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_WEBHOOK_UNSUBSCRIBE,
+        record_id=subscription.id,
+        diff={"name": subscription.name, "url": subscription.url},
+        reason=reason,
+    )
+    session.delete(subscription)
+    session.commit()
+
+
+@app.post("/api/v1/webhooks/{webhook_id}/test")
+def test_webhook(
+    webhook_id: str,
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> dict[str, str]:
+    subscription = session.get(WebhookSubscription, webhook_id)
+    if subscription is None:
+        raise HTTPException(status_code=404, detail="webhook not found")
+    delivery_id, status = deliver(
+        subscription,
+        "test",
+        {"message": f"test delivery for {subscription.name} ({actor.user_sub})"},
+    )
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_WEBHOOK_TEST,
+        record_id=subscription.id,
+        diff={"delivery_id": delivery_id, "status": status},
+        reason="webhook test delivery",
+    )
+    session.commit()
+    return {"id": subscription.id, "delivery_id": delivery_id, "status": status}
