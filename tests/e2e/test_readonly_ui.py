@@ -71,7 +71,7 @@ def test_live_map_and_theme(app_page, static_server_url) -> None:
     page.wait_for_selector("#map")
     initialized = False
     try:
-        page.wait_for_selector("#map .leaflet-container", timeout=10000)
+        page.wait_for_selector("#map.leaflet-container", timeout=10000)
         initialized = True
     except Exception:
         if page.locator("#map:has-text('地図ライブラリ')").count() == 0:

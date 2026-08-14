@@ -23,6 +23,9 @@ def test_login_create_transition_approve_and_audit(app_page) -> None:
     if not base_url:
         pytest.skip("E2E_FULLSTACK_URL not set")
 
+    def expect_notice(text: str) -> None:
+        page.wait_for_selector(f"#manageNotice:has-text('{text}')")
+
     page.goto(base_url)
     page.click("#loginButton")
     page.wait_for_selector("#loginDialog[open]")
@@ -50,28 +53,26 @@ def test_login_create_transition_approve_and_audit(app_page) -> None:
     page.select_option("#entryForm [name=connection_status]", "未調査")
     page.fill("#entryForm [name=reason]", "E2Eデモ用の登録（架空）")
     page.click("#entryFormSubmit")
-    page.wait_for_selector("#manageNotice:not([hidden])")
-    assert "登録しました" in page.locator("#manageNotice").inner_text()
+    expect_notice("登録しました")
 
     # Review flow: submit → review_ok → approve (Admin can drive all states).
     row = page.locator(f"#manageRows tr:has-text('{entry_id}')")
     row.locator('button[data-act="transition"][data-action="submit"]').click()
     page.fill("#reasonInput", "E2E: レビュー依頼（デモ）")
     page.click("#reasonConfirm")
-    page.wait_for_selector("#manageNotice:not([hidden])")
+    expect_notice("レビュー中")
 
     row = page.locator(f"#manageRows tr:has-text('{entry_id}')")
     row.locator('button[data-act="transition"][data-action="review_ok"]').click()
     page.fill("#reasonInput", "E2E: レビューOK（デモ）")
     page.click("#reasonConfirm")
-    page.wait_for_selector("#manageNotice:not([hidden])")
+    expect_notice("承認待ち")
 
     row = page.locator(f"#manageRows tr:has-text('{entry_id}')")
     row.locator('button[data-act="transition"][data-action="approve"]').click()
     page.fill("#reasonInput", "E2E: 承認・公開（デモ）")
     page.click("#reasonConfirm")
-    page.wait_for_selector("#manageNotice:not([hidden])")
-    assert "公開中" in page.locator("#manageNotice").inner_text()
+    expect_notice("公開中")
 
     # Webhook echo should have recorded the workflow transition events.
     log_path = ROOT / "data" / "demo" / "webhook_deliveries.jsonl"
