@@ -1,0 +1,10 @@
+{
+  "station_id": "999901",
+  "station_name": "デモ第1観測所（架空）",
+  "river_name": "デモ川（架空）",
+  "observed_at": "2026-08-14T09:00:00+09:00",
+  "water_level_cm": 128,
+  "discharge_m3s": 45.2,
+  "warning_level": "注意",
+  "note": "すべて架空のデモデータです。"
+}

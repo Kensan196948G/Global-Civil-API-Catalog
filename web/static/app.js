@@ -11,6 +11,9 @@ const state = {
   tileLayers: new Map(),
   user: null,
   manage: { items: [], loaded: false, editingId: null },
+  compare: new Set(),
+  tasks: { tasks: [], counts: {} },
+  webhooks: [],
 };
 
 const byId = (id) => document.getElementById(id);
@@ -330,8 +333,36 @@ function filteredCatalog() {
   const region = byId("regionFilter").value;
   const trustRank = byId("trustRankFilter").value;
   const minPriority = byId("minPriorityFilter").value;
+  const tokens = q.split(/\s|,/).filter(Boolean);
+  const haystack = (item) =>
+    JSON.stringify(
+      [
+        item.id,
+        item.name,
+        item.sub_category,
+        item.provider,
+        item.region,
+        item.official_url,
+        item.document_url,
+        item.auth_type,
+        item.license_note,
+        item.commercial_use,
+        item.update_frequency,
+        item.connection_status,
+        item.usage_summary,
+        item.usage_notes,
+        item.risk_note,
+        item.adoption_reason,
+        item.data_formats,
+        item.tags,
+        item.target_projects,
+      ],
+    ).toLowerCase();
   return state.catalog
-    .filter((item) => !q || JSON.stringify(item).toLowerCase().includes(q))
+    .filter(
+      (item) =>
+        !tokens.length || tokens.every((token) => haystack(item).includes(token)),
+    )
     .filter((item) => !category || item.category === category)
     .filter((item) => !status || item.connection_status === status)
     .filter((item) => !region || item.region === region)
@@ -364,11 +395,24 @@ function scoreBreakdownHtml(item) {
 
 function renderCatalog() {
   const rows = filteredCatalog();
+  const compareCount = state.compare.size;
+  const compareButton = byId("compareButton");
+  compareButton.disabled = compareCount < 2;
+  compareButton.textContent = `⚖ 比較する（${compareCount}件選択）`;
   byId("catalogResultCount").textContent = `${rows.length}件`;
   byId("catalogRows").innerHTML = rows
     .map(
       (item) => `
     <tr>
+      <td class="compareCol">
+        <input
+          type="checkbox"
+          class="compareCheck"
+          data-id="${escapeHtml(item.id)}"
+          aria-label="比較対象: ${escapeHtml(item.name)}"
+          ${state.compare.has(item.id) ? "checked" : ""}
+        />
+      </td>
       <td><strong>${escapeHtml(item.id)}</strong><br>${badge(item.catalog_mode)}</td>
       <td>${escapeHtml(item.name)}</td>
       <td>${escapeHtml(item.category)}<br><small>${escapeHtml(item.sub_category || "")}</small></td>
@@ -793,6 +837,10 @@ function updateNavForRoles() {
   if (navManage) navManage.hidden = !isStaff();
   const newEntryButton = byId("newEntryButton");
   if (newEntryButton) newEntryButton.hidden = !hasRole("Editor", "Admin");
+  const webhookPanel = byId("webhookPanel");
+  if (webhookPanel) webhookPanel.hidden = !hasRole("Admin");
+  const openApiPanel = byId("openApiPanel");
+  if (openApiPanel) openApiPanel.hidden = !hasRole("Editor", "Admin");
 }
 
 // ===================== Local login (username/password) =====================
@@ -1350,9 +1398,352 @@ async function onManageRowAction(event) {
   else if (button.dataset.act === "delete") await doDelete(id);
 }
 
+// ===================== 採用候補の比較 =====================
+
+const COMPARE_FIELDS = [
+  ["id", "ID"],
+  ["name", "名称"],
+  ["category", "カテゴリ"],
+  ["provider", "提供元"],
+  ["region", "地域"],
+  ["connection_status", "接続状態"],
+  ["trust_rank", "信頼度"],
+  ["connection_priority", "優先度"],
+  ["business_fit_score", "事業適合"],
+  ["integration_score", "連携実装"],
+  ["api_key_required", "APIキー"],
+  ["auth_type", "認証方式"],
+  ["data_formats", "データ形式"],
+  ["commercial_use", "商用利用"],
+  ["update_frequency", "更新頻度"],
+  ["official_url", "公式URL"],
+  ["usage_summary", "利用説明"],
+];
+
+function compareDisplayValue(item, field) {
+  if (field === "data_formats") return (item[field] || []).join(", ");
+  const value = item[field];
+  return value === undefined || value === null || value === "" ? "-" : String(value);
+}
+
+function openCompare() {
+  const selected = state.catalog.filter((item) => state.compare.has(item.id));
+  if (selected.length < 2) return;
+  const head = `<tr><th>項目</th>${selected
+    .map((item) => `<th>${escapeHtml(item.name)}<br><span class="mono">${escapeHtml(item.id)}</span></th>`)
+    .join("")}</tr>`;
+  const body = COMPARE_FIELDS.map(([field, label]) => {
+    const cells = selected
+      .map((item) => {
+        const value = compareDisplayValue(item, field);
+        if (field === "official_url" && item[field]) {
+          return `<td><a href="${safeUrl(item[field])}" target="_blank" rel="noreferrer">${escapeHtml(value)}</a></td>`;
+        }
+        return `<td>${escapeHtml(value)}</td>`;
+      })
+      .join("");
+    return `<tr><th>${escapeHtml(label)}</th>${cells}</tr>`;
+  }).join("");
+  byId("compareBody").innerHTML =
+    `<table class="compareTable"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  byId("compareDialog").showModal();
+}
+
+function wireCompareUI() {
+  byId("catalogRows").addEventListener("change", (event) => {
+    const box = event.target.closest("input.compareCheck");
+    if (!box) return;
+    if (box.checked) state.compare.add(box.dataset.id);
+    else state.compare.delete(box.dataset.id);
+    renderCatalog();
+  });
+  byId("compareAll").addEventListener("change", (event) => {
+    const rows = filteredCatalog();
+    if (event.target.checked) rows.forEach((item) => state.compare.add(item.id));
+    else rows.forEach((item) => state.compare.delete(item.id));
+    renderCatalog();
+  });
+  byId("compareButton").addEventListener("click", openCompare);
+  byId("compareClose").addEventListener("click", () =>
+    byId("compareDialog").close(),
+  );
+}
+
+// ===================== マイタスク（レビュー・承認待ち） =====================
+
+const TASK_ACTIONS = {
+  review: [
+    ["review_ok", "レビューOK"],
+    ["send_back", "差し戻し"],
+  ],
+  approval: [
+    ["approve", "承認・公開"],
+    ["send_back", "差し戻し"],
+  ],
+  fix: [["submit", "レビュー再依頼"]],
+};
+
+async function loadTasks() {
+  const panel = byId("tasksPanel");
+  if (!panel) return;
+  try {
+    state.tasks = await apiV1("/api/v1/tasks");
+    renderTasks();
+  } catch {
+    panel.hidden = true;
+  }
+}
+
+function renderTasks() {
+  const panel = byId("tasksPanel");
+  const list = byId("taskList");
+  if (!panel || !list) return;
+  panel.hidden = false;
+  byId("taskCount").textContent = `${state.tasks.tasks.length}件`;
+  if (!state.tasks.tasks.length) {
+    list.innerHTML = `<p class="emptyCell">対応待ちのタスクはありません。</p>`;
+    return;
+  }
+  list.innerHTML = state.tasks.tasks
+    .map((task) => {
+      const buttons = (TASK_ACTIONS[task.task_type] || [])
+        .map(
+          ([action, label]) =>
+            `<button type="button" class="rowButton" data-task-action="${action}" data-task-id="${escapeHtml(task.record_id)}">${label}</button>`,
+        )
+        .join("");
+      return `<div class="taskRow">
+        <span class="wfBadge wf-${escapeHtml(task.state)}">${escapeHtml(WORKFLOW_LABELS[task.state] || task.state)}</span>
+        <strong>${escapeHtml(task.name)}</strong>
+        <span class="mono">${escapeHtml(task.record_id)}</span>
+        ${buttons}
+      </div>`;
+    })
+    .join("");
+}
+
+async function onTaskAction(event) {
+  const button = event.target.closest("button[data-task-action]");
+  if (!button) return;
+  const action = button.dataset.taskAction;
+  const id = button.dataset.taskId;
+  const reason = await askReason(
+    `${TRANSITION_LABELS[action] || action} — ${id}`,
+    `タスク「${id}」に「${TRANSITION_LABELS[action] || action}」を実行します。`,
+  );
+  if (reason === null) return;
+  try {
+    const result = await apiV1(
+      `/api/v1/entries/${encodeURIComponent(id)}/transitions`,
+      { method: "POST", body: { action, reason } },
+    );
+    showManageNotice(
+      `${id} を「${WORKFLOW_LABELS[result.state] || result.state}」にしました。`,
+      "success",
+    );
+    await Promise.all([loadManageEntries(), loadTasks()]);
+  } catch (error) {
+    showManageNotice(error.message);
+  }
+}
+
+// ===================== Webhook 管理 =====================
+
+const WEBHOOK_EVENT_LABELS = {
+  "entry.created": "作成",
+  "entry.updated": "更新",
+  "entry.deleted": "削除",
+  "entry.restored": "復元",
+  "entry.workflow_transition": "遷移",
+  "verification.completed": "検証完了",
+};
+
+async function loadWebhooks() {
+  const panel = byId("webhookPanel");
+  if (!panel) return;
+  try {
+    const data = await apiV1("/api/v1/webhooks");
+    state.webhooks = data.items || [];
+    renderWebhooks();
+  } catch {
+    panel.hidden = true;
+  }
+}
+
+function renderWebhooks() {
+  const rows = byId("webhookRows");
+  if (!rows) return;
+  byId("webhookCount").textContent = `${state.webhooks.length}件`;
+  if (!state.webhooks.length) {
+    rows.innerHTML = `<tr><td colspan="6" class="emptyCell">Webhook登録はありません。</td></tr>`;
+    return;
+  }
+  rows.innerHTML = state.webhooks
+    .map(
+      (hook) => `<tr>
+        <td>${escapeHtml(hook.name)}</td>
+        <td><a href="${safeUrl(hook.url)}" target="_blank" rel="noreferrer">${escapeHtml(hook.url)}</a></td>
+        <td>${escapeHtml((hook.events || []).map((e) => WEBHOOK_EVENT_LABELS[e] || e).join(", "))}</td>
+        <td>${hook.is_active ? "有効" : "無効"}</td>
+        <td>${escapeHtml(hook.last_delivery_status || "-")}${hook.last_delivery_at ? `<br><small>${escapeHtml(hook.last_delivery_at)}</small>` : ""}</td>
+        <td class="rowActions">
+          <button type="button" class="rowButton" data-wh-act="test" data-id="${escapeHtml(hook.id)}">テスト</button>
+          <button type="button" class="rowButton" data-wh-act="toggle" data-id="${escapeHtml(hook.id)}">${hook.is_active ? "停止" : "再開"}</button>
+          <button type="button" class="rowButton danger" data-wh-act="delete" data-id="${escapeHtml(hook.id)}">削除</button>
+        </td>
+      </tr>`,
+    )
+    .join("");
+}
+
+async function onWebhookAction(event) {
+  const button = event.target.closest("button[data-wh-act]");
+  if (!button) return;
+  const id = button.dataset.id;
+  const act = button.dataset.whAct;
+  if (act === "test") {
+    try {
+      const result = await apiV1(`/api/v1/webhooks/${encodeURIComponent(id)}/test`, {
+        method: "POST",
+      });
+      showWebhookNotice(`テスト配信: ${result.status}（delivery ${result.delivery_id}）`, "success");
+    } catch (error) {
+      showWebhookNotice(error.message);
+    }
+    await loadWebhooks();
+    return;
+  }
+  if (act === "toggle") {
+    const hook = state.webhooks.find((item) => item.id === id);
+    if (!hook) return;
+    const reason = await askReason(
+      `${hook.is_active ? "停止" : "再開"} — ${hook.name}`,
+      `Webhook「${hook.name}」を${hook.is_active ? "停止" : "再開"}します。`,
+    );
+    if (reason === null) return;
+    try {
+      await apiV1(`/api/v1/webhooks/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: { reason, is_active: !hook.is_active },
+      });
+      showWebhookNotice(`${hook.name} を${hook.is_active ? "停止" : "再開"}しました。`, "success");
+      await loadWebhooks();
+    } catch (error) {
+      showWebhookNotice(error.message);
+    }
+    return;
+  }
+  if (act === "delete") {
+    const hook = state.webhooks.find((item) => item.id === id);
+    const reason = await askReason(
+      `Webhook削除 — ${id}`,
+      `Webhook「${hook ? hook.name : id}」を削除します（監査ログは残ります）。`,
+    );
+    if (reason === null) return;
+    try {
+      await apiV1(
+        `/api/v1/webhooks/${encodeURIComponent(id)}?reason=${encodeURIComponent(reason)}`,
+        { method: "DELETE" },
+      );
+      showWebhookNotice("Webhookを削除しました。", "success");
+      await loadWebhooks();
+    } catch (error) {
+      showWebhookNotice(error.message);
+    }
+  }
+}
+
+function showWebhookNotice(message, kind = "error") {
+  const notice = byId("webhookNotice");
+  if (!notice) return;
+  notice.textContent = message;
+  notice.className = `manageNotice ${kind === "success" ? "success" : "error"}`;
+  notice.hidden = false;
+}
+
+async function submitWebhookForm(event) {
+  event.preventDefault();
+  const form = event.target;
+  const events = Array.from(form.elements)
+    .filter((element) => element.name === "events" && element.checked)
+    .map((element) => element.value);
+  if (!events.length) {
+    showWebhookNotice("イベントを1つ以上選択してください。");
+    return;
+  }
+  const payload = {
+    name: form.name.value.trim(),
+    url: form.url.value.trim(),
+    events,
+    reason: form.reason.value.trim(),
+  };
+  if (form.secret.value.trim()) payload.secret = form.secret.value.trim();
+  try {
+    const created = await apiV1("/api/v1/webhooks", { method: "POST", body: payload });
+    const secretNote = created.secret
+      ? ` 署名シークレット（この一度きり）: ${created.secret}`
+      : "";
+    showWebhookNotice(`登録しました（${created.id}）。${secretNote}`, "success");
+    form.reset();
+    await loadWebhooks();
+  } catch (error) {
+    showWebhookNotice(error.message);
+  }
+}
+
+function showOpenApiNotice(message, kind = "error") {
+  const notice = byId("openApiNotice");
+  if (!notice) return;
+  notice.textContent = message;
+  notice.className = `manageNotice ${kind === "success" ? "success" : "error"}`;
+  notice.hidden = false;
+}
+
+async function submitOpenApiForm(event) {
+  event.preventDefault();
+  const form = event.target;
+  let spec;
+  try {
+    spec = JSON.parse(form.spec.value);
+  } catch {
+    showOpenApiNotice("OpenAPI のJSONが解析できません。構文を確認してください。");
+    return;
+  }
+  try {
+    const result = await apiV1("/api/v1/import/openapi", {
+      method: "POST",
+      body: {
+        name: form.name.value.trim(),
+        spec,
+        reason: form.reason.value.trim(),
+      },
+    });
+    const created = result.created.length;
+    const skipped = result.skipped_duplicates.length;
+    const errors = (result.errors || []).join(" / ");
+    showOpenApiNotice(
+      `下書き ${created}件を生成しました（重複スキップ ${skipped}件）${errors ? `。注意: ${errors}` : ""}。`,
+      created ? "success" : "error",
+    );
+    form.reset();
+    await loadManageEntries();
+  } catch (error) {
+    showOpenApiNotice(error.message);
+  }
+}
+
+function wireWebhooks() {
+  const panel = byId("webhookPanel");
+  if (!panel) return;
+  byId("webhookRows").addEventListener("click", onWebhookAction);
+  byId("webhookForm").addEventListener("submit", submitWebhookForm);
+  byId("openApiForm").addEventListener("submit", submitOpenApiForm);
+}
+
 function initManage() {
   const manageRows = byId("manageRows");
   if (!manageRows) return;
+  wireCompareUI();
   byId("catalogRows").addEventListener("click", (event) => {
     const button = event.target.closest("button[data-try-url]");
     if (button) runTryIt(button.dataset.tryUrl, button.dataset.tryId, button);
@@ -1368,6 +1759,8 @@ function initManage() {
   byId("entryForm").addEventListener("submit", submitEntryForm);
   byId("manageReload").addEventListener("click", loadManageEntries);
   byId("auditReload").addEventListener("click", loadAudit);
+  byId("taskList").addEventListener("click", onTaskAction);
+  wireWebhooks();
   byId("manageStateFilter").addEventListener("change", renderManage);
   byId("manageSearch").addEventListener("input", () => {
     // Keyword filtering is server-side; debounce the reload lightly.
@@ -1428,6 +1821,8 @@ function setView(view) {
   if (view === "manage" && !state.manage.loaded) {
     loadManageEntries();
     loadAudit();
+    loadTasks();
+    loadWebhooks();
   }
   window.scrollTo(0, 0);
 }

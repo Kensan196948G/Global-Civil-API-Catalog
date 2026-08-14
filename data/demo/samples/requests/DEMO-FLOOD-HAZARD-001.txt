@@ -1,0 +1,2 @@
+curl -sS "https://example.test/demo/flood/api/v1/zones?pref=demo" \
+  -H "Authorization: Bearer <デモ用APIキー>"

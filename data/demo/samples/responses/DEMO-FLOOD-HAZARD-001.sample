@@ -1,0 +1,5 @@
+{
+  "type": "FeatureCollection",
+  "note": "デモ用の架空洪水浸水想定区域（GeoJSON）。実在区域ではありません。",
+  "features": []
+}

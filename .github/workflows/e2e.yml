@@ -1,0 +1,101 @@
+name: e2e
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  static-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install E2E dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest pytest-playwright
+          python -m playwright install --with-deps chromium
+      - name: Run read-only UI E2E (demo dataset)
+        run: python -m pytest -m e2e tests/e2e/test_readonly_ui.py
+
+  fullstack:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:14-3.4
+        env:
+          POSTGRES_USER: catalog_demo
+          POSTGRES_PASSWORD: catalog_demo_pw
+          POSTGRES_DB: catalog_demo
+        ports:
+          - 55435:5432
+        options: >-
+          --health-cmd "pg_isready -U catalog_demo -d catalog_demo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      CATALOG_DATABASE_URL: postgresql+psycopg://catalog_demo:catalog_demo_pw@127.0.0.1:55435/catalog_demo
+      CATALOG_DEMO_SEED: "1"
+      CATALOG_ENV: development
+      CATALOG_BASE_URL: http://127.0.0.1:49331
+      E2E_FULLSTACK_URL: http://127.0.0.1:49331
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[db]" pytest pytest-playwright
+          python -m playwright install --with-deps chromium
+      - name: Enable PostGIS
+        run: |
+          python - <<'PY'
+          from sqlalchemy import create_engine, text
+          engine = create_engine("${{ env.CATALOG_DATABASE_URL }}")
+          with engine.begin() as conn:
+              conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis"))
+          PY
+      - name: Apply migrations
+        run: python -m alembic upgrade head
+      - name: Seed fictional demo data
+        run: python scripts/seed_demo_data.py
+      - name: Generate demo export artifacts
+        run: |
+          CATALOG_DATA_DIR=data/demo CATALOG_EXPORT_DIR=export-demo \
+            python scripts/export_markdown.py
+      - name: Start webhook echo + API + WebUI
+        run: |
+          nohup python scripts/demo_webhook_echo.py --port 49339 > /tmp/echo.log 2>&1 &
+          nohup python -m uvicorn web.api_v1:app --host 127.0.0.1 --port 49332 \
+            > /tmp/api.log 2>&1 &
+          CATALOG_API_UPSTREAM=http://127.0.0.1:49332 \
+          CATALOG_DATA_DIR=data/demo \
+          CATALOG_EXPORT_DIR=export-demo \
+          nohup python web/server.py --host 127.0.0.1 --port 49331 \
+            > /tmp/web.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -sS http://127.0.0.1:49331/api/health >/dev/null 2>&1; then
+              if curl -sS http://127.0.0.1:49331/api/v1/health >/dev/null 2>&1; then
+                break
+              fi
+            fi
+            sleep 0.5
+          done
+          curl -sS http://127.0.0.1:49331/api/v1/health
+          echo
+          curl -sS http://127.0.0.1:49339/webhook-echo
+          echo
+      - name: Run full-stack workflow E2E
+        run: python -m pytest -m e2e tests/e2e/test_workflow_fullstack.py
+      - name: Show stack logs on failure
+        if: failure()
+        run: |
+          echo "=== web ==="; tail -50 /tmp/web.log || true
+          echo "=== api ==="; tail -50 /tmp/api.log || true
+          echo "=== echo ==="; tail -50 /tmp/echo.log || true

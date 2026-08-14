@@ -1,7 +1,14 @@
 /* Service worker: read-only offline cache for the catalog UI and data.
  * Writes (/auth/*, /api/v1/*) are never cached. */
 const CACHE = "gc-api-catalog-v1";
-const CORE = ["/", "/static/index.html", "/static/app.js", "/static/styles.css"];
+const CORE = [
+  "/",
+  "/static/index.html",
+  "/static/app.js",
+  "/static/styles.css",
+  "/vendor/leaflet/leaflet.js",
+  "/vendor/leaflet/leaflet.css",
+];
 const DATA = [
   "/api/catalog",
   "/api/summary",

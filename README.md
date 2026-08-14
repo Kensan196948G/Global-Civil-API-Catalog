@@ -153,6 +153,12 @@ flowchart TD
 | 📚 API台帳              | 検索・絞り込み・スコア比較と各APIの詳細・接続情報                                                                                                                                                                                             |
 | 🗺️ 地理空間ライブマップ | OpenStreetMap のタイルを実接続して表示。ベースマップは OSM 標準（OSM-TILE-001）／Humanitarian HOT（OSM-HOT）／CyclOSM（OSM-CYCLOSM）／地理院 淡色・標準 から選択。ハザード等のカタログタイルは重ね合わせレイヤとして透過度調整つきでオン/オフ |
 | 📤 成果物エクスポート   | Markdown / CSV / JSON の生成・ダウンロード                                                                                                                                                                                                    |
+| ⚖ 採用候補比較          | API台帳で複数候補を選択し、スコア・利用条件・接続情報を横並びで比較                                                                                                                                                                           |
+| 📥 OpenAPI インポート   | OpenAPI 3.x のJSONからエントリ候補を自動生成し、重複検出つきで下書き（レビューキュー）へ投入                                                                                                                                                 |
+| 🔔 マイタスク           | ロール別のレビュー・承認・差し戻し対応タスクを一覧表示し、その場でワークフロー操作可能                                                                                                                                                       |
+| 🕸 Webhook 通知          | エントリ作成・更新・削除・復元・ワークフロー遷移を外部URLへHMAC署名付きで通知（管理者が登録・テスト・停止可能）                                                                                                                                |
+| 🧾 監査CSV出力          | 監査ログをCSVで一括出力（レビュー証跡・監査資料用）                                                                                                                                                                                            |
+| 🖨 印刷用帳票            | 全APIの帳票HTMLを生成し、ブラウザの「印刷→PDFに保存」で帳票化                                                                                                                                                                                  |
 
 ```mermaid
 flowchart LR
@@ -189,6 +195,7 @@ flowchart LR
 | `export/接続優先度.md`         | 優先順位とリスク                 |
 | `export/接続検証結果.md`       | 接続確認の履歴                   |
 | `export/本格利用候補.md`       | 後続システムで使う候補           |
+| `export/API台帳_帳票.html`     | 印刷・PDF化用の全API帳票         |
 | `export/api_catalog.csv`       | 表計算・BI向け一覧               |
 | `export/catalog_metadata.json` | 本番台帳の取込元、件数、ハッシュ |
 
@@ -200,8 +207,35 @@ Web UIの `Exports` では、各成果物を画面で開くか、ファイルと
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 📚 台帳カバレッジ     | 登録50件・検証結果30件。接続検証済ステータスは7件、本格利用候補は3件のみ。多くのデータは今後の検証待ち                                                                                                                                                                                                                                                                                                                                                                       |
 | 🔑 認証・アクセス制御 | 静的 Web UI（`web/server.py`）自体はログイン機構を持たず、社内 LAN + 外部公開時は Cloudflare Access（One-Time PIN）で保護する。API v1 レイヤ（`web/api_v1.py`）はログイン認証 + 5 ロール RBAC を実装済みで、書込系（登録・更新・論理削除）は認証必須。認証方式は既定で**ローカルユーザー/パスワード**（`scripts/create_local_user.py` で管理・5回失敗で15分ロック）、`CATALOG_AUTH_MODE=oidc` 設定時のみ Entra ID OIDC（詳細: `docs/entra-id-setup.md`） |
-| 🧪 テスト網羅性       | 106件のテストを実装（DB 依存テストは CI の PostgreSQL でも実行）。コネクタ単位のカバレッジは限定的。E2E は未導入                                                                                                                                                                                                                                                                                                                                     |
+| 🧪 テスト網羅性       | 約200件のテストを実装（DB 依存テストは CI の PostgreSQL でも実行、Playwright E2E は専用 CI ジョブで実行）。コネクタ単位のカバレッジは限定的                                                                                                                                                                                                                                            |
 | 🔍 静的解析           | CI に lint (ruff)・型チェック (mypy)・依存関係セキュリティスキャン (pip-audit) を追加済み                                                                                                                                                                                                                                                                                                                                               |
+
+## 🧪 MVP / デモ環境（Prototype）
+
+関係者レビュー用に、**架空ダミーデータのみ**で動く MVP 環境を用意しています。
+本番データ・本番DB・実在企業/個人情報は一切使っていません（全値が `デモ用（架空）` と明示）。
+
+| 項目 | 内容 |
+| --- | --- |
+| デモデータ | `data/demo/api_catalog.json`（8件・全ステータス網羅）、`verification_results.json`（成功/警告/失敗/スキップの10件）、`workflow_states.json`（draft/in_review/pending_approval/rejected/published） |
+| デモユーザー | `demo-admin` / `demo-editor` / `demo-verifier` / `demo-approver` / `demo-viewer`（パスワードはすべて `DemoPassw0rd!2026`。デモ専用・本番禁止） |
+| Webhook | `http://127.0.0.1:49339/webhook-echo` へイベント配信（配信履歴は `data/demo/webhook_deliveries.jsonl`） |
+| 主なデモフロー | ログイン → マイタスク確認 → 新規登録（draft）→ レビュー依頼 → レビューOK → 承認・公開 → 監査CSV出力 → Webhook配信確認 |
+| 追加デモ機能 | 採用候補比較、OpenAPI インポート（下書き生成＋重複検出）、印刷用帳票（PDF化）、監査CSV、キーワード検索強化 |
+
+### 起動（ローカル）
+
+```bash
+bash scripts/run_demo_stack.sh start   # Postgres + api_v1 + WebUI + webhook echo
+# WebUI:  http://127.0.0.1:49331  （demo-admin / DemoPassw0rd!2026）
+# API:    http://127.0.0.1:49332/api/v1/health
+bash scripts/run_demo_stack.sh stop    # 停止（デモ用コンテナ/プロセスのみ）
+```
+
+### 公開URL（MVP用サブドメイン＋規定ドメイン）
+
+- 本番: `https://api.mirai-dx-platform.com`（既存）
+- MVP/Prototype: `https://gc-api-catalog-mvp.mirai-dx-platform.com`（Cloudflare Tunnel＋Access。本番と同じ許可ポリシーで保護）
 
 ## 📌 関連ドキュメント
 

@@ -1,0 +1,9 @@
+{
+  "area": "デモ県デモ市（架空）",
+  "forecast_at": "2026-08-14T09:00:00+09:00",
+  "temperature_c": 31.5,
+  "precipitation_mm": 0.0,
+  "wind_ms": 4.2,
+  "alert": null,
+  "note": "すべて架空のデモデータです。"
+}

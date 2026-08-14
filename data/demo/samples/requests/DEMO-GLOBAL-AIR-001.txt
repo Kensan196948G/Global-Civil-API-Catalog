@@ -1,0 +1,2 @@
+curl -sS "https://example.test/demo/air/api/v1/measurements?city=Tokyo" \
+  -H "X-Api-Key: <デモ用APIキー>"

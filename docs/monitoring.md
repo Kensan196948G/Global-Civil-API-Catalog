@@ -12,6 +12,8 @@
 | 外部公開 | `curl -s -o /dev/null -w '%{http_code}' https://api.mirai-dx-platform.com/api/health` | 302（Access ログインへリダイレクト） |
 | 週次検証 | GitHub Actions `scheduled-verify`（毎週月曜 02:00 UTC） | 検証 PR が作成される |
 | 台帳データ鮮度 | `python scripts/validate_catalog.py` | WARNING が無い（180日超の未確認データ無し） |
+| Webhook 配信 | API v1 の Webhook 管理画面（`last_delivery_status` / `failure_count`） | 直近配信が HTTP 2xx または未設定。`failure_count` 増加時は宛先URL・署名を確認 |
+| E2E 回帰 | GitHub Actions `e2e`（Playwright: 静的UI + フルスタック承認フロー） | PR/merge で成功 |
 
 ## 2. ログ確認
 
@@ -30,6 +32,7 @@ journalctl --user -u gc-api-catalog-cloudflared -n 100 --no-pager
 1. 週次検証失敗時: `scheduled-verify` から GitHub Issue（ラベル `verification-alert`）を自動起票
 2. ヘルスチェック失敗時: cron + メール/Teams 通知（HENNGE/SharePoint 連携は将来）
 3. データ鮮度警告: `validate_catalog.py` の WARNING を CI で検知
+4. Webhook 配信失敗: 管理画面の `last_delivery_status` / `failure_count` を定期確認し、連続失敗時は購読を停止・再発行（MVP 段階ではメール/Teams 通知は未導入）
 
 即時運用では `python scripts/health_check.py` を cron で毎分実行し、exit code を監視する。失敗時に通知する仕組み（メール/Teams）は次のフェーズで導入する。
 

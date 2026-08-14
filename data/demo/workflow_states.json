@@ -1,0 +1,10 @@
+{
+  "DEMO-RIVER-LEVEL-001": "published",
+  "DEMO-WEATHER-FORECAST-001": "published",
+  "DEMO-MAP-TILE-001": "published",
+  "DEMO-FLOOD-HAZARD-001": "in_review",
+  "DEMO-LANDSLIDE-001": "draft",
+  "DEMO-US-WATER-001": "pending_approval",
+  "DEMO-GLOBAL-AIR-001": "rejected",
+  "DEMO-3D-CITY-001": "published"
+}

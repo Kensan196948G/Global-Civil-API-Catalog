@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-EXPORT_DIR = ROOT / "export"
+DATA_DIR = ROOT / os.environ.get("CATALOG_DATA_DIR", "data")
+EXPORT_DIR = ROOT / os.environ.get("CATALOG_EXPORT_DIR", "export")
 
 CATALOG_PATH = DATA_DIR / "api_catalog.json"
 CATALOG_METADATA_PATH = DATA_DIR / "catalog_metadata.json"
@@ -59,6 +60,7 @@ STATUS_VALUES = {
     "本格利用候補",
     "保留",
     "除外",
+    "利用終了",
 }
 TRUST_RANK_VALUES = {"A", "B", "C", "D", "E"}
 VERIFICATION_RESULT_VALUES = {"success", "warning", "failure", "skipped"}

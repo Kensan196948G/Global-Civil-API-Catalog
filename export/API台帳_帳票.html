@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>API台帳 帳票（production）</title>
+  <style>body { font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; margin: 24px; color: #1b1f23; } h1 { border-bottom: 3px solid #2563eb; padding-bottom: 8px; } .meta { color: #57606a; font-size: 13px; } .demoBanner { background: #fff3cd; border: 1px solid #e0a800; padding: 8px 12px; border-radius: 6px; } .entry { page-break-inside: avoid; margin: 24px 0; } .entry h2 { font-size: 16px; margin: 0 0 8px; } .mono { font-family: monospace; font-size: 12px; color: #57606a; } table { border-collapse: collapse; width: 100%; font-size: 12px; } th, td { border: 1px solid #d0d7de; padding: 4px 8px; text-align: left; vertical-align: top; } th { width: 140px; background: #f6f8fa; } a { color: #0969da; word-break: break-all; } @media print { body { margin: 0; } a { color: inherit; text-decoration: none; } }</style>
+</head>
+<body>
+  <h1>API・公開データ台帳 帳票</h1>
+  <p class="meta">データ状態: production ／ 取込元: claude-design-bundle ／ 取込日: 2026-07-04 ／ 登録: 50件 ／ 検証: 30件</p>
+  
+  <p class="meta">印刷: ブラウザの「印刷 → PDFに保存」で出力できます。生成: 2026-08-14</p>
+  <section class="entry">
+  <h2>地理院標高タイル <span class="mono">GSI-ELEVATION-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>地形 / 標高</td></tr>
+    <tr><th>提供元</th><td>国土地理院（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, DEM, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>出典表記が必要。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>実装接続済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>93 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:35+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>ドキュメント</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>利用説明</th><td>候補地の標高、周辺地形、概略勾配の把握に使います。造成、排水、災害リスクの初期確認に役立ちます。</td></tr>
+    <tr><th>注意点・リスク</th><td>測地成果と欠損値の扱いを明示する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>ハザードマップ洪水タイル <span class="mono">GSI-HAZARD-FLOOD-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 洪水</td></tr>
+    <tr><th>提供元</th><td>国土地理院/国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>ハザードマップポータルの利用条件と出典表記に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>実装接続済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>93 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:48+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://disaportal.gsi.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html</td></tr>
+    <tr><th>利用説明</th><td>洪水浸水想定をWeb地図上に重ね、候補地や現場周辺のリスクを直感的に確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>タイルなしの404を正常扱いする場合がある。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>ハザードマップ土砂災害タイル <span class="mono">GSI-HAZARD-LANDSLIDE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 土砂災害</td></tr>
+    <tr><th>提供元</th><td>国土地理院/国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>ハザードマップポータルの利用条件と出典表記に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:48+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://disaportal.gsi.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>正式レイヤIDの確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>ハザードマップ高潮タイル <span class="mono">GSI-HAZARD-STORM-SURGE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 高潮</td></tr>
+    <tr><th>提供元</th><td>国土地理院/国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>ハザードマップポータルの利用条件と出典表記に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:49+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://disaportal.gsi.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>正式レイヤIDの確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>ハザードマップ津波タイル <span class="mono">GSI-HAZARD-TSUNAMI-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 津波</td></tr>
+    <tr><th>提供元</th><td>国土地理院/国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>ハザードマップポータルの利用条件と出典表記に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:49+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://disaportal.gsi.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://disaportal.gsi.go.jp/hazardmapportal/hazardmap/copyright/opendata.html</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>正式レイヤIDの確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>地理院淡色地図タイル <span class="mono">GSI-TILE-PALE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>地図 / ベースマップ</td></tr>
+    <tr><th>提供元</th><td>国土地理院（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>出典表記が必要。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続検証済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>84 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:34+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>ドキュメント</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>利用説明</th><td>背景地図、位置確認、現地概況の把握に利用します。Web地図や台帳画面のベースレイヤとして扱いやすいデータです。</td></tr>
+    <tr><th>注意点・リスク</th><td>背景図用途では視認性評価が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>地理院写真タイル <span class="mono">GSI-TILE-PHOTO-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>地図 / 航空写真</td></tr>
+    <tr><th>提供元</th><td>国土地理院（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, JPEG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>出典表記が必要。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続検証済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>84 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:34+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>ドキュメント</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>利用説明</th><td>背景地図、位置確認、現地概況の把握に利用します。Web地図や台帳画面のベースレイヤとして扱いやすいデータです。</td></tr>
+    <tr><th>注意点・リスク</th><td>撮影時期の差異に注意。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>地理院標準地図タイル <span class="mono">GSI-TILE-STD-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>地図 / ベースマップ</td></tr>
+    <tr><th>提供元</th><td>国土地理院（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>出典「国土地理院」または「地理院タイル」の明示が必要。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>本格利用候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>100 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:33+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>ドキュメント</th><td>https://maps.gsi.go.jp/development/ichiran.html</td></tr>
+    <tr><th>利用説明</th><td>国内案件の共通ベースマップとして最優先で利用します。現場位置、候補地、リスクレイヤを重ねる土台になります。</td></tr>
+    <tr><th>注意点・リスク</th><td>個別タイルごとの出典条件を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>地理院Vector <span class="mono">GSI-VECTOR-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>地形 / ベクトルタイル</td></tr>
+    <tr><th>提供元</th><td>国土地理院（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Vector Tile, PBF</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>出典表記が必要。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:36+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://maps.gsi.go.jp/vector/</td></tr>
+    <tr><th>ドキュメント</th><td>https://maps.gsi.go.jp/vector/</td></tr>
+    <tr><th>利用説明</th><td>標高、地形、勾配、地盤・施工条件の初期確認に利用します。候補地比較や危険箇所の一次把握に向きます。</td></tr>
+    <tr><th>注意点・リスク</th><td>実験的提供範囲の確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>海上保安庁 海しる <span class="mono">JCG-UMISHIRU-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>海象 / 海洋情報</td></tr>
+    <tr><th>提供元</th><td>海上保安庁（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, 地図, データ</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>海しるの利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 50</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.msil.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.msil.go.jp/</td></tr>
+    <tr><th>利用説明</th><td>海洋、波浪、潮位などを確認し、港湾・海洋土木の施工判断や安全確認に利用します。観測地点と利用条件を確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>API提供範囲と利用条件の確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>気象庁 アメダスJSON <span class="mono">JMA-AMEDAS-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>気象 / 観測</td></tr>
+    <tr><th>提供元</th><td>気象庁（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>JSON</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>気象庁ホームページの利用規約に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>短周期</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:53+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.jma.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.jma.go.jp/bosai/amedas/</td></tr>
+    <tr><th>利用説明</th><td>天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。</td></tr>
+    <tr><th>注意点・リスク</th><td>URL時刻生成と仕様変更リスクに注意。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>気象庁 地震情報 <span class="mono">JMA-EARTHQUAKE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>気象 / 地震</td></tr>
+    <tr><th>提供元</th><td>気象庁（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>XML, JSON相当</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>気象庁ホームページの利用規約に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>79 / 80</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.jma.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.jma.go.jp/bosai/map.html#contents=earthquake_map</td></tr>
+    <tr><th>利用説明</th><td>天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。</td></tr>
+    <tr><th>注意点・リスク</th><td>機械取得方法と再配信条件を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>気象庁 天気予報JSON <span class="mono">JMA-FORECAST-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>気象 / 予報</td></tr>
+    <tr><th>提供元</th><td>気象庁（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>JSON</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>気象庁ホームページの利用規約に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>定時</td></tr>
+    <tr><th>接続状態</th><td>本格利用候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>94 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:53+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.jma.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.jma.go.jp/bosai/forecast/</td></tr>
+    <tr><th>利用説明</th><td>施工可否、作業計画、現場安全確認に使う天気予報データです。地域コードを指定して予報情報を取得します。</td></tr>
+    <tr><th>注意点・リスク</th><td>公式API仕様ではない可能性があるため仕様変更リスクを明記する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>気象庁 台風情報 <span class="mono">JMA-TYPHOON-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>気象 / 台風</td></tr>
+    <tr><th>提供元</th><td>気象庁（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>JSON相当, XML相当</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>気象庁ホームページの利用規約に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>79 / 80</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.jma.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.jma.go.jp/bosai/map.html#contents=typhoon</td></tr>
+    <tr><th>利用説明</th><td>天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。</td></tr>
+    <tr><th>注意点・リスク</th><td>海上工事用途では公式警報との照合が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>気象庁 警報注意報JSON <span class="mono">JMA-WARNING-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>気象 / 警報注意報</td></tr>
+    <tr><th>提供元</th><td>気象庁（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>JSON</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>気象庁ホームページの利用規約に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>88 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:54+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.jma.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.jma.go.jp/bosai/warning/</td></tr>
+    <tr><th>利用説明</th><td>天気、観測、警報、台風などを確認し、施工判断、現場安全、工程調整に利用します。仕様変更や速報性の扱いに注意します。</td></tr>
+    <tr><th>注意点・リスク</th><td>防災用途では最新性と責任範囲を明記する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 都市地域 <span class="mono">MLIT-KSJ-A09-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>都市 / 都市計画</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:39+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>都市計画、用途地域、規制確認の入口として利用します。詳細判断では自治体の公式資料と照合してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>都市計画の詳細制限は別資料確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 空港 <span class="mono">MLIT-KSJ-AIRPORT-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>交通 / 空港</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:42+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>高さ制限等は別資料が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 洪水浸水想定区域 <span class="mono">MLIT-KSJ-FLOOD-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 洪水</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続検証済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>91 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:43+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>河川管理者ごとの差分と想定規模を明示する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 土地利用細分メッシュ <span class="mono">MLIT-KSJ-L03-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>土地 / 土地利用</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>数年</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>76 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:38+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>土地利用やメッシュ情報を用いて、候補地の周辺特性や利用状況を把握します。計画初期の比較検討に向きます。</td></tr>
+    <tr><th>注意点・リスク</th><td>最新版と過年度の比較条件を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 土砂災害警戒区域 <span class="mono">MLIT-KSJ-LANDSLIDE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 土砂災害</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>88 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:44+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>自治体更新とのタイムラグに注意。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 行政区域 <span class="mono">MLIT-KSJ-N03-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>行政 / 行政区域</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>年次</td></tr>
+    <tr><th>接続状態</th><td>本格利用候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>95 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:37+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-2025.html</td></tr>
+    <tr><th>利用説明</th><td>住所・座標を行政区域にひも付ける基礎データです。案件管理、地域別集計、許認可確認の起点になります。</td></tr>
+    <tr><th>注意点・リスク</th><td>年度、測地系、属性定義の差分管理が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 港湾 <span class="mono">MLIT-KSJ-PORT-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>交通 / 港湾</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:42+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>港湾区域の定義差分を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 鉄道 <span class="mono">MLIT-KSJ-RAIL-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>交通 / 鉄道</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:41+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>近接施工判定には詳細な権利範囲確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 道路密度・道路延長 <span class="mono">MLIT-KSJ-ROAD-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>交通 / 道路</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>年次/随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:40+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>道路、鉄道、港湾、空港などの交通・物流条件を確認します。搬入ルート、近接施工、制限確認の初期調査に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>搬入ルート評価には道路幅員等の補助データが必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 高潮浸水想定 <span class="mono">MLIT-KSJ-STORM-SURGE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 高潮</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:47+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>沿岸・港湾案件で優先確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>国土数値情報 津波浸水想定 <span class="mono">MLIT-KSJ-TSUNAMI-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>防災 / 津波</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON, GML, SHP</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>国土数値情報の利用約款に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:46+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>ドキュメント</th><td>https://nlftp.mlit.go.jp/ksj/</td></tr>
+    <tr><th>利用説明</th><td>洪水、土砂災害、津波、高潮などの災害リスクを地図上で確認します。現場安全、候補地評価、防災計画の初期判断に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>対象地域と想定条件を明記する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>PLATEAU 3D都市モデル <span class="mono">MLIT-PLATEAU-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>3D都市 / 3D都市モデル</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>CityGML, 3D Tiles, GeoJSON</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>PLATEAUの利用規約と各データセットの条件に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>年次/随時</td></tr>
+    <tr><th>接続状態</th><td>接続検証済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 5</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>91 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:51+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.mlit.go.jp/plateau/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.mlit.go.jp/plateau/</td></tr>
+    <tr><th>利用説明</th><td>都市スケールの3D確認、BIM/CIM連携、景観・日影・都市空間検討の基礎データとして使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>ファイルサイズが大きいためメタデータ優先で扱う。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>PLATEAU SDK/ユースケースデータ <span class="mono">MLIT-PLATEAU-SDK-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>3D都市 / SDK</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>SDK, Sample Data</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>PLATEAUの利用規約に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 87</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:52+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.mlit.go.jp/plateau/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.mlit.go.jp/plateau/</td></tr>
+    <tr><th>利用説明</th><td>3D都市モデルやCityGMLを使い、景観、BIM/CIM、都市スケールの空間検討に利用します。大容量データのため範囲を絞って扱います。</td></tr>
+    <tr><th>注意点・リスク</th><td>SDKバージョンとの互換性を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>不動産情報ライブラリ 都市計画 <span class="mono">MLIT-REINFOLIB-CITYPLAN-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>都市 / 都市計画</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, GeoJSON, PBF</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>不動産情報ライブラリのAPI利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.reinfolib.mlit.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.reinfolib.mlit.go.jp/help/apiManual/</td></tr>
+    <tr><th>利用説明</th><td>都市計画、用途地域、規制確認の入口として利用します。詳細判断では自治体の公式資料と照合してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>規制確認には公式都市計画図との照合が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>不動産情報ライブラリ 地価公示 <span class="mono">MLIT-REINFOLIB-LANDPRICE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>不動産 / 地価</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, GeoJSON, PBF</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>不動産情報ライブラリのAPI利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>年次</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>59 / 60</td></tr>
+    <tr><th>最新検証</th><td>warning（2026-08-12T11:43:50+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.reinfolib.mlit.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.reinfolib.mlit.go.jp/help/apiManual/</td></tr>
+    <tr><th>利用説明</th><td>地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>APIキー要否と商用利用条件の確定が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>不動産情報ライブラリ 地価調査 <span class="mono">MLIT-REINFOLIB-LANDPRICE-LOCAL-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>不動産 / 地価</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, GeoJSON, PBF</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>不動産情報ライブラリのAPI利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>年次</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>57 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.reinfolib.mlit.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.reinfolib.mlit.go.jp/help/apiManual/</td></tr>
+    <tr><th>利用説明</th><td>地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>認証方式と利用制限を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>不動産情報ライブラリ 医療機関 <span class="mono">MLIT-REINFOLIB-MEDICAL-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>周辺 / 公共施設</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, GeoJSON, PBF</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>不動産情報ライブラリのAPI利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 2</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>55 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.reinfolib.mlit.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.reinfolib.mlit.go.jp/help/apiManual/</td></tr>
+    <tr><th>利用説明</th><td>学校、医療機関など周辺施設の把握に利用します。工事影響、生活環境、説明資料作成の補助情報です。</td></tr>
+    <tr><th>注意点・リスク</th><td>土木建設主要用途では優先度低。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>不動産情報ライブラリ 学校 <span class="mono">MLIT-REINFOLIB-SCHOOL-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>周辺 / 公共施設</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, GeoJSON, PBF</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>不動産情報ライブラリのAPI利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 2</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>55 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.reinfolib.mlit.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.reinfolib.mlit.go.jp/help/apiManual/</td></tr>
+    <tr><th>利用説明</th><td>学校、医療機関など周辺施設の把握に利用します。工事影響、生活環境、説明資料作成の補助情報です。</td></tr>
+    <tr><th>注意点・リスク</th><td>土木建設主要用途では優先度低。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>不動産情報ライブラリ 不動産取引価格 <span class="mono">MLIT-REINFOLIB-TRADE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>不動産 / 取引価格</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>API, JSON</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>不動産情報ライブラリのAPI利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>四半期等</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>57 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.reinfolib.mlit.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.reinfolib.mlit.go.jp/help/apiManual/</td></tr>
+    <tr><th>利用説明</th><td>地価、取引価格、周辺施設などを確認し、候補地評価や事業性検討の参考にします。利用条件とAPIキー要否を必ず確認してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>用途により個別地点情報の扱いに注意。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>川の防災情報 <span class="mono">MLIT-RIVER-DISASTER-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>河川 / 防災情報</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Web, 地図</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>提供元の利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>リアルタイム</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 77</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.river.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.river.go.jp/</td></tr>
+    <tr><th>利用説明</th><td>雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>スクレイピング前提にしない。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>水文水質データベース 流量 <span class="mono">MLIT-WATER-FLOW-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>河川 / 流量</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Web, CSV相当</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>提供元の利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>観測周期</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 77</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www1.river.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www1.river.go.jp/</td></tr>
+    <tr><th>利用説明</th><td>雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>取得容易性が未確認。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>水文水質データベース 水位 <span class="mono">MLIT-WATER-LEVEL-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>河川 / 水位</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Web, CSV相当</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>提供元の利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>観測周期</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 77</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www1.river.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www1.river.go.jp/</td></tr>
+    <tr><th>利用説明</th><td>雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>公式API形式と取得条件の確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>水文水質データベース 雨量 <span class="mono">MLIT-WATER-RAIN-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>河川 / 雨量</td></tr>
+    <tr><th>提供元</th><td>国土交通省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Web, CSV相当</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>提供元の利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>観測周期</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 77</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www1.river.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www1.river.go.jp/</td></tr>
+    <tr><th>利用説明</th><td>雨量、水位、流量、河川防災情報を確認し、出水リスクや河川工事の判断材料にします。リアルタイム性と公式発表の扱いを確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>公式API形式と取得条件の確認が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>環境省 大気汚染物質広域監視 <span class="mono">MOE-AIR-POLLUTION-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>環境 / 大気</td></tr>
+    <tr><th>提供元</th><td>環境省（government）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Web, CSV相当</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>提供元の利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>時間</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 77</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://soramame.env.go.jp/</td></tr>
+    <tr><th>ドキュメント</th><td>https://soramame.env.go.jp/</td></tr>
+    <tr><th>利用説明</th><td>大気、水質、環境監視などを確認し、環境影響や安全配慮の参考情報として利用します。公式データの取得条件を確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>機械取得方法を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>NASA Earthdata / FIRMS <span class="mono">NASA-FIRMS-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>衛星 / 災害/火災</td></tr>
+    <tr><th>提供元</th><td>NASA（government）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>API, GeoJSON, CSV</td></tr>
+    <tr><th>APIキー</th><td>required / api_key</td></tr>
+    <tr><th>利用条件</th><td>NASA FIRMSおよびEarthdataの利用条件に従う。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>保留</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>60 / 58</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://firms.modaps.eosdis.nasa.gov/</td></tr>
+    <tr><th>ドキュメント</th><td>https://firms.modaps.eosdis.nasa.gov/api/</td></tr>
+    <tr><th>利用説明</th><td>衛星観測、火災、災害関連データを使い、広域監視や災害初動の参考にします。APIキーと利用条件の確認が必要です。</td></tr>
+    <tr><th>注意点・リスク</th><td>APIキーが必要なため初期CIでは検証しない。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>NOAA Climate Data Online API <span class="mono">NOAA-CDO-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際気象 / 気候</td></tr>
+    <tr><th>提供元</th><td>NOAA/NCEI（government）</td></tr>
+    <tr><th>地域</th><td>US</td></tr>
+    <tr><th>データ形式</th><td>REST, JSON</td></tr>
+    <tr><th>APIキー</th><td>required / api_key</td></tr>
+    <tr><th>利用条件</th><td>NOAA CDO API利用条件に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>日次等</td></tr>
+    <tr><th>接続状態</th><td>保留</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>77 / 58</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.ncei.noaa.gov/cdo-web/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.ncei.noaa.gov/cdo-web/webservices/v2</td></tr>
+    <tr><th>利用説明</th><td>海外気象・気候データを使い、海外案件や比較研究の気象条件を確認します。User-AgentやAPIキー要件に注意します。</td></tr>
+    <tr><th>注意点・リスク</th><td>APIキーが必要なためCIではskipped扱い。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>NOAA NWS API <span class="mono">NOAA-NWS-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際気象 / 天気予報</td></tr>
+    <tr><th>提供元</th><td>NOAA/NWS（government）</td></tr>
+    <tr><th>地域</th><td>US</td></tr>
+    <tr><th>データ形式</th><td>REST, JSON-LD</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>NWS API利用条件とUser-Agent要件に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続検証済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>84 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:56+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.weather.gov/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.weather.gov/documentation/services-web-api</td></tr>
+    <tr><th>利用説明</th><td>米国の天気・予報APIとして、海外案件やAPI設計比較に使います。JSON-LDで地点情報から予報系データへ接続できます。</td></tr>
+    <tr><th>注意点・リスク</th><td>User-Agentに連絡先を含める運用を検討する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>NOWPHAS 港湾波浪情報 <span class="mono">NOWPHAS-WAVE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>海象 / 波浪</td></tr>
+    <tr><th>提供元</th><td>港湾空港技術研究所等（official）</td></tr>
+    <tr><th>地域</th><td>JP</td></tr>
+    <tr><th>データ形式</th><td>Web, CSV相当</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>提供元の利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>観測周期</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 50</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.mlit.go.jp/kowan/nowphas/</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.mlit.go.jp/kowan/nowphas/</td></tr>
+    <tr><th>利用説明</th><td>海洋、波浪、潮位などを確認し、港湾・海洋土木の施工判断や安全確認に利用します。観測地点と利用条件を確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>機械取得方法と再利用条件を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>OpenAQ API <span class="mono">OPENAQ-API-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際環境 / 大気</td></tr>
+    <tr><th>提供元</th><td>OpenAQ（official）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>REST, JSON</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>OpenAQの利用条件を確認する。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>時間</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://openaq.org/</td></tr>
+    <tr><th>ドキュメント</th><td>https://docs.openaq.org/</td></tr>
+    <tr><th>利用説明</th><td>海外・国際的な環境観測データを使い、大気環境や環境比較に利用します。APIバージョンと認証要件を確認してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>APIバージョンと認証要件を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>OpenTopography API <span class="mono">OPENTOPOGRAPHY-API-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際地形 / DEM</td></tr>
+    <tr><th>提供元</th><td>OpenTopography（official）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>REST, GeoTIFF</td></tr>
+    <tr><th>APIキー</th><td>unknown / unknown</td></tr>
+    <tr><th>利用条件</th><td>データセットごとのライセンスに従う。（商用: unknown）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>B / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>62 / 60</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://opentopography.org/</td></tr>
+    <tr><th>ドキュメント</th><td>https://opentopography.org/developers</td></tr>
+    <tr><th>利用説明</th><td>海外の標高・地形データを取得し、広域地形解析や比較研究に利用します。データセットごとのライセンスを確認します。</td></tr>
+    <tr><th>注意点・リスク</th><td>APIキー要否とデータセット別条件を確認する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>OpenStreetMap Overpass API <span class="mono">OSM-OVERPASS-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際地図 / OSM</td></tr>
+    <tr><th>提供元</th><td>OSM（foundation）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>Overpass QL, JSON, XML</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>Open Database Licenseとタイル/API利用ポリシーに従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>73 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:55+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.openstreetmap.org/</td></tr>
+    <tr><th>ドキュメント</th><td>https://wiki.openstreetmap.org/wiki/Overpass_API</td></tr>
+    <tr><th>利用説明</th><td>海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>高頻度アクセスは禁止。キャッシュと利用制限を守る。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>OSM Tile <span class="mono">OSM-TILE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際地図 / ベースマップ</td></tr>
+    <tr><th>提供元</th><td>OSM（foundation）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>XYZ Tile, PNG</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>OSM Tile Usage PolicyとODbLに従う。（商用: restricted）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 3</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>58 / 90</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://www.openstreetmap.org/</td></tr>
+    <tr><th>ドキュメント</th><td>https://operations.osmfoundation.org/policies/tiles/</td></tr>
+    <tr><th>利用説明</th><td>海外案件や国内データの補完に使う地図・地物データです。利用ポリシー、アクセス制限、ライセンスを確認してください。</td></tr>
+    <tr><th>注意点・リスク</th><td>本番用途では独自タイルまたは商用プロバイダ検討。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>Overture Maps <span class="mono">OVERTURE-MAPS-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際建物 / 建物/基盤地物</td></tr>
+    <tr><th>提供元</th><td>Overture Maps Foundation（foundation）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>Parquet, GeoParquet</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>Overture Mapsのデータライセンスに従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>随時</td></tr>
+    <tr><th>接続状態</th><td>調査中</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>71 / 77</td></tr>
+    <tr><th>最新検証</th><td>未検証（-）</td></tr>
+    <tr><th>公式URL</th><td>https://overturemaps.org/</td></tr>
+    <tr><th>ドキュメント</th><td>https://docs.overturemaps.org/</td></tr>
+    <tr><th>利用説明</th><td>海外の建物・基盤地物データを使い、都市分析や海外案件の初期調査に利用します。大容量データの抽出設計が必要です。</td></tr>
+    <tr><th>注意点・リスク</th><td>データ容量が大きいため抽出設計が必要。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>USGS Earthquake API <span class="mono">USGS-EARTHQUAKE-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際災害 / 地震</td></tr>
+    <tr><th>提供元</th><td>USGS（government）</td></tr>
+    <tr><th>地域</th><td>Global</td></tr>
+    <tr><th>データ形式</th><td>GeoJSON</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>USGS利用条件に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>リアルタイム</td></tr>
+    <tr><th>接続状態</th><td>接続候補</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>81 / 97</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:57+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://earthquake.usgs.gov/</td></tr>
+    <tr><th>ドキュメント</th><td>https://earthquake.usgs.gov/fdsnws/event/1/</td></tr>
+    <tr><th>利用説明</th><td>地震など国際的な災害データを使い、広域リスク把握や研究に利用します。国内公式情報とは用途を分けます。</td></tr>
+    <tr><th>注意点・リスク</th><td>国内地震情報とは用途を分ける。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section><section class="entry">
+  <h2>USGS Water Data APIs <span class="mono">USGS-WATER-001</span></h2>
+  <table>
+    <tr><th>カテゴリ</th><td>国際水文 / 水位/流量</td></tr>
+    <tr><th>提供元</th><td>USGS（government）</td></tr>
+    <tr><th>地域</th><td>US</td></tr>
+    <tr><th>データ形式</th><td>REST, JSON</td></tr>
+    <tr><th>APIキー</th><td>not_required / none</td></tr>
+    <tr><th>利用条件</th><td>USGS利用条件に従う。（商用: allowed）</td></tr>
+    <tr><th>更新頻度</th><td>短周期/日次</td></tr>
+    <tr><th>接続状態</th><td>接続検証済</td></tr>
+    <tr><th>信頼度 / 優先度</th><td>A / 4</td></tr>
+    <tr><th>事業適合 / 連携実装</th><td>84 / 100</td></tr>
+    <tr><th>最新検証</th><td>success（2026-08-12T11:43:56+00:00）</td></tr>
+    <tr><th>公式URL</th><td>https://www.usgs.gov/products/web-tools/apis</td></tr>
+    <tr><th>ドキュメント</th><td>https://www.usgs.gov/tools/usgs-water-data-apis</td></tr>
+    <tr><th>利用説明</th><td>米国の水位・流量データを取得し、海外水文データの比較、研究、サンプル実装に使います。</td></tr>
+    <tr><th>注意点・リスク</th><td>米国向け比較データとして利用する。</td></tr>
+    <tr><th>最終確認</th><td>2026-06-18</td></tr>
+  </table>
+</section>
+</body>
+</html>

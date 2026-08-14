@@ -15,14 +15,13 @@ from urllib.parse import parse_qs, quote, unquote, urlparse
 ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 DESIGN_HTML_PATH = Path(__file__).resolve().parent / "Global Civil API Catalog.html"
-DATA_DIR = ROOT / "data"
-EXPORT_DIR = ROOT / "export"
 
-# CSP allows Leaflet (unpkg.com), Google Fonts, and HTTPS tile images for the map UI.
+# CSP allows Google Fonts and HTTPS tile images for the map UI; Leaflet is
+# vendored under web/static/vendor so no third-party script origin is needed.
 _CSP = (
     "default-src 'self'; "
-    "script-src 'self' https://unpkg.com; "
-    "style-src 'self' https://unpkg.com https://fonts.googleapis.com; "
+    "script-src 'self'; "
+    "style-src 'self' https://fonts.googleapis.com; "
     "font-src 'self' https://fonts.gstatic.com; "
     "img-src 'self' data: https:; "
     "connect-src 'self'"
@@ -61,6 +60,16 @@ _json_cache: dict[str, tuple[float, object]] = {}
 _cache_lock = threading.Lock()
 
 
+def data_dir() -> Path:
+    """Directory with catalog JSON files; overridable for demo/E2E runs."""
+    return Path(os.environ.get("CATALOG_DATA_DIR", str(ROOT / "data")))
+
+
+def export_dir() -> Path:
+    """Directory with generated export artifacts; overridable for demo runs."""
+    return Path(os.environ.get("CATALOG_EXPORT_DIR", str(ROOT / "export")))
+
+
 def load_json(path: Path) -> Any:
     with path.open(encoding="utf-8") as file:
         return json.load(file)
@@ -79,17 +88,56 @@ def load_json_cached(path: Path) -> Any:
     return data
 
 
+_SEARCH_FIELDS = (
+    "id",
+    "name",
+    "sub_category",
+    "provider",
+    "region",
+    "official_url",
+    "document_url",
+    "endpoint_template",
+    "sample_endpoint",
+    "auth_type",
+    "license_note",
+    "commercial_use",
+    "update_frequency",
+    "connection_status",
+    "trust_rank",
+    "usage_summary",
+    "usage_notes",
+    "risk_note",
+    "adoption_reason",
+)
+
+
+def _search_haystack(item: dict) -> str:
+    parts = [str(item.get(field) or "") for field in _SEARCH_FIELDS]
+    parts += [str(value) for value in item.get("data_formats", [])]
+    parts += [str(value) for value in item.get("tags", [])]
+    parts += [str(value) for value in item.get("target_projects", [])]
+    return json.dumps(parts, ensure_ascii=False).lower()
+
+
 def filter_catalog(
     catalog: list[dict],
     keyword: str = "",
     category: str = "",
     status: str = "",
 ) -> list[dict]:
-    """Return catalog items matching all supplied filters."""
+    """Return catalog items matching all supplied filters.
+
+    Keyword search tokenizes on whitespace/commas and requires every token
+    to match somewhere in the entry (name, provider, tags, formats, notes,
+    URLs, ...).  A single ``JSON.stringify`` substring search could not find
+    entries by tag/format/note and made multi-word queries order-dependent.
+    """
     if keyword:
-        catalog = [
-            item for item in catalog if keyword in json.dumps(item, ensure_ascii=False).lower()
-        ]
+        tokens = [token for token in keyword.lower().replace(",", " ").split() if token]
+        if tokens:
+            catalog = [
+                item for item in catalog if all(token in _search_haystack(item) for token in tokens)
+            ]
     if category:
         catalog = [item for item in catalog if item["category"] == category]
     if status:
@@ -296,13 +344,13 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.handle_catalog(parse_qs(parsed.query))
             return
         if parsed.path == "/api/verification":
-            self.write_json(load_json_cached(DATA_DIR / "verification_results.json"))
+            self.write_json(load_json_cached(data_dir() / "verification_results.json"))
             return
         if parsed.path == "/api/summary":
             self.handle_summary()
             return
         if parsed.path == "/api/metadata":
-            self.write_json(load_json_cached(DATA_DIR / "catalog_metadata.json"))
+            self.write_json(load_json_cached(data_dir() / "catalog_metadata.json"))
             return
         if parsed.path == "/api/live-map":
             self.handle_live_map()
@@ -341,15 +389,15 @@ class CatalogHandler(SimpleHTTPRequestHandler):
             self.wfile.write(data)
 
     def handle_catalog(self, query: dict[str, list[str]]) -> None:
-        catalog = load_json_cached(DATA_DIR / "api_catalog.json")
+        catalog = load_json_cached(data_dir() / "api_catalog.json")
         keyword = (query.get("q", [""])[0] or "").lower()
         category = query.get("category", [""])[0]
         status = query.get("status", [""])[0]
         self.write_json(filter_catalog(catalog, keyword=keyword, category=category, status=status))
 
     def handle_summary(self) -> None:
-        catalog = load_json_cached(DATA_DIR / "api_catalog.json")
-        results = load_json_cached(DATA_DIR / "verification_results.json")
+        catalog = load_json_cached(data_dir() / "api_catalog.json")
+        results = load_json_cached(data_dir() / "verification_results.json")
         latest = latest_verification(results)
         summary = {
             "catalog_count": len(catalog),
@@ -373,13 +421,13 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         self.write_json(summary)
 
     def handle_live_map(self) -> None:
-        catalog = load_json_cached(DATA_DIR / "api_catalog.json")
-        results = load_json_cached(DATA_DIR / "verification_results.json")
+        catalog = load_json_cached(data_dir() / "api_catalog.json")
+        results = load_json_cached(data_dir() / "verification_results.json")
         self.write_json(live_map_payload(catalog, results))
 
     def handle_export_index(self) -> None:
         exports = []
-        for path in sorted(EXPORT_DIR.glob("*")):
+        for path in sorted(export_dir().glob("*")):
             if path.is_file():
                 exports.append(
                     {
@@ -395,8 +443,8 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         # catalog_metadata.json) so the design bundle can fetch live data instead of
         # relying on its embedded copies.
         filename = unquote(request_path.removeprefix("/data/"))
-        path = (DATA_DIR / filename).resolve()
-        if not path.is_relative_to(DATA_DIR.resolve()) or not path.exists():
+        path = (data_dir() / filename).resolve()
+        if not path.is_relative_to(data_dir().resolve()) or not path.exists():
             self.send_error(404)
             return
         data = path.read_bytes()
@@ -413,8 +461,8 @@ class CatalogHandler(SimpleHTTPRequestHandler):
         include_body: bool,
     ) -> None:
         filename = unquote(request_path.removeprefix("/exports/"))
-        path = (EXPORT_DIR / filename).resolve()
-        if not path.is_relative_to(EXPORT_DIR.resolve()) or not path.exists():
+        path = (export_dir() / filename).resolve()
+        if not path.is_relative_to(export_dir().resolve()) or not path.exists():
             self.send_error(404)
             return
         content_type = (

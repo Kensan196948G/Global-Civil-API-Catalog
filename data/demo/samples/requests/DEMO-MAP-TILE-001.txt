@@ -1,0 +1,1 @@
+curl -sS "https://example.test/demo/map/tiles/10/909/403.png" -o demo-tile.png
