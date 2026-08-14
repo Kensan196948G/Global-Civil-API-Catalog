@@ -232,10 +232,10 @@ bash scripts/run_demo_stack.sh start   # Postgres + api_v1 + WebUI + webhook ech
 bash scripts/run_demo_stack.sh stop    # 停止（デモ用コンテナ/プロセスのみ）
 ```
 
-### 公開URL（予定・作成後に更新）
+### 公開URL（MVP用サブドメイン＋規定ドメイン）
 
 - 本番: `https://api.mirai-dx-platform.com`（既存）
-- MVP/Prototype: `https://gc-api-catalog-mvp.mirai-dx-platform.com`（MVP用サブドメイン＋規定ドメイン）
+- MVP/Prototype: `https://gc-api-catalog-mvp.mirai-dx-platform.com`（Cloudflare Tunnel＋Access。本番と同じ許可ポリシーで保護）
 
 ## 📌 関連ドキュメント
 

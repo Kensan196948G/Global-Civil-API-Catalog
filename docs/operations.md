@@ -41,6 +41,7 @@ bash scripts/run_demo_stack.sh stop
 - Webhook配信履歴: `data/demo/webhook_deliveries.jsonl`（echo サーバーが追記）
 - E2E（フルスタック）: `E2E_FULLSTACK_URL=http://127.0.0.1:49331 python -m pytest -m e2e tests/e2e/test_workflow_fullstack.py`
 - E2E（静的UI・デモデータ）: `python -m pytest -m e2e tests/e2e/test_readonly_ui.py`
+- 公開URL: `https://gc-api-catalog-mvp.mirai-dx-platform.com`（Named Tunnel `gc-api-catalog-mvp` + Cloudflare Access。未認証は Access ログインへ 302）
 
 ---
 
