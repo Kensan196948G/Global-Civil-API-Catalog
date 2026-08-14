@@ -43,6 +43,14 @@ bash scripts/run_demo_stack.sh stop
 - E2E（静的UI・デモデータ）: `python -m pytest -m e2e tests/e2e/test_readonly_ui.py`
 - 公開URL: `https://gc-api-catalog-mvp.mirai-dx-platform.com`（Named Tunnel `gc-api-catalog-mvp` + Cloudflare Access。未認証は Access ログインへ 302）
 
+> ⚠️ 2026-08-14 事象: `cloudflared tunnel route dns gc-api-catalog-mvp ...` が CNAME を別トンネル ID へ向けることがあった（公開 URL が認証後に 404）。
+> 作成・変更後は DNS CNAME の content が `0c7cb966-3761-4a82-92d6-bf4180600a7c.cfargotunnel.com`（本トンネル）であることを必ず確認する。
+> ```bash
+> curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+>   "https://api.cloudflare.com/client/v4/zones/e375e651e49a40801a305b89e297bff0/dns_records?name=gc-api-catalog-mvp.mirai-dx-platform.com" \
+>   | python -m json.tool | rg 'content'
+> ```
+
 ---
 
 ## 🐧 Linux（本番 origin）
