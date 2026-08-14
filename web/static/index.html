@@ -297,6 +297,14 @@
             </div>
             <div class="tableToolbar">
               <strong id="catalogResultCount">0件</strong>
+              <button
+                type="button"
+                class="textButton"
+                id="compareButton"
+                disabled
+              >
+                ⚖ 比較する（0件選択）
+              </button>
               <span
                 >信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span
               >
@@ -305,6 +313,13 @@
               <table>
                 <thead>
                   <tr>
+                    <th class="compareCol" aria-label="比較選択">
+                      <input
+                        type="checkbox"
+                        id="compareAll"
+                        aria-label="一覧の全件を比較対象にする"
+                      />
+                    </th>
                     <th>ID</th>
                     <th>名称</th>
                     <th>カテゴリ</th>
@@ -598,6 +613,14 @@ L.tileLayer(
                 rel="noreferrer"
                 >export index</a
               >
+              <a
+                class="primaryButton"
+                id="printReportButton"
+                href="/exports/API台帳_帳票.html"
+                target="_blank"
+                rel="noreferrer"
+                >🖨 印刷用帳票（PDF化可）</a
+              >
             </div>
             <div id="exportList" class="exportGrid"></div>
             <button
@@ -612,6 +635,19 @@ L.tileLayer(
 
         <!-- ============ Manage (RBAC / workflow) ============ -->
         <div class="view" hidden data-view="manage">
+          <section id="tasksPanel" class="panel" hidden>
+            <div class="panelHeader">
+              <div>
+                <h2>マイタスク（レビュー・承認待ち）</h2>
+                <p>
+                  自分のロールに割り当てられた承認・レビュー・差し戻し対応の件数を表示します。
+                </p>
+              </div>
+              <span class="countPill" id="taskCount">0件</span>
+            </div>
+            <div id="taskList" class="list compactList"></div>
+          </section>
+
           <section id="manage" class="panel">
             <div class="panelHeader">
               <div>
@@ -849,12 +885,52 @@ L.tileLayer(
             </form>
           </section>
 
+          <section id="openApiPanel" class="panel" hidden>
+            <div class="panelHeader">
+              <div>
+                <h2>OpenAPI インポート</h2>
+                <p>
+                  OpenAPI 3.x の JSON からエントリ候補を自動生成し、下書き（レビューキュー）へ投入します（重複は自動検出）。
+                </p>
+              </div>
+            </div>
+            <div id="openApiNotice" class="manageNotice" hidden></div>
+            <form id="openApiForm" class="webhookForm">
+              <input
+                name="name"
+                placeholder="取込名（例: デモ気象API仕様）"
+                required
+              />
+              <input
+                name="reason"
+                placeholder="変更理由（必須）"
+                required
+              />
+              <textarea
+                name="spec"
+                rows="8"
+                placeholder='{ "openapi": "3.0.0", "info": { "title": "…" }, "paths": { … } }'
+                required
+              ></textarea>
+              <button type="submit" class="primaryButton">
+                インポートして下書き生成
+              </button>
+            </form>
+          </section>
+
           <section id="auditPanel" class="panel">
             <div class="panelHeader">
               <div>
                 <h2>監査ログ</h2>
                 <p>直近の変更履歴（append-only・改ざん不可）。</p>
               </div>
+              <a
+                class="textButton"
+                id="auditCsvLink"
+                href="/api/v1/audit/export.csv"
+                download="catalog_audit_log.csv"
+                >監査CSV出力</a
+              >
               <button type="button" class="textButton" id="auditReload">
                 ↻ 再読込
               </button>
@@ -872,6 +948,58 @@ L.tileLayer(
                   </tr>
                 </thead>
                 <tbody id="auditRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="webhookPanel" class="panel" hidden>
+            <div class="panelHeader">
+              <div>
+                <h2>Webhook 通知</h2>
+                <p>
+                  エントリ作成・更新・削除・ワークフロー遷移を外部URLへ通知します（HMAC署名付き）。
+                </p>
+              </div>
+              <span class="countPill" id="webhookCount">0件</span>
+            </div>
+            <div id="webhookNotice" class="manageNotice" hidden></div>
+            <form id="webhookForm" class="webhookForm">
+              <input
+                name="name"
+                placeholder="通知名（例: デモ用ローカル通知）"
+                required
+              />
+              <input
+                name="url"
+                type="url"
+                placeholder="https://example.com/webhook"
+                required
+              />
+              <div class="webhookEvents">
+                <label><input type="checkbox" name="events" value="entry.created" /> 作成</label>
+                <label><input type="checkbox" name="events" value="entry.updated" /> 更新</label>
+                <label><input type="checkbox" name="events" value="entry.deleted" /> 削除</label>
+                <label><input type="checkbox" name="events" value="entry.restored" /> 復元</label>
+                <label><input type="checkbox" name="events" value="entry.workflow_transition" /> 遷移</label>
+                <label><input type="checkbox" name="events" value="verification.completed" /> 検証完了</label>
+              </div>
+              <input name="secret" placeholder="署名シークレット（任意・返却は登録時のみ）" />
+              <input name="reason" placeholder="変更理由（必須）" required />
+              <button type="submit" class="primaryButton">登録</button>
+            </form>
+            <div class="tableWrap">
+              <table class="manageTable">
+                <thead>
+                  <tr>
+                    <th>名称</th>
+                    <th>URL</th>
+                    <th>イベント</th>
+                    <th>状態</th>
+                    <th>最終配信</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="webhookRows"></tbody>
               </table>
             </div>
           </section>
@@ -959,6 +1087,16 @@ L.tileLayer(
           <tbody id="versionRows"></tbody>
         </table>
       </div>
+    </dialog>
+
+    <dialog id="compareDialog">
+      <div class="dialogHead">
+        <h3>採用候補の比較</h3>
+        <button type="button" class="textButton" id="compareClose">
+          ✕ 閉じる
+        </button>
+      </div>
+      <div class="tableWrap" id="compareBody"></div>
     </dialog>
 
     <script
