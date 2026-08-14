@@ -221,6 +221,29 @@ def test_filter_catalog_no_match_returns_empty() -> None:
     assert result == []
 
 
+def test_filter_catalog_multi_token_keyword_and_tags() -> None:
+    catalog = [
+        {
+            "id": "A",
+            "name": "標準地図",
+            "category": "地図",
+            "tags": ["map", "tile"],
+            "connection_status": "本格利用候補",
+            "usage_notes": "出典表記必須",
+        },
+        {
+            "id": "B",
+            "name": "洪水ハザード",
+            "category": "防災",
+            "tags": ["flood"],
+            "connection_status": "接続候補",
+            "usage_notes": "要キー",
+        },
+    ]
+    assert filter_catalog(catalog, keyword="地図 tile") == [catalog[0]]
+    assert filter_catalog(catalog, keyword="flood, 要キー") == [catalog[1]]
+
+
 def test_filter_catalog_combined_filters() -> None:
     result = filter_catalog(_SAMPLE_CATALOG, category="地図", status="本格利用候補")
     assert len(result) == 1
