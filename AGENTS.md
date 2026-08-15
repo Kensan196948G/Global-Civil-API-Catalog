@@ -41,3 +41,13 @@ Pythonスクリプトを追加する場合は `pytest` を前提に `tests/` 配
 ## セキュリティと設定
 
 APIキーは環境変数またはシークレット管理に保存し、台帳本文へ平文で記録しないでください。サンプルレスポンスは最小限にし、機密情報を除去してから保存します。各APIには公式URL、利用条件、商用利用可否、最終確認日を必ず記録してください。
+
+<!-- central-github-policy -->
+## GitHub運用ポリシー（中央配布）
+
+GitHub運用はこのWorkspaceの記述ではなく、中央ポリシーに従います。
+
+- 正本: /home/kensan/Projects/Deep-Seek-Harness-Project/GITHUB_POLICY.md
+- 詳細: /home/kensan/Projects/Deep-Seek-Harness-Project/docs/architecture/CloudflareNeonGitHub自動化仕様.md
+- 優先順位: 中央GitHub Policy > GitHub Rulesets > GitHub Actions/CI > Workspace AGENTS.md / CLAUDE.md / README
+- main直接push禁止、Required Checks PASS後のSquash Merge、merge後branch削除
