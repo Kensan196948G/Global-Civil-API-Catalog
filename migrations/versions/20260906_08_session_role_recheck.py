@@ -1,8 +1,15 @@
 """sessions.last_role_check_at — periodic role re-validation (Issue #61)
 
-Revision ID: 20260906_07
-Revises: 20260814_06
+Revision ID: 20260906_08
+Revises: 20260906_07
 Create Date: 2026-09-06
+
+Renumbered/rechained at merge time: PR #95 (epic #48, owner/steward/
+lifecycle_status) independently created a migration also numbered
+``20260906_07`` off the same ``20260814_06`` head and merged to main
+first. This file was renamed and its ``down_revision`` retargeted to
+``20260906_07`` (the owner/lifecycle migration) so Alembic has a single
+linear head instead of two migrations claiming the same revision ID.
 
 Additive only: one new NOT NULL column with a server-side default, so
 existing rows are backfilled to ``now()`` at migration time and no
@@ -18,8 +25,8 @@ from __future__ import annotations
 import sqlalchemy as sa
 from alembic import op
 
-revision = "20260906_07"
-down_revision = "20260814_06"
+revision = "20260906_08"
+down_revision = "20260906_07"
 branch_labels = None
 depends_on = None
 
