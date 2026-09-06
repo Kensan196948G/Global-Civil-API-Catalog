@@ -6,10 +6,7 @@
     <meta name="theme-color" content="#1f5f8b" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Global Civil API Catalog</title>
-    <link
-      rel="stylesheet"
-      href="/vendor/leaflet/leaflet.css"
-    />
+    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -691,6 +688,8 @@ L.tileLayer(
                     <th>名称</th>
                     <th>提供元</th>
                     <th>ワークフロー状態</th>
+                    <th>ライフサイクル</th>
+                    <th>所有者/スチュワード</th>
                     <th>操作</th>
                   </tr>
                 </thead>
@@ -849,6 +848,22 @@ L.tileLayer(
                   >タグ（カンマ区切り）
                   <input name="tags" placeholder="地図, 防災" />
                 </label>
+                <label
+                  >所有者（owner）
+                  <input name="owner" placeholder="部署 / 氏名など" />
+                </label>
+                <label
+                  >データスチュワード（steward）
+                  <input name="steward" placeholder="部署 / 氏名など" />
+                </label>
+                <label
+                  >レビュー担当（reviewer）
+                  <input name="reviewer" placeholder="部署 / 氏名など" />
+                </label>
+                <label
+                  >問い合わせ先（support contact）
+                  <input name="support_contact" placeholder="連絡先メール等" />
+                </label>
                 <label class="entryFormWide"
                   >用途サマリ
                   <textarea name="usage_summary" rows="2"></textarea>
@@ -891,7 +906,8 @@ L.tileLayer(
               <div>
                 <h2>OpenAPI インポート</h2>
                 <p>
-                  OpenAPI 3.x の JSON からエントリ候補を自動生成し、下書き（レビューキュー）へ投入します（重複は自動検出）。
+                  OpenAPI 3.x の JSON
+                  からエントリ候補を自動生成し、下書き（レビューキュー）へ投入します（重複は自動検出）。
                 </p>
               </div>
             </div>
@@ -902,11 +918,7 @@ L.tileLayer(
                 placeholder="取込名（例: デモ気象API仕様）"
                 required
               />
-              <input
-                name="reason"
-                placeholder="変更理由（必須）"
-                required
-              />
+              <input name="reason" placeholder="変更理由（必須）" required />
               <textarea
                 name="spec"
                 rows="8"
@@ -977,14 +989,55 @@ L.tileLayer(
                 required
               />
               <div class="webhookEvents">
-                <label><input type="checkbox" name="events" value="entry.created" /> 作成</label>
-                <label><input type="checkbox" name="events" value="entry.updated" /> 更新</label>
-                <label><input type="checkbox" name="events" value="entry.deleted" /> 削除</label>
-                <label><input type="checkbox" name="events" value="entry.restored" /> 復元</label>
-                <label><input type="checkbox" name="events" value="entry.workflow_transition" /> 遷移</label>
-                <label><input type="checkbox" name="events" value="verification.completed" /> 検証完了</label>
+                <label
+                  ><input type="checkbox" name="events" value="entry.created" />
+                  作成</label
+                >
+                <label
+                  ><input type="checkbox" name="events" value="entry.updated" />
+                  更新</label
+                >
+                <label
+                  ><input type="checkbox" name="events" value="entry.deleted" />
+                  削除</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="entry.restored"
+                  />
+                  復元</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="entry.workflow_transition"
+                  />
+                  遷移</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="entry.lifecycle_transition"
+                  />
+                  ライフサイクル遷移</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="verification.completed"
+                  />
+                  検証完了</label
+                >
               </div>
-              <input name="secret" placeholder="署名シークレット（任意・返却は登録時のみ）" />
+              <input
+                name="secret"
+                placeholder="署名シークレット（任意・返却は登録時のみ）"
+              />
               <input name="reason" placeholder="変更理由（必須）" required />
               <button type="submit" class="primaryButton">登録</button>
             </form>

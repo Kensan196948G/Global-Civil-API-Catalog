@@ -335,33 +335,32 @@ function filteredCatalog() {
   const minPriority = byId("minPriorityFilter").value;
   const tokens = q.split(/\s|,/).filter(Boolean);
   const haystack = (item) =>
-    JSON.stringify(
-      [
-        item.id,
-        item.name,
-        item.sub_category,
-        item.provider,
-        item.region,
-        item.official_url,
-        item.document_url,
-        item.auth_type,
-        item.license_note,
-        item.commercial_use,
-        item.update_frequency,
-        item.connection_status,
-        item.usage_summary,
-        item.usage_notes,
-        item.risk_note,
-        item.adoption_reason,
-        item.data_formats,
-        item.tags,
-        item.target_projects,
-      ],
-    ).toLowerCase();
+    JSON.stringify([
+      item.id,
+      item.name,
+      item.sub_category,
+      item.provider,
+      item.region,
+      item.official_url,
+      item.document_url,
+      item.auth_type,
+      item.license_note,
+      item.commercial_use,
+      item.update_frequency,
+      item.connection_status,
+      item.usage_summary,
+      item.usage_notes,
+      item.risk_note,
+      item.adoption_reason,
+      item.data_formats,
+      item.tags,
+      item.target_projects,
+    ]).toLowerCase();
   return state.catalog
     .filter(
       (item) =>
-        !tokens.length || tokens.every((token) => haystack(item).includes(token)),
+        !tokens.length ||
+        tokens.every((token) => haystack(item).includes(token)),
     )
     .filter((item) => !category || item.category === category)
     .filter((item) => !status || item.connection_status === status)
@@ -431,7 +430,9 @@ function renderCatalog() {
             <a href="${safeUrl(item.document_url || item.official_url)}" target="_blank" rel="noreferrer">仕様</a>
             ${item.sample_endpoint ? `<a href="${safeUrl(item.sample_endpoint)}" target="_blank" rel="noreferrer">サンプル</a>` : ""}
             ${
-              item.sample_endpoint && !item.sample_endpoint.includes("{") && isStaff()
+              item.sample_endpoint &&
+              !item.sample_endpoint.includes("{") &&
+              isStaff()
                 ? `<button type="button" class="tryItButton" data-try-url="${escapeHtml(item.sample_endpoint)}" data-try-id="${escapeHtml(item.id)}">接続テスト</button>`
                 : ""
             }
@@ -948,7 +949,33 @@ const ENTRY_NULLABLE_FIELDS = [
   "usage_summary",
   "usage_notes",
   "risk_note",
+  "owner",
+  "steward",
+  "reviewer",
+  "support_contact",
 ];
+
+// epic #48: API-definition lifecycle (distinct from workflow_state above).
+const LIFECYCLE_LABELS = {
+  draft: "下書き",
+  active: "提供中",
+  deprecated: "非推奨",
+  retired: "提供終了",
+};
+
+// Mirrors _LIFECYCLE_TRANSITIONS in web/api_v1.py.
+const LIFECYCLE_TRANSITIONS = {
+  draft: ["active"],
+  active: ["deprecated", "retired"],
+  deprecated: ["retired"],
+  retired: [],
+};
+
+function lifecycleTransitionsForEntry(item) {
+  if (!hasRole("Editor", "Admin")) return [];
+  const current = item.lifecycle_status || "active";
+  return LIFECYCLE_TRANSITIONS[current] || [];
+}
 
 function formatDetail(detail) {
   if (typeof detail === "string") return detail;
@@ -1107,7 +1134,7 @@ function renderManage() {
     (item) => !stateFilter || item.workflow_state === stateFilter,
   );
   if (!items.length) {
-    rows.innerHTML = `<tr><td colspan="5" class="emptyCell">${
+    rows.innerHTML = `<tr><td colspan="7" class="emptyCell">${
       state.manage.loaded ? "該当するエントリがありません。" : "読込中…"
     }</td></tr>`;
     return;
@@ -1115,6 +1142,7 @@ function renderManage() {
   rows.innerHTML = items
     .map((item) => {
       const wfState = item.workflow_state;
+      const lifecycle = item.lifecycle_status || "active";
       const buttons = [];
       if (
         hasRole("Editor", "Admin") &&
@@ -1129,6 +1157,11 @@ function renderManage() {
           `<button type="button" class="rowButton" data-act="transition" data-action="${action}" data-id="${escapeHtml(item.id)}">${TRANSITION_LABELS[action]}</button>`,
         );
       });
+      lifecycleTransitionsForEntry(item).forEach((target) => {
+        buttons.push(
+          `<button type="button" class="rowButton" data-act="lifecycle" data-target="${escapeHtml(target)}" data-id="${escapeHtml(item.id)}">→${LIFECYCLE_LABELS[target] || target}</button>`,
+        );
+      });
       buttons.push(
         `<button type="button" class="rowButton" data-act="versions" data-id="${escapeHtml(item.id)}">版履歴</button>`,
       );
@@ -1137,15 +1170,44 @@ function renderManage() {
           `<button type="button" class="rowButton danger" data-act="delete" data-id="${escapeHtml(item.id)}">削除</button>`,
         );
       }
+      const stewardship = [item.owner, item.steward]
+        .filter(Boolean)
+        .join(" / ");
       return `<tr>
         <td class="mono">${escapeHtml(item.id)}</td>
         <td>${escapeHtml(item.name)}</td>
         <td>${escapeHtml(item.provider)}</td>
         <td><span class="wfBadge wf-${escapeHtml(wfState)}">${escapeHtml(WORKFLOW_LABELS[wfState] || wfState)}</span></td>
+        <td><span class="wfBadge lc-${escapeHtml(lifecycle)}">${escapeHtml(LIFECYCLE_LABELS[lifecycle] || lifecycle)}</span></td>
+        <td>${stewardship ? escapeHtml(stewardship) : '<span class="emptyCell">未設定</span>'}</td>
         <td class="rowActions">${buttons.join("")}</td>
       </tr>`;
     })
     .join("");
+}
+
+async function doLifecycleTransition(id, target) {
+  const reason = await askReason(
+    `ライフサイクル変更 — ${id}`,
+    `エントリ ${id} のライフサイクルを「${LIFECYCLE_LABELS[target] || target}」に変更します。`,
+  );
+  if (reason === null) return;
+  try {
+    const result = await apiV1(
+      `/api/v1/entries/${encodeURIComponent(id)}/lifecycle`,
+      {
+        method: "POST",
+        body: { lifecycle_status: target, reason },
+      },
+    );
+    showManageNotice(
+      `${id} のライフサイクルを「${LIFECYCLE_LABELS[result.lifecycle_status] || result.lifecycle_status}」にしました。`,
+      "success",
+    );
+    await loadManageEntries();
+  } catch (error) {
+    showManageNotice(error.message);
+  }
 }
 
 async function doTransition(id, action) {
@@ -1394,6 +1456,8 @@ async function onManageRowAction(event) {
   if (button.dataset.act === "edit") openEntryForm(item);
   else if (button.dataset.act === "transition")
     await doTransition(id, button.dataset.action);
+  else if (button.dataset.act === "lifecycle")
+    await doLifecycleTransition(id, button.dataset.target);
   else if (button.dataset.act === "versions") await openVersions(id);
   else if (button.dataset.act === "delete") await doDelete(id);
 }
@@ -1423,14 +1487,19 @@ const COMPARE_FIELDS = [
 function compareDisplayValue(item, field) {
   if (field === "data_formats") return (item[field] || []).join(", ");
   const value = item[field];
-  return value === undefined || value === null || value === "" ? "-" : String(value);
+  return value === undefined || value === null || value === ""
+    ? "-"
+    : String(value);
 }
 
 function openCompare() {
   const selected = state.catalog.filter((item) => state.compare.has(item.id));
   if (selected.length < 2) return;
   const head = `<tr><th>項目</th>${selected
-    .map((item) => `<th>${escapeHtml(item.name)}<br><span class="mono">${escapeHtml(item.id)}</span></th>`)
+    .map(
+      (item) =>
+        `<th>${escapeHtml(item.name)}<br><span class="mono">${escapeHtml(item.id)}</span></th>`,
+    )
     .join("")}</tr>`;
   const body = COMPARE_FIELDS.map(([field, label]) => {
     const cells = selected
@@ -1459,7 +1528,8 @@ function wireCompareUI() {
   });
   byId("compareAll").addEventListener("change", (event) => {
     const rows = filteredCatalog();
-    if (event.target.checked) rows.forEach((item) => state.compare.add(item.id));
+    if (event.target.checked)
+      rows.forEach((item) => state.compare.add(item.id));
     else rows.forEach((item) => state.compare.delete(item.id));
     renderCatalog();
   });
@@ -1555,6 +1625,7 @@ const WEBHOOK_EVENT_LABELS = {
   "entry.deleted": "削除",
   "entry.restored": "復元",
   "entry.workflow_transition": "遷移",
+  "entry.lifecycle_transition": "ライフサイクル遷移",
   "verification.completed": "検証完了",
 };
 
@@ -1603,10 +1674,16 @@ async function onWebhookAction(event) {
   const act = button.dataset.whAct;
   if (act === "test") {
     try {
-      const result = await apiV1(`/api/v1/webhooks/${encodeURIComponent(id)}/test`, {
-        method: "POST",
-      });
-      showWebhookNotice(`テスト配信: ${result.status}（delivery ${result.delivery_id}）`, "success");
+      const result = await apiV1(
+        `/api/v1/webhooks/${encodeURIComponent(id)}/test`,
+        {
+          method: "POST",
+        },
+      );
+      showWebhookNotice(
+        `テスト配信: ${result.status}（delivery ${result.delivery_id}）`,
+        "success",
+      );
     } catch (error) {
       showWebhookNotice(error.message);
     }
@@ -1626,7 +1703,10 @@ async function onWebhookAction(event) {
         method: "PATCH",
         body: { reason, is_active: !hook.is_active },
       });
-      showWebhookNotice(`${hook.name} を${hook.is_active ? "停止" : "再開"}しました。`, "success");
+      showWebhookNotice(
+        `${hook.name} を${hook.is_active ? "停止" : "再開"}しました。`,
+        "success",
+      );
       await loadWebhooks();
     } catch (error) {
       showWebhookNotice(error.message);
@@ -1679,11 +1759,17 @@ async function submitWebhookForm(event) {
   };
   if (form.secret.value.trim()) payload.secret = form.secret.value.trim();
   try {
-    const created = await apiV1("/api/v1/webhooks", { method: "POST", body: payload });
+    const created = await apiV1("/api/v1/webhooks", {
+      method: "POST",
+      body: payload,
+    });
     const secretNote = created.secret
       ? ` 署名シークレット（この一度きり）: ${created.secret}`
       : "";
-    showWebhookNotice(`登録しました（${created.id}）。${secretNote}`, "success");
+    showWebhookNotice(
+      `登録しました（${created.id}）。${secretNote}`,
+      "success",
+    );
     form.reset();
     await loadWebhooks();
   } catch (error) {
@@ -1706,7 +1792,9 @@ async function submitOpenApiForm(event) {
   try {
     spec = JSON.parse(form.spec.value);
   } catch {
-    showOpenApiNotice("OpenAPI のJSONが解析できません。構文を確認してください。");
+    showOpenApiNotice(
+      "OpenAPI のJSONが解析できません。構文を確認してください。",
+    );
     return;
   }
   try {
