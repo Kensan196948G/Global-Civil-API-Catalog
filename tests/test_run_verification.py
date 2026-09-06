@@ -1,7 +1,10 @@
+import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
 
+from scripts.catalog_utils import append_verification_history, load_verification_history
 from scripts.run_verification import MAX_SAMPLE_BYTES, build_result, extract_record_count
 
 _ITEM = {
@@ -149,3 +152,83 @@ def test_build_result_exact_cap_payload_is_not_flagged_truncated(
     assert "sample_truncated" not in result
     assert result["record_count"] == 3
     assert "truncated" not in result["note"]
+
+
+# --- verification history (issue #49) -----------------------------------
+
+
+def test_load_verification_history_missing_file_returns_empty_list(tmp_path: Path) -> None:
+    assert load_verification_history(tmp_path / "does-not-exist.jsonl") == []
+
+
+def test_append_verification_history_writes_one_line_per_record(tmp_path: Path) -> None:
+    history_path = tmp_path / "verification_history.jsonl"
+    records = [
+        {"api_id": "A-001", "verified_at": "2026-09-01T00:00:00+00:00", "result": "success"},
+        {"api_id": "A-002", "verified_at": "2026-09-01T00:00:01+00:00", "result": "failure"},
+    ]
+
+    result = append_verification_history(records, path=history_path)
+
+    assert result == records
+    lines = history_path.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 2
+    assert load_verification_history(history_path) == records
+
+
+def test_append_verification_history_accumulates_across_calls(tmp_path: Path) -> None:
+    history_path = tmp_path / "verification_history.jsonl"
+    first = [{"api_id": "A-001", "verified_at": "2026-09-01T00:00:00+00:00", "result": "success"}]
+    second = [{"api_id": "A-001", "verified_at": "2026-09-08T00:00:00+00:00", "result": "failure"}]
+
+    append_verification_history(first, path=history_path)
+    result = append_verification_history(second, path=history_path)
+
+    assert result == first + second
+    assert load_verification_history(history_path) == first + second
+
+
+def test_append_verification_history_prunes_entries_past_retention_window(
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "verification_history.jsonl"
+    now = datetime(2026, 9, 6, tzinfo=timezone.utc)
+    old = {
+        "api_id": "A-001",
+        "verified_at": (now - timedelta(days=100)).isoformat(),
+        "result": "success",
+    }
+    recent = {
+        "api_id": "A-001",
+        "verified_at": (now - timedelta(days=1)).isoformat(),
+        "result": "success",
+    }
+    history_path.write_text(
+        "\n".join(json.dumps(r) for r in (old, recent)) + "\n", encoding="utf-8"
+    )
+
+    new_record = {
+        "api_id": "A-001",
+        "verified_at": now.isoformat(),
+        "result": "success",
+    }
+    result = append_verification_history(
+        [new_record], path=history_path, retention_days=90, now=now
+    )
+
+    api_ids_and_dates = [(r["api_id"], r["verified_at"]) for r in result]
+    assert (old["api_id"], old["verified_at"]) not in api_ids_and_dates
+    assert (recent["api_id"], recent["verified_at"]) in api_ids_and_dates
+    assert (new_record["api_id"], new_record["verified_at"]) in api_ids_and_dates
+
+
+def test_append_verification_history_keeps_malformed_verified_at_instead_of_crashing(
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "verification_history.jsonl"
+    malformed = {"api_id": "A-001", "verified_at": "not-a-date", "result": "success"}
+    history_path.write_text(json.dumps(malformed) + "\n", encoding="utf-8")
+
+    result = append_verification_history([], path=history_path)
+
+    assert malformed in result

@@ -27,6 +27,15 @@ jobs:
         run: python scripts/validate_catalog.py
       - name: Run tests
         run: python -m pytest
+      - name: Install project (db extra, pinned) for dependency audit
+        # pip-audit can only scan packages actually installed in the
+        # environment; without this the scan below covered nothing but the
+        # CI tool belt above (pytest/ruff/mypy/pip-audit itself). The db
+        # extra (fastapi/sqlalchemy/httpx/authlib/...) is installed from the
+        # lock file so the audited version set is reproducible.
+        run: |
+          python -m pip install -e .
+          python -m pip install -r requirements-lock.txt
       - name: Dependency security scan (pip-audit)
         run: python -m pip_audit
       - name: Export artifacts
@@ -73,6 +82,15 @@ jobs:
         env:
           CATALOG_DATABASE_URL: postgresql+psycopg://catalog:catalog_ci_test@127.0.0.1:5432/catalog
         run: python -m alembic upgrade head
+      - name: Verify migration round-trip (downgrade base -> upgrade head)
+        env:
+          CATALOG_DATABASE_URL: postgresql+psycopg://catalog:catalog_ci_test@127.0.0.1:5432/catalog
+        # Runs before seeding so the round-trip exercises an empty schema
+        # only; the PostGIS extension itself is created once above and is
+        # not touched by any migration's downgrade().
+        run: |
+          python -m alembic downgrade base
+          python -m alembic upgrade head
       - name: Seed database from JSON catalog
         env:
           CATALOG_DATABASE_URL: postgresql+psycopg://catalog:catalog_ci_test@127.0.0.1:5432/catalog
@@ -87,4 +105,5 @@ jobs:
             tests/test_workflow_audit.py \
             tests/test_local_auth.py \
             tests/test_migrate_json_to_db.py \
-            tests/test_tasks_webhooks.py
+            tests/test_tasks_webhooks.py \
+            tests/test_lifecycle_management.py

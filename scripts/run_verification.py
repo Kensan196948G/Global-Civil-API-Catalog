@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.catalog_utils import (  # noqa: E402
     CATALOG_PATH,
     VERIFICATION_PATH,
+    append_verification_history,
     load_catalog,
     write_json,
 )
@@ -134,8 +135,7 @@ def build_result(item: dict, live: bool, timeout: int) -> dict:
             # catalog status does not silently drift to "verified".
             result["result"] = "warning"
             result["note"] = (
-                f"authentication required (HTTP {status}); "
-                "API key requirement needs confirmation"
+                f"authentication required (HTTP {status}); API key requirement needs confirmation"
             )
         else:
             result["result"] = "failure"
@@ -163,6 +163,16 @@ def main() -> int:
     parser.add_argument(
         "--write", action="store_true", help="write results to data/verification_results.json"
     )
+    parser.add_argument(
+        "--append-history",
+        action="store_true",
+        help=(
+            "append this run's results to data/verification_history.jsonl "
+            "(pruned to the retention window; see "
+            "catalog_utils.VERIFICATION_HISTORY_RETENTION_DAYS) so "
+            "scripts/detect_verification_anomalies.py has a prior baseline to compare against"
+        ),
+    )
     args = parser.parse_args()
 
     catalog = load_catalog(CATALOG_PATH)
@@ -173,6 +183,8 @@ def main() -> int:
     print(json.dumps(results, ensure_ascii=False, indent=2))
     if args.write:
         write_json(VERIFICATION_PATH, results)
+    if args.append_history:
+        append_verification_history(results)
     return 0
 
 
