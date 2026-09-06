@@ -73,6 +73,15 @@ jobs:
         env:
           CATALOG_DATABASE_URL: postgresql+psycopg://catalog:catalog_ci_test@127.0.0.1:5432/catalog
         run: python -m alembic upgrade head
+      - name: Verify migration round-trip (downgrade base -> upgrade head)
+        env:
+          CATALOG_DATABASE_URL: postgresql+psycopg://catalog:catalog_ci_test@127.0.0.1:5432/catalog
+        # Runs before seeding so the round-trip exercises an empty schema
+        # only; the PostGIS extension itself is created once above and is
+        # not touched by any migration's downgrade().
+        run: |
+          python -m alembic downgrade base
+          python -m alembic upgrade head
       - name: Seed database from JSON catalog
         env:
           CATALOG_DATABASE_URL: postgresql+psycopg://catalog:catalog_ci_test@127.0.0.1:5432/catalog
