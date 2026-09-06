@@ -65,6 +65,22 @@ class CatalogEntry(Base):
     usage_notes: Mapped[str | None] = mapped_column(Text)
     risk_note: Mapped[str | None] = mapped_column(Text)
     last_checked_at: Mapped[date | None] = mapped_column(Date)
+    # epic #48: stewardship contacts — who owns/stewards/reviews this entry
+    # and who to contact for support. Plain text (name/email/free-form); kept
+    # deliberately simple (no jsonb sub-structure) so lookups/filters stay
+    # trivial and the CRUD schema in web/api_v1.py needs no nested models.
+    owner: Mapped[str | None] = mapped_column(Text)
+    steward: Mapped[str | None] = mapped_column(Text)
+    reviewer: Mapped[str | None] = mapped_column(Text)
+    support_contact: Mapped[str | None] = mapped_column(Text)
+    # epic #48: lifecycle of the *API definition itself* — separate from
+    # EntryWorkflow.state (epic #47, the value-change approval process).
+    # 'retired' is the dedicated 提供終了/利用終了 status requested in
+    # issue #44 (previously conflated with connection_status='除外').
+    lifecycle_status: Mapped[str] = mapped_column(
+        Text, nullable=False, server_default=text("'active'")
+    )
+    lifecycle_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
@@ -85,6 +101,10 @@ class CatalogEntry(Base):
         CheckConstraint(
             "trust_rank IN ('A','B','C','D','E')",
             name="ck_catalog_entries_trust_rank",
+        ),
+        CheckConstraint(
+            "lifecycle_status IN ('draft','active','deprecated','retired')",
+            name="ck_catalog_entries_lifecycle_status",
         ),
     )
 
@@ -160,6 +180,11 @@ class CatalogEntryVersion(Base):
 
 
 WORKFLOW_STATES = ("draft", "in_review", "pending_approval", "published", "rejected")
+
+# epic #48: API definition lifecycle vocabulary — distinct from
+# WORKFLOW_STATES above (which governs the *value-change approval*
+# process, epic #47). See docs/api-lifecycle.md for the transition rules.
+LIFECYCLE_STATUSES = ("draft", "active", "deprecated", "retired")
 
 
 class EntryWorkflow(Base):
@@ -265,6 +290,7 @@ WEBHOOK_EVENTS = (
     "entry.deleted",
     "entry.restored",
     "entry.workflow_transition",
+    "entry.lifecycle_transition",
     "verification.completed",
 )
 
@@ -287,9 +313,7 @@ class WebhookSubscription(Base):
         ARRAY(Text), nullable=False, server_default=text("'{}'")
     )
     secret: Mapped[str | None] = mapped_column(Text)
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, server_default=text("true")
-    )
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
     created_by: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")

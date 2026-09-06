@@ -227,18 +227,26 @@ draft ──(編集者: 提出)──▶ in_review ──(検証者: OK)──�
 
 ## 5. 👥 Epic #48 詳細設計 — 所有者管理 + API 定義ライフサイクル
 
-### 5.1 スキーマ拡張（catalog_entries へ expand）
+> ✅ 実装済み（PR: `feat/issue-48-lifecycle-management`）。詳細は
+> `docs/api-lifecycle.md` を正本とする。以下 §5.1 は当初スケッチを実装確定形に更新済み。
+
+### 5.1 スキーマ拡張（catalog_entries へ expand・実装確定形）
 
 ```sql
 ALTER TABLE catalog_entries
-  ADD COLUMN owner_contact    jsonb,   -- {name, org, email}（PII 最小限・業務連絡先のみ）
-  ADD COLUMN steward_contact  jsonb,
-  ADD COLUMN reviewer_contact jsonb,
-  ADD COLUMN support_contact  jsonb,
-  ADD COLUMN lifecycle_status text NOT NULL DEFAULT 'active'
+  ADD COLUMN owner               text,   -- 自由記入（氏名・部署・連絡先等）
+  ADD COLUMN steward             text,
+  ADD COLUMN reviewer            text,
+  ADD COLUMN support_contact     text,
+  ADD COLUMN lifecycle_status    text NOT NULL DEFAULT 'active'
       CHECK (lifecycle_status IN ('draft','active','deprecated','retired')),
-  ADD COLUMN lifecycle_changed_at timestamptz;
+  ADD COLUMN lifecycle_updated_at timestamptz;
 ```
+
+当初案の `owner_contact`/`steward_contact`/`reviewer_contact`(jsonb) は、実装時に過剰設計を避け
+フラットな `text` カラム（`owner`/`steward`/`reviewer`/`support_contact`）へ簡素化した。
+`lifecycle_changed_at` は既存の `updated_at` 系カラムとの命名一貫性のため `lifecycle_updated_at`
+に変更した。判断理由の詳細は `docs/api-lifecycle.md` §5 を参照。
 
 ### 5.2 責務分担（#47 との境界）
 

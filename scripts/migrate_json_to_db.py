@@ -43,6 +43,10 @@ def entry_row(record: dict) -> dict:
             value = date.fromisoformat(value)
         if field in ("data_formats", "tags") and value is None:
             value = []
+        # epic #48: the JSON catalog predates lifecycle_status; explicit None
+        # would bypass the column's server_default and violate NOT NULL.
+        if field == "lifecycle_status" and value is None:
+            value = "active"
         row[field] = value
     return row
 

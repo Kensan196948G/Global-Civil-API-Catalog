@@ -1954,6 +1954,29 @@ details p {
   color: var(--good);
 }
 
+/* epic #48: API-definition lifecycle badges (distinct from wf-* workflow
+   states above). */
+.wfBadge.lc-draft {
+  background: var(--chip);
+  color: var(--muted);
+}
+
+.wfBadge.lc-active {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.wfBadge.lc-deprecated {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.wfBadge.lc-retired {
+  background: var(--chip);
+  color: var(--ink-2);
+  text-decoration: line-through;
+}
+
 .entryFormGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

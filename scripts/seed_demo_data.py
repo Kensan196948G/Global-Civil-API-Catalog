@@ -95,6 +95,10 @@ def _normalize_row(model, record: dict) -> dict:
         value = record.get(column.name)
         if column.name in ("data_formats", "tags") and value is None:
             value = []
+        # epic #48: demo fixtures predate lifecycle_status; explicit None
+        # would bypass the column's server_default and violate NOT NULL.
+        if column.name == "lifecycle_status" and value is None:
+            value = "active"
         row[column.name] = value
     return row
 

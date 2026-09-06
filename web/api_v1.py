@@ -28,7 +28,7 @@ import os
 import secrets
 import sys
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +43,7 @@ from sqlalchemy.orm import Session  # noqa: E402
 from db.audit import (  # noqa: E402
     ACTION_CREATE,
     ACTION_DELETE,
+    ACTION_LIFECYCLE_TRANSITION,
     ACTION_OPENAPI_IMPORT,
     ACTION_RESTORE,
     ACTION_TRANSITION,
@@ -58,6 +59,7 @@ from db.audit import (  # noqa: E402
     snapshot_entry,
 )
 from db.models import (  # noqa: E402
+    LIFECYCLE_STATUSES,
     WEBHOOK_EVENTS,
     AuditLog,
     CatalogEntry,
@@ -258,6 +260,57 @@ def list_entries(
     }
 
 
+# epic #48: how long a 'deprecated' definition may sit before it is flagged
+# as needing a decision (retire it, or move it back to active).
+STALE_DEPRECATED_DAYS = 90
+
+
+def _gap_summary(entry: CatalogEntry, workflow_state: str | None) -> dict[str, Any]:
+    return {
+        "id": entry.id,
+        "name": entry.name,
+        "provider": entry.provider,
+        "owner": entry.owner,
+        "steward": entry.steward,
+        "lifecycle_status": entry.lifecycle_status,
+        "lifecycle_updated_at": entry.lifecycle_updated_at,
+        "workflow_state": workflow_state or "published",
+    }
+
+
+@app.get("/api/v1/entries/stewardship-gaps")
+def stewardship_gaps(request: Request, session: Session = Depends(get_session)) -> dict[str, Any]:
+    """Entries missing owner+steward, and definitions stuck 'deprecated' too
+    long (design §5.2 / issue #48 completion criteria). Read visibility
+    mirrors ``list_entries``: anonymous callers only see published entries.
+    """
+    is_staff = _staff_session(request, session) is not None
+    base = (
+        select(CatalogEntry, EntryWorkflow.state)
+        .outerjoin(EntryWorkflow, EntryWorkflow.record_id == CatalogEntry.id)
+        .where(CatalogEntry.deleted_at.is_(None))
+    )
+    if not is_staff:
+        base = base.where(func.coalesce(EntryWorkflow.state, "published") == "published")
+
+    missing_stmt = base.where(CatalogEntry.owner.is_(None), CatalogEntry.steward.is_(None))
+    missing_rows = session.execute(missing_stmt.order_by(CatalogEntry.id)).all()
+
+    stale_cutoff = datetime.now(timezone.utc) - timedelta(days=STALE_DEPRECATED_DAYS)
+    stale_stmt = base.where(
+        CatalogEntry.lifecycle_status == "deprecated",
+        CatalogEntry.lifecycle_updated_at.is_not(None),
+        CatalogEntry.lifecycle_updated_at < stale_cutoff,
+    )
+    stale_rows = session.execute(stale_stmt.order_by(CatalogEntry.id)).all()
+
+    return {
+        "missing_owner_steward": [_gap_summary(e, s) for e, s in missing_rows],
+        "stale_deprecated": [_gap_summary(e, s) for e, s in stale_rows],
+        "stale_deprecated_threshold_days": STALE_DEPRECATED_DAYS,
+    }
+
+
 @app.get("/api/v1/entries/{entry_id}")
 def get_entry(
     request: Request, entry_id: str, session: Session = Depends(get_session)
@@ -433,6 +486,12 @@ class EntryCreate(BaseModel):
     usage_summary: str | None = None
     usage_notes: str | None = None
     risk_note: str | None = None
+    # epic #48: stewardship contacts (optional on create; lifecycle_status
+    # is managed only via the dedicated /lifecycle endpoint below).
+    owner: str | None = None
+    steward: str | None = None
+    reviewer: str | None = None
+    support_contact: str | None = None
 
 
 class EntryPatch(BaseModel):
@@ -465,6 +524,10 @@ class EntryPatch(BaseModel):
     usage_summary: str | None = None
     usage_notes: str | None = None
     risk_note: str | None = None
+    owner: str | None = None
+    steward: str | None = None
+    reviewer: str | None = None
+    support_contact: str | None = None
 
 
 def _create_entry_record(
@@ -837,6 +900,85 @@ def transition_entry(
     return {"record_id": entry_id, "state": rule["to"]}
 
 
+# epic #48: lifecycle of the API *definition itself* — deliberately separate
+# from _TRANSITIONS above (epic #47's value-change approval workflow). See
+# docs/api-lifecycle.md for the rationale and design doc §5.2 for the
+# responsibility split.
+_LIFECYCLE_TRANSITIONS: dict[str, set[str]] = {
+    "draft": {"active"},
+    "active": {"deprecated", "retired"},
+    "deprecated": {"retired"},
+    "retired": set(),  # terminal: 提供終了/利用終了 (issue #44)
+}
+
+
+class LifecycleTransitionRequest(BaseModel):
+    lifecycle_status: str = Field(pattern=f"^({'|'.join(LIFECYCLE_STATUSES)})$")
+    reason: str = Field(min_length=1, max_length=1000)
+
+
+@app.post("/api/v1/entries/{entry_id}/lifecycle")
+def transition_lifecycle(
+    entry_id: str,
+    payload: LifecycleTransitionRequest,
+    actor: UserSession = Depends(require_editor),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    """Move an entry's API-definition lifecycle status (design §5, issue #48).
+
+    Distinct from ``/transitions`` above: this concerns whether the API
+    *definition* is still valid/current, not whether a pending edit has been
+    reviewed and approved.
+    """
+    entry = session.get(CatalogEntry, entry_id, with_for_update=True)
+    if entry is None or entry.deleted_at is not None:
+        raise HTTPException(status_code=404, detail=f"entry {entry_id} not found")
+    current = entry.lifecycle_status
+    allowed = _LIFECYCLE_TRANSITIONS.get(current, set())
+    if payload.lifecycle_status not in allowed:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"cannot transition lifecycle_status from '{current}' to "
+                f"'{payload.lifecycle_status}'"
+            ),
+        )
+    before = current
+    entry.lifecycle_status = payload.lifecycle_status
+    entry.lifecycle_updated_at = func.now()
+    entry.updated_at = func.now()
+    session.flush()
+    session.refresh(entry)
+    snapshot_entry(session, entry, actor.user_sub)
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_LIFECYCLE_TRANSITION,
+        record_id=entry_id,
+        diff={"lifecycle_status": {"before": before, "after": payload.lifecycle_status}},
+        reason=payload.reason,
+    )
+    session.commit()
+    dispatch_webhooks(
+        session,
+        "entry.lifecycle_transition",
+        {
+            "record_id": entry_id,
+            "name": entry.name,
+            "from": before,
+            "to": payload.lifecycle_status,
+            "actor": actor.user_sub,
+            "reason": payload.reason,
+        },
+    )
+    return {
+        "record_id": entry_id,
+        "lifecycle_status": payload.lifecycle_status,
+        "lifecycle_updated_at": entry.lifecycle_updated_at,
+    }
+
+
 @app.get("/api/v1/entries/{entry_id}/versions")
 def list_versions(
     entry_id: str,
@@ -1073,10 +1215,7 @@ class WebhookPatch(BaseModel):
 def _webhook_to_dict(
     subscription: WebhookSubscription, include_secret: bool = False
 ) -> dict[str, Any]:
-    payload = {
-        c.name: getattr(subscription, c.name)
-        for c in WebhookSubscription.__table__.columns
-    }
+    payload = {c.name: getattr(subscription, c.name) for c in WebhookSubscription.__table__.columns}
     if payload.get("last_delivery_at") is not None:
         payload["last_delivery_at"] = payload["last_delivery_at"].isoformat()
     if not include_secret:
