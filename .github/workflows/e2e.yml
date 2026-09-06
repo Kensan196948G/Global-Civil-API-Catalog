@@ -20,6 +20,8 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Run read-only UI E2E (demo dataset)
         run: python -m pytest -m e2e tests/e2e/test_readonly_ui.py
+      - name: Run accessibility (a11y) checks (vendored axe-core)
+        run: python -m pytest -m e2e tests/e2e/test_accessibility.py
 
   fullstack:
     runs-on: ubuntu-latest
