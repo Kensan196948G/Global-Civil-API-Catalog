@@ -1,0 +1,48 @@
+# Lock file for the project's runtime dependencies, i.e. the transitive
+# closure of the "db" optional-dependency group declared in pyproject.toml
+# ([project.optional-dependencies].db). This exists so `pip-audit` in CI
+# (.github/workflows/validate.yml, "catalog" job) scans the exact set of
+# third-party packages the FastAPI/SQLAlchemy layer ships with, instead of
+# an environment that never installed them.
+#
+# Regeneration steps (run whenever pyproject.toml's [project.optional-
+# dependencies].db list changes, or periodically to pick up patch releases):
+#
+#   python3 -m venv /tmp/catalog-lock-venv
+#   /tmp/catalog-lock-venv/bin/pip install --upgrade pip
+#   /tmp/catalog-lock-venv/bin/pip install -e ".[db]"
+#   /tmp/catalog-lock-venv/bin/pip freeze | grep -v '^-e ' > requirements-lock.txt
+#
+# (The `pip freeze` output also contains an "-e git+...#subdirectory=..."
+# line for the project itself when installed from a worktree/clone; that
+# line is not a real pinned dependency and must be dropped, hence the
+# `grep -v '^-e '` above.) Commit the regenerated file together with the
+# pyproject.toml change in the same PR.
+Authlib==1.8.0
+Mako==1.4.1
+MarkupSafe==3.0.3
+SQLAlchemy==2.0.52
+alembic==1.19.2
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.15.1
+certifi==2026.7.22
+cffi==2.1.1
+click==8.5.0
+cryptography==50.0.1
+fastapi==0.141.1
+greenlet==3.5.5
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+idna==3.19
+joserfc==1.7.5
+psycopg==3.3.5
+psycopg-binary==3.3.5
+pycparser==3.0
+pydantic==2.13.5
+pydantic_core==2.46.5
+starlette==1.6.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+uvicorn==0.52.4

@@ -4,20 +4,24 @@
   --bg-soft: #faf8f2;
   --sidebar: #f6f3ec;
   --sidebar-ink: #3c4a52;
-  --sidebar-muted: #9a8f78;
+  /* --sidebar-muted / --faint / --muted-2 / --gold-deep are darkened from
+     the original design values to meet WCAG AA text contrast (>=4.5:1)
+     against --sidebar/--bg/--panel/--gold-soft (axe-core "color-contrast",
+     tests/e2e/test_accessibility.py). */
+  --sidebar-muted: #766e5c;
   --panel: #ffffff;
   --ink: #18262e;
   --head: #1b2a32;
   --ink-2: #3c4a52;
   --muted: #5e6b73;
-  --muted-2: #7d8893;
-  --faint: #9a8f78;
+  --muted-2: #666f78;
+  --faint: #766e5c;
   --line: #e4ded2;
   --line-2: #e8e2d6;
   --track: #f0ece2;
   --chip: #f3efe5;
   --gold: #c08a2e;
-  --gold-deep: #a06a0c;
+  --gold-deep: #94620b;
   --gold-soft: #f3efe5;
   --good: #0b6b61;
   --good-bg: #e6f4ea;
@@ -1165,7 +1169,7 @@ details p {
   position: absolute;
   font-family: var(--mono);
   font-size: 10px;
-  color: #9a8f78;
+  color: var(--faint);
   pointer-events: none;
 }
 
@@ -1726,7 +1730,9 @@ details p {
   display: inline-block;
   padding: 8px 18px;
   border-radius: var(--radius);
-  background: var(--gold);
+  /* --gold-deep (not --gold) so the white label text clears WCAG AA
+     (>=4.5:1); --gold alone only reaches ~3:1 (axe-core "color-contrast"). */
+  background: var(--gold-deep);
   color: #fff;
   font-weight: 600;
   text-decoration: none;
@@ -1734,7 +1740,7 @@ details p {
 }
 
 .authButton:hover {
-  background: var(--gold-deep);
+  background: var(--gold);
 }
 
 .userBox {
@@ -1796,7 +1802,10 @@ details p {
   padding: 8px 16px;
   border: none;
   border-radius: var(--radius);
-  background: var(--gold);
+  /* --gold-deep (not --gold) so the white label text clears WCAG AA
+     (>=4.5:1); --gold alone only reaches ~3:1 (axe-core "color-contrast",
+     e.g. #loginSubmit in tests/e2e/test_accessibility.py). */
+  background: var(--gold-deep);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -1804,7 +1813,7 @@ details p {
 }
 
 .primaryButton:hover {
-  background: var(--gold-deep);
+  background: var(--gold);
 }
 
 .manageNotice {

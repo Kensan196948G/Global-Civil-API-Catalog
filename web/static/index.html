@@ -6,10 +6,7 @@
     <meta name="theme-color" content="#1f5f8b" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Global Civil API Catalog</title>
-    <link
-      rel="stylesheet"
-      href="/vendor/leaflet/leaflet.css"
-    />
+    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -217,7 +214,7 @@
                   </p>
                 </div>
               </div>
-              <div class="tableWrap">
+              <div class="tableWrap" tabindex="0">
                 <table class="adoptionTable">
                   <thead>
                     <tr>
@@ -272,19 +269,22 @@
                   type="search"
                   placeholder="キーワード検索"
                 />
-                <select id="categoryFilter">
+                <select id="categoryFilter" aria-label="カテゴリで絞り込み">
                   <option value="">全カテゴリ</option>
                 </select>
-                <select id="statusFilter">
+                <select id="statusFilter" aria-label="接続状態で絞り込み">
                   <option value="">全ステータス</option>
                 </select>
-                <select id="regionFilter">
+                <select id="regionFilter" aria-label="地域で絞り込み">
                   <option value="">全地域</option>
                 </select>
-                <select id="trustRankFilter">
+                <select id="trustRankFilter" aria-label="信頼度で絞り込み">
                   <option value="">全信頼度</option>
                 </select>
-                <select id="minPriorityFilter">
+                <select
+                  id="minPriorityFilter"
+                  aria-label="最低接続優先度で絞り込み"
+                >
                   <option value="">全優先度</option>
                   <option value="2">2以上</option>
                   <option value="3">3以上</option>
@@ -307,7 +307,7 @@
                 >信頼度、利用条件、サンプル接続先、利用説明を確認できます。</span
               >
             </div>
-            <div class="tableWrap">
+            <div class="tableWrap" tabindex="0">
               <table>
                 <thead>
                   <tr>
@@ -395,7 +395,7 @@
                 <p>形式に応じた典型的な使い方と、該当する代表的なAPIです。</p>
               </div>
             </div>
-            <div class="tableWrap">
+            <div class="tableWrap" tabindex="0">
               <table class="refTable">
                 <thead>
                   <tr>
@@ -683,7 +683,7 @@ L.tileLayer(
                 ↻ 再読込
               </button>
             </div>
-            <div class="tableWrap">
+            <div class="tableWrap" tabindex="0">
               <table class="manageTable">
                 <thead>
                   <tr>
@@ -891,7 +891,8 @@ L.tileLayer(
               <div>
                 <h2>OpenAPI インポート</h2>
                 <p>
-                  OpenAPI 3.x の JSON からエントリ候補を自動生成し、下書き（レビューキュー）へ投入します（重複は自動検出）。
+                  OpenAPI 3.x の JSON
+                  からエントリ候補を自動生成し、下書き（レビューキュー）へ投入します（重複は自動検出）。
                 </p>
               </div>
             </div>
@@ -902,11 +903,7 @@ L.tileLayer(
                 placeholder="取込名（例: デモ気象API仕様）"
                 required
               />
-              <input
-                name="reason"
-                placeholder="変更理由（必須）"
-                required
-              />
+              <input name="reason" placeholder="変更理由（必須）" required />
               <textarea
                 name="spec"
                 rows="8"
@@ -936,7 +933,7 @@ L.tileLayer(
                 ↻ 再読込
               </button>
             </div>
-            <div class="tableWrap">
+            <div class="tableWrap" tabindex="0">
               <table class="manageTable">
                 <thead>
                   <tr>
@@ -977,18 +974,51 @@ L.tileLayer(
                 required
               />
               <div class="webhookEvents">
-                <label><input type="checkbox" name="events" value="entry.created" /> 作成</label>
-                <label><input type="checkbox" name="events" value="entry.updated" /> 更新</label>
-                <label><input type="checkbox" name="events" value="entry.deleted" /> 削除</label>
-                <label><input type="checkbox" name="events" value="entry.restored" /> 復元</label>
-                <label><input type="checkbox" name="events" value="entry.workflow_transition" /> 遷移</label>
-                <label><input type="checkbox" name="events" value="verification.completed" /> 検証完了</label>
+                <label
+                  ><input type="checkbox" name="events" value="entry.created" />
+                  作成</label
+                >
+                <label
+                  ><input type="checkbox" name="events" value="entry.updated" />
+                  更新</label
+                >
+                <label
+                  ><input type="checkbox" name="events" value="entry.deleted" />
+                  削除</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="entry.restored"
+                  />
+                  復元</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="entry.workflow_transition"
+                  />
+                  遷移</label
+                >
+                <label
+                  ><input
+                    type="checkbox"
+                    name="events"
+                    value="verification.completed"
+                  />
+                  検証完了</label
+                >
               </div>
-              <input name="secret" placeholder="署名シークレット（任意・返却は登録時のみ）" />
+              <input
+                name="secret"
+                placeholder="署名シークレット（任意・返却は登録時のみ）"
+              />
               <input name="reason" placeholder="変更理由（必須）" required />
               <button type="submit" class="primaryButton">登録</button>
             </form>
-            <div class="tableWrap">
+            <div class="tableWrap" tabindex="0">
               <table class="manageTable">
                 <thead>
                   <tr>
@@ -1075,7 +1105,7 @@ L.tileLayer(
           ✕ 閉じる
         </button>
       </div>
-      <div class="tableWrap">
+      <div class="tableWrap" tabindex="0">
         <table class="manageTable">
           <thead>
             <tr>
@@ -1097,7 +1127,7 @@ L.tileLayer(
           ✕ 閉じる
         </button>
       </div>
-      <div class="tableWrap" id="compareBody"></div>
+      <div class="tableWrap" id="compareBody" tabindex="0"></div>
     </dialog>
 
     <script src="/vendor/leaflet/leaflet.js"></script>
