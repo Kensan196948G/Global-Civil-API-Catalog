@@ -4,7 +4,7 @@ import csv
 import json
 import os
 from collections import Counter
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +15,18 @@ EXPORT_DIR = ROOT / os.environ.get("CATALOG_EXPORT_DIR", "export")
 CATALOG_PATH = DATA_DIR / "api_catalog.json"
 CATALOG_METADATA_PATH = DATA_DIR / "catalog_metadata.json"
 VERIFICATION_PATH = DATA_DIR / "verification_results.json"
+# Time-series history (issue #49): verification_results.json above stays a
+# point-in-time snapshot that is overwritten on every run; this JSON Lines
+# file (one `build_result` record per line) accumulates history across runs
+# so anomaly detection has a prior baseline to compare against. This is a
+# deliberate interim JSON-based store for the pre-#46 (DB migration) period;
+# see docs/verification-plan.md for the DB fast-follow plan.
+VERIFICATION_HISTORY_PATH = DATA_DIR / "verification_history.jsonl"
+# Retention window applied on every append so the file does not grow
+# unbounded. At the current weekly cadence and catalog size this keeps the
+# file well under a few hundred KB, so a full-file rewrite on each append
+# (rather than true O(1) appends) is simple and cheap enough.
+VERIFICATION_HISTORY_RETENTION_DAYS = 90
 
 REQUIRED_CATALOG_FIELDS = {
     "id",
@@ -90,6 +102,68 @@ def load_verification_results(path: Path = VERIFICATION_PATH) -> list[dict[str, 
     if not isinstance(data, list):
         raise ValueError("verification root must be a list")
     return data
+
+
+def load_verification_history(path: Path = VERIFICATION_HISTORY_PATH) -> list[dict[str, Any]]:
+    """Read the newline-delimited verification history file.
+
+    Returns an empty list when the file does not exist yet (e.g. before the
+    first `--append-history` run) instead of raising, so callers such as the
+    anomaly detector can treat "no history" as a normal first-run state.
+    Blank lines are skipped so the file tolerates manual edits/trimming.
+    """
+    if not path.exists():
+        return []
+    records: list[dict[str, Any]] = []
+    with path.open(encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue
+            records.append(json.loads(line))
+    return records
+
+
+def _verified_at_is_within_retention(record: dict[str, Any], cutoff: datetime) -> bool:
+    verified_at = record.get("verified_at")
+    if not isinstance(verified_at, str):
+        # Keep malformed/legacy records rather than silently losing data;
+        # they simply won't sort meaningfully for anomaly comparisons.
+        return True
+    try:
+        parsed = datetime.fromisoformat(verified_at.replace("Z", "+00:00"))
+    except ValueError:
+        return True
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed >= cutoff
+
+
+def append_verification_history(
+    new_records: list[dict[str, Any]],
+    path: Path = VERIFICATION_HISTORY_PATH,
+    retention_days: int = VERIFICATION_HISTORY_RETENTION_DAYS,
+    now: datetime | None = None,
+) -> list[dict[str, Any]]:
+    """Append `new_records` to the JSONL history file, pruning entries older
+    than `retention_days` (based on `verified_at`). Rewrites the whole file
+    on each call rather than doing a literal filesystem append, which keeps
+    the retention/pruning logic simple; see the module-level comment on
+    VERIFICATION_HISTORY_PATH for why this is cheap enough in practice.
+
+    Returns the resulting (pruned + appended) record list.
+    """
+    now = now or datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=retention_days)
+    existing = load_verification_history(path)
+    kept = [record for record in existing if _verified_at_is_within_retention(record, cutoff)]
+    kept.extend(new_records)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as file:
+        for record in kept:
+            file.write(json.dumps(record, ensure_ascii=False))
+            file.write("\n")
+    return kept
 
 
 def load_catalog_metadata(path: Path = CATALOG_METADATA_PATH) -> dict[str, Any]:
