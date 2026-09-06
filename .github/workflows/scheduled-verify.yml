@@ -21,7 +21,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest ruff
       - name: Run live API verification
-        run: python scripts/run_verification.py --live --write --limit 50 --timeout 15
+        run: >-
+          python scripts/run_verification.py --live --write --append-history
+          --limit 50 --timeout 15
+      - name: Detect verification anomalies
+        run: >-
+          python scripts/detect_verification_anomalies.py
+          --output data/verification_anomalies.json
       - name: Update scores
         run: python scripts/score_catalog.py --write
       - name: Refresh catalog metadata counts
@@ -80,7 +86,7 @@ jobs:
             --head "$BRANCH" \
             --title "chore: weekly verification ${DATE}" \
             --body "$BODY"
-      - name: Create alert issue on verification failures
+      - name: Create alert issue on verification failures and anomalies
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -92,7 +98,20 @@ jobs:
           fi
           python - <<'PY'
           import json
-          results = json.load(open("data/verification_results.json", encoding="utf-8"))
+          from datetime import date
+
+          with open("data/verification_results.json", encoding="utf-8") as fh:
+              results = json.load(fh)
+
+          try:
+              with open("data/verification_anomalies.json", encoding="utf-8") as fh:
+                  anomalies = json.load(fh)
+          except FileNotFoundError:
+              # scripts/detect_verification_anomalies.py did not run (e.g. an
+              # earlier step failed before reaching it); treat as "no anomalies"
+              # rather than blocking the failure-only alert path.
+              anomalies = []
+
           failures = [
               {
                   "api_id": r["api_id"],
@@ -103,18 +122,23 @@ jobs:
               if r.get("result") == "failure"
           ]
           with open("verification_alerts.json", "w", encoding="utf-8") as fh:
-              json.dump({"date": __import__("datetime").date.today().isoformat(), "failures": failures}, fh, ensure_ascii=False, indent=2)
+              json.dump(
+                  {"date": date.today().isoformat(), "failures": failures, "anomalies": anomalies},
+                  fh,
+                  ensure_ascii=False,
+                  indent=2,
+              )
           PY
-          if python -c "import json; d=json.load(open('verification_alerts.json')); exit(0 if d['failures'] else 1)"; then
+          if python -c "import json; d=json.load(open('verification_alerts.json')); exit(0 if (d['failures'] or d['anomalies']) else 1)"; then
             OPEN="$(gh issue list --label verification-alert --state open --json number --jq 'length')"
             if [ "$OPEN" = "0" ]; then
               gh issue create \
-                --title "週次検証 failure 検出 ($(date -u +%Y-%m-%d))" \
+                --title "週次検証 failure/異常検出 ($(date -u +%Y-%m-%d))" \
                 --label verification-alert \
                 --body "$(cat verification_alerts.json)"
             else
               echo "verification-alert issue already open ($OPEN); skipping."
             fi
           else
-            echo "No verification failures to report."
+            echo "No verification failures or anomalies to report."
           fi
