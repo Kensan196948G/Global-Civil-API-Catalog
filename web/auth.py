@@ -238,13 +238,44 @@ def _revalidate_local_session(db: Session, session: UserSession) -> UserSession 
     return session
 
 
+def auth_bypass_enabled() -> bool:
+    """MVP 公開デモ用のログイン認証バイパスが有効かどうか。
+
+    CATALOG_AUTH_BYPASS=true のときだけ有効。さらに CATALOG_ENV が
+    "production" の場合は設定値によらず必ず無効にする（安全装置）。
+    """
+    if os.environ.get("CATALOG_AUTH_BYPASS", "").strip().lower() != "true":
+        return False
+    return os.environ.get("CATALOG_ENV", "").strip().lower() != "production"
+
+
+def _bypass_session() -> UserSession:
+    """バイパス時に使う、DB へ保存しない一時セッション。
+
+    付与ロールは CATALOG_AUTH_BYPASS_ROLES（カンマ区切り）で指定でき、
+    未指定なら閲覧のみの Catalog.Viewer とする。未知のロール名は無視する。
+    ``last_role_check_at`` は DB へ保存されないため未設定のままでよい
+    （issue #61 の再照合ロジックは DB 上のセッションにのみ適用される）。
+    """
+    raw = os.environ.get("CATALOG_AUTH_BYPASS_ROLES", "")
+    roles = [r.strip() for r in raw.split(",") if r.strip() in ALL_ROLES]
+    return UserSession(
+        id="mvp-demo-bypass",
+        user_sub=os.environ.get("CATALOG_AUTH_BYPASS_SUB", "demo@example.invalid"),
+        display_name=os.environ.get("CATALOG_AUTH_BYPASS_NAME", "デモ利用者"),
+        roles=roles or [ROLE_VIEWER],
+        expires_at=_now() + SESSION_TTL,
+    )
+
+
 def current_session(request: Request, db: Session) -> UserSession | None:
     session_id = request.cookies.get(SESSION_COOKIE)
     if not session_id:
-        return None
+        # MVP 公開デモ: ログインしていなくても閲覧できるようにする
+        return _bypass_session() if auth_bypass_enabled() else None
     session = db.get(UserSession, session_id)
     if session is None or session.expires_at < _now():
-        return None
+        return _bypass_session() if auth_bypass_enabled() else None
     return _revalidate_local_session(db, session)
 
 

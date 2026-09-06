@@ -86,6 +86,8 @@ echo "Starting api_v1 (${API_PORT})..."
 CATALOG_DATABASE_URL="$DB_URL" \
 CATALOG_AUTH_MODE=local \
 CATALOG_BASE_URL="$CATALOG_BASE_URL" \
+CATALOG_AUTH_BYPASS="${CATALOG_AUTH_BYPASS:-true}" \
+CATALOG_AUTH_BYPASS_ROLES="${CATALOG_AUTH_BYPASS_ROLES:-Catalog.Viewer}" \
 nohup python -m uvicorn web.api_v1:app --host 127.0.0.1 --port "$API_PORT" \
   >"$LOG_DIR/api.log" 2>&1 &
 echo $! >"$LOG_DIR/api.pid"
@@ -102,7 +104,7 @@ echo $! >"$LOG_DIR/web.pid"
 sleep 2
 echo ""
 echo "Demo stack started:"
-echo "  WebUI:      http://127.0.0.1:${WEB_PORT}  (ログイン: demo-admin / DemoPassw0rd!2026)"
+echo "  WebUI:      http://127.0.0.1:${WEB_PORT}  (MVP 公開デモのためログイン不要。編集は demo-admin でログイン)"
 echo "  API:        http://127.0.0.1:${API_PORT}/api/v1/health"
 echo "  Webhook:    http://127.0.0.1:${ECHO_PORT}/webhook-echo"
 echo "  Logs:       $LOG_DIR"
