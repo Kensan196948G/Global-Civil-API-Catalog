@@ -217,6 +217,12 @@ class UserSession(Base):
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    # Last time role/active-state was re-read from the source of truth
+    # (local_users for auth mode ``local``). Defaults to "now" on login so a
+    # freshly issued session is never immediately re-checked (issue #61).
+    last_role_check_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
 
 
 class LocalUser(Base):
@@ -287,9 +293,7 @@ class WebhookSubscription(Base):
         ARRAY(Text), nullable=False, server_default=text("'{}'")
     )
     secret: Mapped[str | None] = mapped_column(Text)
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, server_default=text("true")
-    )
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))
     created_by: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")

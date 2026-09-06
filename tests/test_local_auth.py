@@ -18,6 +18,8 @@ pytest.importorskip("authlib")
 if not os.environ.get("CATALOG_DATABASE_URL"):
     pytest.skip("CATALOG_DATABASE_URL not set", allow_module_level=True)
 
+from datetime import datetime, timedelta, timezone  # noqa: E402
+
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import delete  # noqa: E402
 
@@ -25,7 +27,9 @@ from db.models import AuditLog, LocalUser, UserSession  # noqa: E402
 from db.session import make_session_factory  # noqa: E402
 from web.api_v1 import app  # noqa: E402
 from web.auth import (  # noqa: E402
+    LOCAL_ROLE_RECHECK_INTERVAL,
     MAX_FAILED_LOGINS,
+    ROLE_ADMIN,
     ROLE_EDITOR,
     SESSION_COOKIE,
     hash_password,
@@ -166,9 +170,7 @@ def test_local_login_disabled_in_oidc_mode(monkeypatch: pytest.MonkeyPatch, clie
     assert response.status_code == 404
 
 
-def test_login_rate_limit_returns_429(
-    db, client, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_login_rate_limit_returns_429(db, client, monkeypatch: pytest.MonkeyPatch) -> None:
     import web.api_v1
 
     put_user(db, "test-local-rate")
@@ -189,3 +191,72 @@ def test_revoke_user_sessions_invalidates_existing_logins(db, client) -> None:
 
     assert revoked >= 1
     assert client.get("/auth/me", cookies={SESSION_COOKIE: cookie}).status_code == 401
+
+
+# --- session re-validation (issue #61) --------------------------------------
+
+
+def _make_stale(db, session_id: str) -> None:
+    """Force a session's cached role/state to look overdue for re-check."""
+    session = db.get(UserSession, session_id)
+    session.last_role_check_at = (
+        datetime.now(timezone.utc) - LOCAL_ROLE_RECHECK_INTERVAL - timedelta(minutes=1)
+    )
+    db.commit()
+
+
+def test_stale_session_picks_up_role_change(db, client) -> None:
+    put_user(db, "test-local-rolechange", role=ROLE_EDITOR)
+    login = client.post(
+        "/auth/login", json={"username": "test-local-rolechange", "password": PASSWORD}
+    )
+    cookie = login.cookies[SESSION_COOKIE]
+
+    user = db.get(LocalUser, "test-local-rolechange")
+    user.role = ROLE_ADMIN
+    db.commit()
+    _make_stale(db, cookie)
+
+    me = client.get("/auth/me", cookies={SESSION_COOKIE: cookie})
+
+    assert me.status_code == 200
+    assert me.json()["roles"] == [ROLE_ADMIN]
+
+
+def test_fresh_session_does_not_recheck_role_immediately(db, client) -> None:
+    put_user(db, "test-local-freshcheck", role=ROLE_EDITOR)
+    login = client.post(
+        "/auth/login", json={"username": "test-local-freshcheck", "password": PASSWORD}
+    )
+    cookie = login.cookies[SESSION_COOKIE]
+
+    # Promote the account but leave last_role_check_at untouched (just set
+    # by login): the cached role must still be served until the interval
+    # elapses, so a single re-check does not happen on every request.
+    user = db.get(LocalUser, "test-local-freshcheck")
+    user.role = ROLE_ADMIN
+    db.commit()
+
+    me = client.get("/auth/me", cookies={SESSION_COOKIE: cookie})
+
+    assert me.status_code == 200
+    assert me.json()["roles"] == [ROLE_EDITOR]
+
+
+def test_stale_session_revoked_when_account_deactivated(db, client) -> None:
+    put_user(db, "test-local-staledeactivate")
+    login = client.post(
+        "/auth/login", json={"username": "test-local-staledeactivate", "password": PASSWORD}
+    )
+    cookie = login.cookies[SESSION_COOKIE]
+
+    user = db.get(LocalUser, "test-local-staledeactivate")
+    user.is_active = False
+    db.commit()
+    _make_stale(db, cookie)
+
+    me = client.get("/auth/me", cookies={SESSION_COOKIE: cookie})
+
+    assert me.status_code == 401
+    db.expire_all()
+    assert db.get(UserSession, cookie) is None

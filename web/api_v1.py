@@ -45,6 +45,7 @@ from db.audit import (  # noqa: E402
     ACTION_DELETE,
     ACTION_OPENAPI_IMPORT,
     ACTION_RESTORE,
+    ACTION_SESSIONS_REVOKED,
     ACTION_TRANSITION,
     ACTION_TRY_IT,
     ACTION_UPDATE,
@@ -80,6 +81,7 @@ from web.auth import (  # noqa: E402
     current_session,
     purge_expired_sessions,
     require_role,
+    revoke_user_sessions,
 )
 from web.ratelimit import RateLimiter  # noqa: E402
 from web.webhooks import deliver, dispatch_webhooks  # noqa: E402
@@ -1073,10 +1075,7 @@ class WebhookPatch(BaseModel):
 def _webhook_to_dict(
     subscription: WebhookSubscription, include_secret: bool = False
 ) -> dict[str, Any]:
-    payload = {
-        c.name: getattr(subscription, c.name)
-        for c in WebhookSubscription.__table__.columns
-    }
+    payload = {c.name: getattr(subscription, c.name) for c in WebhookSubscription.__table__.columns}
     if payload.get("last_delivery_at") is not None:
         payload["last_delivery_at"] = payload["last_delivery_at"].isoformat()
     if not include_secret:
@@ -1229,3 +1228,40 @@ def test_webhook(
     )
     session.commit()
     return {"id": subscription.id, "delivery_id": delivery_id, "status": status}
+
+
+# --- admin session management ------------------------------------------------
+# Issue #61: role/status changes made outside a session's own re-check window
+# (OIDC sessions in particular — see LOCAL_ROLE_RECHECK_INTERVAL in
+# web/auth.py) need an immediate, explicit way to force re-authentication.
+
+
+class SessionRevokeRequest(BaseModel):
+    user_sub: str = Field(min_length=1, max_length=200)
+    reason: str = Field(min_length=1, max_length=1000)
+
+
+@app.post("/api/v1/admin/sessions/revoke")
+def revoke_sessions(
+    payload: SessionRevokeRequest,
+    actor: UserSession = Depends(require_admin),
+    session: Session = Depends(get_session),
+) -> dict[str, Any]:
+    """Immediately invalidate every session of ``user_sub`` (Catalog.Admin
+    only). Use after disabling an account or changing its role outside the
+    periodic local-session re-check (e.g. an OIDC/Entra ID role change)."""
+    user_sub = payload.user_sub.strip()
+    if not user_sub:
+        raise HTTPException(status_code=422, detail="user_sub must not be empty")
+    revoked = revoke_user_sessions(session, user_sub)
+    record_audit(
+        session,
+        actor=actor.user_sub,
+        actor_roles=actor.roles,
+        action=ACTION_SESSIONS_REVOKED,
+        record_id=user_sub,
+        diff={"revoked_count": revoked},
+        reason=payload.reason,
+    )
+    session.commit()
+    return {"user_sub": user_sub, "revoked_count": revoked}
