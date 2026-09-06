@@ -40,6 +40,24 @@ SESSION_TTL = timedelta(hours=8)
 AUTH_REQUEST_TTL = timedelta(minutes=10)
 CLOCK_SKEW_SECONDS = 300  # design §3.3
 
+# How often a *local* (username/password) session re-reads role/active
+# state from ``local_users`` instead of trusting the roles cached on the
+# session at login time (issue #61 — Codex review on PR #60). 1h bounds
+# the worst-case staleness window for a revoked or demoted local account
+# to a small fraction of SESSION_TTL, without adding a DB round trip to
+# every single request.
+#
+# OIDC (Entra ID) sessions are NOT re-checked here: doing so without a
+# stored refresh token would mean a full silent re-authentication against
+# the tenant on a background timer, which needs its own token storage,
+# rotation and revocation handling (offline_access scope) — a materially
+# larger change than this fix. The admin revoke API below (POST
+# /api/v1/admin/sessions/revoke) is the interim mitigation for OIDC
+# role-change events; a future issue can add Entra-side re-validation
+# (e.g. a group-change webhook or short-lived silent re-auth) on top of
+# it without touching this local-mode logic.
+LOCAL_ROLE_RECHECK_INTERVAL = timedelta(hours=1)
+
 ROLE_ADMIN = "Catalog.Admin"
 ROLE_EDITOR = "Catalog.Editor"
 ROLE_VERIFIER = "Catalog.Verifier"
@@ -187,6 +205,39 @@ def validate_id_token(id_token: str, nonce: str, jwks: dict) -> dict:
     return dict(claims)
 
 
+def _local_username(user_sub: str) -> str | None:
+    """``local:<username>`` -> ``<username>``; ``None`` for OIDC subs."""
+    prefix = "local:"
+    if not user_sub.startswith(prefix):
+        return None
+    return user_sub[len(prefix) :]
+
+
+def _revalidate_local_session(db: Session, session: UserSession) -> UserSession | None:
+    """Re-read role/active-state for a stale *local* session (issue #61).
+
+    Returns the (possibly updated) session, or ``None`` if it must be
+    treated as logged out (account deactivated or deleted since login).
+    OIDC sessions are returned unchanged — see ``LOCAL_ROLE_RECHECK_INTERVAL``.
+    """
+    username = _local_username(session.user_sub)
+    if username is None:
+        return session
+    now = _now()
+    if now - session.last_role_check_at < LOCAL_ROLE_RECHECK_INTERVAL:
+        return session
+    user = db.get(LocalUser, username)
+    if user is None or not user.is_active:
+        db.execute(delete(UserSession).where(UserSession.id == session.id))
+        db.commit()
+        return None
+    if list(session.roles) != [user.role]:
+        session.roles = [user.role]
+    session.last_role_check_at = now
+    db.commit()
+    return session
+
+
 def current_session(request: Request, db: Session) -> UserSession | None:
     session_id = request.cookies.get(SESSION_COOKIE)
     if not session_id:
@@ -194,7 +245,7 @@ def current_session(request: Request, db: Session) -> UserSession | None:
     session = db.get(UserSession, session_id)
     if session is None or session.expires_at < _now():
         return None
-    return session
+    return _revalidate_local_session(db, session)
 
 
 def require_role(get_db, *allowed: str):

@@ -86,10 +86,12 @@ def client():
         yield c
 
 
-def make_session(db, roles: list[str], *, expired: bool = False) -> str:
+def make_session(
+    db, roles: list[str], *, user_sub: str | None = None, expired: bool = False
+) -> str:
     session = UserSession(
         id=f"test-session-{time.time_ns()}",
-        user_sub=f"test-sub-{time.time_ns()}",
+        user_sub=user_sub or f"test-sub-{time.time_ns()}",
         display_name="Test User",
         roles=roles,
         expires_at=datetime.now(timezone.utc)
@@ -336,9 +338,7 @@ def test_try_it_success_is_audited(client, db, monkeypatch: pytest.MonkeyPatch) 
 
     url = "https://example.test/data.json"
     monkeypatch.setattr(web.api_v1, "validate_public_url", lambda *a, **k: None)
-    monkeypatch.setattr(
-        web.api_v1, "fetch_public_url", lambda *a, **k: (200, b'{"ok": true}', url)
-    )
+    monkeypatch.setattr(web.api_v1, "fetch_public_url", lambda *a, **k: (200, b'{"ok": true}', url))
     cookies = {SESSION_COOKIE: make_session(db, [ROLE_EDITOR])}
 
     response = client.post("/api/v1/try-it", json={"url": url}, cookies=cookies)
@@ -348,10 +348,7 @@ def test_try_it_success_is_audited(client, db, monkeypatch: pytest.MonkeyPatch) 
     assert body["status"] == 200
     assert body["preview"] == '{"ok": true}'
     row = db.execute(
-        select(AuditLog)
-        .where(AuditLog.action == "try_it")
-        .order_by(AuditLog.seq.desc())
-        .limit(1)
+        select(AuditLog).where(AuditLog.action == "try_it").order_by(AuditLog.seq.desc()).limit(1)
     ).scalar_one()
     assert row.diff["url"] == url
     db.execute(AuditLog.__table__.delete().where(AuditLog.seq == row.seq))  # test cleanup
@@ -391,7 +388,82 @@ def test_login_failure_audit_never_stores_raw_exception_text(
     ).scalar_one()
     assert row.reason == "RuntimeError"
     assert "SECRET-TOKEN-MATERIAL" not in (row.reason or "")
-    db.execute(
-        AuditLog.__table__.delete().where(AuditLog.seq == row.seq)
-    )  # test-row cleanup
+    db.execute(AuditLog.__table__.delete().where(AuditLog.seq == row.seq))  # test-row cleanup
+    db.commit()
+
+
+# --- admin session revoke API (issue #61) -----------------------------------
+
+
+def test_admin_revoke_sessions_requires_admin(client, db) -> None:
+    target_sub = f"test-sub-revoke-403-{time.time_ns()}"
+    target_cookie = make_session(db, [ROLE_VIEWER], user_sub=target_sub)
+    editor_cookie = {SESSION_COOKIE: make_session(db, [ROLE_EDITOR])}
+
+    response = client.post(
+        "/api/v1/admin/sessions/revoke",
+        json={"user_sub": target_sub, "reason": "test: rbac check"},
+        cookies=editor_cookie,
+    )
+
+    assert response.status_code == 403
+    # The target session must be untouched by the rejected request.
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: target_cookie}).status_code == 200
+
+
+def test_admin_revoke_sessions_unauthenticated_is_401(client) -> None:
+    response = client.post(
+        "/api/v1/admin/sessions/revoke",
+        json={"user_sub": "test-sub-anon", "reason": "test: no session"},
+    )
+    assert response.status_code == 401
+
+
+def test_admin_revoke_sessions_rejects_blank_user_sub(client, db) -> None:
+    admin_cookie = {SESSION_COOKIE: make_session(db, [ROLE_ADMIN])}
+
+    response = client.post(
+        "/api/v1/admin/sessions/revoke",
+        json={"user_sub": "   ", "reason": "test: blank user_sub"},
+        cookies=admin_cookie,
+    )
+
+    assert response.status_code == 422
+
+
+def test_admin_revoke_sessions_invalidates_all_target_sessions(client, db) -> None:
+    from sqlalchemy import select
+
+    from db.audit import ACTION_SESSIONS_REVOKED
+    from db.models import AuditLog
+
+    target_sub = f"test-sub-revoke-{time.time_ns()}"
+    target_cookie_a = make_session(db, [ROLE_EDITOR], user_sub=target_sub)
+    target_cookie_b = make_session(db, [ROLE_EDITOR], user_sub=target_sub)
+    admin_cookie = {SESSION_COOKIE: make_session(db, [ROLE_ADMIN])}
+
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: target_cookie_a}).status_code == 200
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: target_cookie_b}).status_code == 200
+
+    response = client.post(
+        "/api/v1/admin/sessions/revoke",
+        json={"user_sub": target_sub, "reason": "test: role downgrade"},
+        cookies=admin_cookie,
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body == {"user_sub": target_sub, "revoked_count": 2}
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: target_cookie_a}).status_code == 401
+    assert client.get("/auth/me", cookies={SESSION_COOKIE: target_cookie_b}).status_code == 401
+
+    row = db.execute(
+        select(AuditLog)
+        .where(AuditLog.action == ACTION_SESSIONS_REVOKED, AuditLog.record_id == target_sub)
+        .order_by(AuditLog.seq.desc())
+        .limit(1)
+    ).scalar_one()
+    assert row.diff == {"revoked_count": 2}
+    assert row.reason == "test: role downgrade"
+    db.execute(AuditLog.__table__.delete().where(AuditLog.seq == row.seq))  # test-row cleanup
     db.commit()
