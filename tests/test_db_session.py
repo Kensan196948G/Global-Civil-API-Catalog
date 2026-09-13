@@ -6,13 +6,22 @@
 * 200 + status=ok を返してはならない（監視が成功と誤認する）、
 * ハングしてはならない（監視がタイムアウトし、何も分からない）。
 
-``create_engine()`` は接続を開かないため、これらのテストは
-``CATALOG_DATABASE_URL`` 未設定のCIでも実行される。
+``create_engine()`` は接続を開かないため ``CATALOG_DATABASE_URL`` は不要だが、
+``db.session`` は SQLAlchemy を要する。CI の ``catalog`` ジョブは
+意図的に stdlib のみ（`pip install pytest ruff mypy pip-audit`）で DB 依存を
+入れないため、**モジュールレベルで importorskip する**。これを怠ると
+コレクション時 ImportError でジョブ全体が落ちる（PR #98 で実際に発生）。
+DB 依存が入る ``db-api`` ジョブでは実行される。
 """
 
 from __future__ import annotations
 
-from db.session import (
+import pytest
+
+pytest.importorskip("sqlalchemy")
+pytest.importorskip("psycopg")
+
+from db.session import (  # noqa: E402
     DEFAULT_CONNECT_TIMEOUT,
     make_engine,
 )
