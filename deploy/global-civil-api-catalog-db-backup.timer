@@ -1,0 +1,16 @@
+[Unit]
+Description=Global Civil API Catalog daily PostgreSQL backup timer (03:40 JST)
+Documentation=file:///home/kensan/Projects/Mirai-DX-Project/Global-Civil-API-Catalog/docs/backup-restore.md
+# 03:40 JST。同ホストの他プロジェクトのバックアップ帯
+# (ctiip 23:30 / civil-twin 03:10 / codip 03:15 / adet 03:30) と重ならない時刻に置く。
+
+[Timer]
+OnCalendar=*-*-* 03:40:00
+# ホスト停止等で実行できなかった場合は、次回起動直後に1回だけ追い実行する
+Persistent=true
+# 多少の遅延を許容して同時刻の他ジョブと重ならないようにする
+RandomizedDelaySec=300
+Unit=global-civil-api-catalog-db-backup.service
+
+[Install]
+WantedBy=timers.target
