@@ -38,3 +38,16 @@ docs/EntraID-info.txt
 # MVP demo environment generated artifacts (fictional data only)
 export-demo/
 data/demo/webhook_deliveries.jsonl
+
+# Secrets — DB connection strings with passwords. The live secret location is
+# outside the repo (~/.config/global-civil-api-catalog/api.env, chmod 600);
+# this entry is the safety net that stops a repo-root .env holding real
+# credentials from ever being staged. Never commit these.
+.env
+.env.*
+!.env.example
+*.env
+!*.env.example
+*.dump
+*.sql.gz
+backups/
