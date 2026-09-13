@@ -2,7 +2,8 @@
 
 DB を必要としない範囲で、有効化条件と付与ロールを固定する。
 - 既定は無効（未ログインは従来どおり None）
-- CATALOG_ENV=production では設定値によらず必ず無効（安全装置）
+- ``CATALOG_ENV`` が development/demo の**明示的な許可リスト**にある場合のみ有効
+  （未設定・production・未知の値では必ず無効）
 - 付与ロールは既定 Catalog.Viewer、未知のロール名は無視する
 """
 
@@ -61,6 +62,33 @@ def test_production_is_never_bypassed(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("CATALOG_ENV", "production")
     assert auth_bypass_enabled() is False
     assert current_session(_Req(), None) is None
+
+
+def test_fails_closed_when_env_is_unset_or_unrecognised(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """回帰防止: 許可リスト方式であること。
+
+    以前は拒否リスト方式（``CATALOG_ENV != "production"`` なら有効）だった
+    ため、環境変数が未設定・別名・大文字小文字違い・末尾空白のいずれでも
+    認証バイパスが成立してしまった。未設定／未知の環境では必ず無効でなければ
+    ならない。
+    """
+    for env_value in (None, "", "prod", "Production", "production ", "stg", "staging", "test"):
+        _clear(monkeypatch)
+        monkeypatch.setenv("CATALOG_AUTH_BYPASS", "true")
+        if env_value is not None:
+            monkeypatch.setenv("CATALOG_ENV", env_value)
+        assert auth_bypass_enabled() is False, f"bypass must be off for CATALOG_ENV={env_value!r}"
+        assert current_session(_Req(), None) is None
+
+
+def test_demo_env_is_allowed(monkeypatch: pytest.MonkeyPatch) -> None:
+    """デモ環境も明示的な許可対象であること。"""
+    _clear(monkeypatch)
+    monkeypatch.setenv("CATALOG_AUTH_BYPASS", "true")
+    monkeypatch.setenv("CATALOG_ENV", "demo")
+    assert auth_bypass_enabled() is True
 
 
 def test_roles_are_configurable(monkeypatch: pytest.MonkeyPatch) -> None:

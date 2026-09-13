@@ -38,9 +38,13 @@ def test_metadata_counts_match_json(client) -> None:
 
 
 def test_health_endpoint_reports_db_ok(client) -> None:
-    body = client.get("/api/v1/health").json()
+    response = client.get("/api/v1/health")
+    assert response.status_code == 200
+    body = response.json()
     assert body["status"] == "ok"
     assert body["database"] == "ok"
+    # Build identification: a probe must be able to tell which env/commit answered.
+    assert set(body) >= {"status", "database", "env", "commit"}
 
 
 def test_list_entries_returns_all_records(client) -> None:

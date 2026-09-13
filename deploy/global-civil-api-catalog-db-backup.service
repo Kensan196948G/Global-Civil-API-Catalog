@@ -1,0 +1,26 @@
+[Unit]
+Description=Global Civil API Catalog PostgreSQL logical backup (global_civil_api_catalog)
+Documentation=file:///home/kensan/Projects/Mirai-DX-Project/Global-Civil-API-Catalog/docs/backup-restore.md
+# 2026-09-13 CTO評価で追加。docs/backup-restore.md は「Neon PITR ＋ 任意の
+# pg_dump」を前提にしていたが、本番DBがローカル PostgreSQL へ移行した時点で
+# PITR は存在しなくなり、pg_dump を定期実行する機構も無かった（実測: backups/
+# ディレクトリも unit も timer も無し）。本 unit がその欠落を埋める。
+#
+# 注意: 保存先は既定で $HOME/backups/global-civil-api-catalog。同一ホスト内で
+# あるため、ホスト障害時にはバックアップごと失われる。外部退避と RPO/RTO の
+# 決定は docs/backup-restore.md の「残課題」のままである。
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/kensan/Projects/Mirai-DX-Project/Global-Civil-API-Catalog
+# peer 認証(Unixソケット)で接続するためパスワード不要。
+# pg_dump / pg_restore はスクリプト側でサーバと同一メジャー(16)に固定している。
+ExecStart=/usr/bin/python3 scripts/db_backup.py --keep 14
+# 失敗を残す: systemd の failed 状態は次の成功で消えるため、ログにも明示的に残す。
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gcac-db-backup
+
+[Install]
+WantedBy=default.target

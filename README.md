@@ -144,6 +144,15 @@ flowchart TD
   D --> G["後続システム"]
 ```
 
+> 🚨 **注意（2026-09-13 実測）**: 上の図の `Neon PostgreSQL` は**現在稼働していません**。
+> 本番 `api.env` の接続先が Neon（`password authentication failed`）を指したままであり、
+> **api_v1 の書込層・RBAC・監査は停止**しています。ローカル PostgreSQL
+> （`127.0.0.1:5432` / `global_civil_api_catalog`）はデータを保持して稼働しているため、
+> **接続先の是正が必要**です。詳細と手順: [運用メモ](docs/operations.md) /
+> [バックアップ・復旧手順](docs/backup-restore.md) §5。
+> なお DB 障害を検知できるよう `/api/v1/health` は **503 + `status=degraded`** を
+> 返すよう修正済みです。
+
 ## 🖥️ Web UI の主な画面
 
 | 画面                    | 内容                                                                                                                                                                                                                                          |
