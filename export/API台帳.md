@@ -53,7 +53,7 @@
 | OVERTURE-MAPS-001 | Overture Maps | 国際建物 | Overture Maps Foundation | Parquet, GeoParquet | not_required | A | 4 | 調査中 | - | 海外の建物・基盤地物データを使い、都市分析や海外案件の初期調査に利用します。大容量データの抽出設計が必要です。 |
 | NOAA-NWS-001 | NOAA NWS API | 国際気象 | NOAA/NWS | REST, JSON-LD | not_required | A | 4 | 接続検証済 | success | 米国の天気・予報APIとして、海外案件やAPI設計比較に使います。JSON-LDで地点情報から予報系データへ接続できます。 |
 | NOAA-CDO-001 | NOAA Climate Data Online API | 国際気象 | NOAA/NCEI | REST, JSON | required | A | 3 | 保留 | - | 海外気象・気候データを使い、海外案件や比較研究の気象条件を確認します。User-AgentやAPIキー要件に注意します。 |
-| USGS-WATER-001 | USGS Water Data APIs | 国際水文 | USGS | REST, JSON | not_required | A | 4 | 接続検証済 | success | 米国の水位・流量データを取得し、海外水文データの比較、研究、サンプル実装に使います。 |
+| USGS-WATER-001 | USGS Water Data APIs | 国際水文 | USGS | REST, JSON | not_required | A | 4 | 接続検証済 | failure | 米国の水位・流量データを取得し、海外水文データの比較、研究、サンプル実装に使います。 |
 | USGS-EARTHQUAKE-001 | USGS Earthquake API | 国際災害 | USGS | GeoJSON | not_required | A | 4 | 接続候補 | success | 地震など国際的な災害データを使い、広域リスク把握や研究に利用します。国内公式情報とは用途を分けます。 |
 | OPENAQ-API-001 | OpenAQ API | 国際環境 | OpenAQ | REST, JSON | unknown | B | 3 | 調査中 | - | 海外・国際的な環境観測データを使い、大気環境や環境比較に利用します。APIバージョンと認証要件を確認してください。 |
 | NASA-FIRMS-001 | NASA Earthdata / FIRMS | 衛星 | NASA | API, GeoJSON, CSV | required | B | 3 | 保留 | - | 衛星観測、火災、災害関連データを使い、広域監視や災害初動の参考にします。APIキーと利用条件の確認が必要です。 |
