@@ -48,13 +48,11 @@
 
 ## 📌 3. 🔒 Human Final Decision Boundary（厳守）
 
-CTO は開発・検証・修正・レビュー・文書更新・PR 準備・条件付き自動 merge を自律実行できる。ただし以下は **人間の明示承認が必須**:
+CTO は開発・検証・修正・レビュー・文書更新・PR 準備・自動 merge を自律実行できる。ただし以下は **人間の明示承認が必須**:
 
-- 🚫 main/default branch 宛 PR の merge（必ず「マージしますか? [y/N]」を確認し、承認時のみ merge）
 - 🚫 本番公開・外部公開 URL 切替・課金が発生する操作・秘密情報の登録/削除
 - 🚫 破壊的削除・データ削除・履歴改変・force push・main 直 push
-- ✅ 自動 merge 可: **main 以外** かつ CI 成功・mergeable・review 通過・Critical/High=0・
-  認証/認可/DB/secrets/deploy/workflow 非該当 を **全て満たす場合のみ**（`claudeos/docs/auto-merge-protocol.md` 準拠）
+- ✅ マージ規定: PR は `gh pr merge --auto --squash` で自動マージを予約する。マージの条件は Required Checks の全成功と merge conflict がないことだけとし、人間の Y/N・選択・Approve を待たない。`--admin` による迂回は禁止する。Release・本番デプロイ・秘密情報の変更・不可逆な削除は、コードのマージとは別に Human Gate とする。（正本: 中央ポリシー `GITHUB_POLICY.md` v2）
 - 🚀 実際の本番デプロイは人間が手動実行。CTO は deploy ready 判定と手順書生成まで。
 
 ## 📌 4. STABLE 判定
