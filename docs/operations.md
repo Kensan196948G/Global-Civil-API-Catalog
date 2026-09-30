@@ -215,8 +215,29 @@ journalctl --user -u gc-api-catalog-cloudflared -n 20 --no-pager
 ## 🗄️ DB レイヤ（Phase A / epic #46 — dual-run 期間中）
 
 > 📌 正本は引き続き `data/*.json`。DB は expand-and-contract 移行の併走側であり、正本切替は別途 Approval PR で行う（設計正本: `docs/epic-detailed-design-q4.md`）。
+>
+> 🚨 **2026-09-13 実測による重要警告 — DB 接続先が実環境と一致していない**
+>
+> - 本文書が記載してきた **Neon（project `global-civil-api-catalog` / `billowing-cloud-38872160`）は稼働していない**。
+>   本番 `~/.config/global-civil-api-catalog/api.env` の `CATALOG_DATABASE_URL` は
+>   `ep-spring-dust-aw25w51h…/neondb` を指したままで、実測すると
+>   `password authentication failed for user 'neondb_owner'`（Neon 側でパスワードがローテーション済み）。
+> - 一方、本番 origin の **ローカル PostgreSQL 16.14**（`127.0.0.1:5432` / DB `global_civil_api_catalog`）は
+>   正常に稼働し、`catalog_entries` 50件・`verification_results` 30件・`entry_workflow` 50件・
+>   `local_users` 1件を保持している（PostGIS 有効、`alembic current` は head）。
+> - したがって現状 **api_v1 の DB アクセス（書込層・RBAC・監査）は停止している**。
+>   読取は `data/*.json` を配信する Web UI 層のみが生きている。
+> - 復旧は「接続先をローカル PostgreSQL へ切り替える」か「Neon の現行資格情報を再取得する」の
+>   いずれかであり、**どちらを正とするかは運用判断が必要**（未決）。
+>   手順と影響は `docs/backup-restore.md` §5 を参照。
+> - 監視は本件を検知できていなかった。DB 到達不能時に `/api/v1/health` が
+>   200 を返していたためである。現在は **503 + `status=degraded`** を返すよう修正済み
+>   （`scripts/health_check.py` が `HEALTH: DEGRADED` を出力し exit=1）。
+>
+> ⚠️ 以下の記述のうち Neon を前提とする部分は、上記の是正が完了するまで**現状と一致しない**。
 
-- 🐘 DB: Neon PostgreSQL + PostGIS（project: `global-civil-api-catalog` / `billowing-cloud-38872160`、dev 用。接続文字列は Secret 管理 — リポジトリ・ログへ書かない）
+- 🐘 DB（**是正後の想定**）: ローカル PostgreSQL 16.14 + PostGIS（DB `global_civil_api_catalog`、接続文字列は Secret 管理 — リポジトリ・ログへ書かない）。旧: Neon PostgreSQL（稼働停止中）
+- 🗄️ 旧: Neon PostgreSQL + PostGIS（project: `global-civil-api-catalog` / `billowing-cloud-38872160`、dev 用）— **現在は認証失敗により使用不可**
 - 📦 依存導入: `pip install -e ".[db]"`（既定の静的サイト・バッチは従来どおり stdlib のみで動作）
 - 🧬 スキーマ適用: `CATALOG_DATABASE_URL=... python -m alembic upgrade head`（rollback は `alembic downgrade base`）
 - 🔁 データ投入 + 照合: `CATALOG_DATABASE_URL=... python scripts/migrate_json_to_db.py`（冪等 upsert + field-by-field round-trip 検証。`--verify-only` で照合のみ）

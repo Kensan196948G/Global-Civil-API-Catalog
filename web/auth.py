@@ -76,6 +76,11 @@ MIN_PASSWORD_LENGTH = 12
 MAX_FAILED_LOGINS = 5
 LOCKOUT_WINDOW = timedelta(minutes=15)
 
+# ``CATALOG_ENV`` values in which the demo auth bypass may be armed. This is an
+# allow-list on purpose: an unset or unrecognised environment must never
+# disable authentication (see auth_bypass_enabled).
+AUTH_BYPASS_ENVS = frozenset({"development", "demo"})
+
 
 def auth_mode() -> str:
     """``local`` (username/password) or ``oidc`` (Entra ID).
@@ -241,12 +246,18 @@ def _revalidate_local_session(db: Session, session: UserSession) -> UserSession 
 def auth_bypass_enabled() -> bool:
     """MVP 公開デモ用のログイン認証バイパスが有効かどうか。
 
-    CATALOG_AUTH_BYPASS=true のときだけ有効。さらに CATALOG_ENV が
-    "production" の場合は設定値によらず必ず無効にする（安全装置）。
+    ``CATALOG_AUTH_BYPASS=true`` に加えて、``CATALOG_ENV`` が
+    :data:`AUTH_BYPASS_ENVS` に**明示的に**含まれる場合のみ有効にする。
+
+    安全側（fail-closed）の許可リスト方式であることが重要。以前は
+    「``CATALOG_ENV`` が ``production`` でなければ有効」という拒否リスト
+    方式だったため、``CATALOG_ENV`` が未設定・別名（``prod`` / ``stg``）・
+    大文字小文字違い・末尾空白のいずれでもバイパスが成立してしまった。
+    認証を無効化するスイッチの既定は「無効」でなければならない。
     """
     if os.environ.get("CATALOG_AUTH_BYPASS", "").strip().lower() != "true":
         return False
-    return os.environ.get("CATALOG_ENV", "").strip().lower() != "production"
+    return os.environ.get("CATALOG_ENV", "").strip().lower() in AUTH_BYPASS_ENVS
 
 
 def _bypass_session() -> UserSession:

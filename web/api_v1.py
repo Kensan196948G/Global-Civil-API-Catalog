@@ -362,14 +362,31 @@ def metadata(session: Session = Depends(get_session)) -> dict[str, Any]:
 
 
 @app.get("/api/v1/health")
-def health(session: Session = Depends(get_session)) -> dict[str, str]:
-    """DB-aware health probe for load balancers and monitoring runbooks."""
+def health(response: Response, session: Session = Depends(get_session)) -> dict[str, str]:
+    """DB-aware health probe for load balancers and monitoring runbooks.
+
+    Returns **503** with ``status: "degraded"`` when the database is
+    unreachable. Returning 200 in that case (the previous behaviour) made
+    every automated consumer — ``scripts/health_check.py``, uptime checks,
+    and the operation runbook — report success while the write layer was
+    completely dead. A health probe that cannot fail is not a health probe.
+
+    ``env`` and ``commit`` are reported so a probe can tell *which* build is
+    answering; they are non-secret and come from the environment.
+    """
+    environment = os.environ.get("CATALOG_ENV", "").strip() or "unknown"
+    commit = os.environ.get("CATALOG_COMMIT", "").strip() or "unknown"
     try:
         session.execute(text("SELECT 1"))
-        database = "ok"
     except Exception:  # noqa: BLE001 - health must report, not raise.
-        database = "unavailable"
-    return {"status": "ok", "database": database}
+        response.status_code = 503
+        return {
+            "status": "degraded",
+            "database": "unavailable",
+            "env": environment,
+            "commit": commit,
+        }
+    return {"status": "ok", "database": "ok", "env": environment, "commit": commit}
 
 
 MAX_TRY_BYTES = 64 * 1024
