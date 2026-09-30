@@ -3463,7 +3463,7 @@
     "trust_rank": "A",
     "connection_priority": 4,
     "business_fit_score": 73,
-    "integration_score": 100,
+    "integration_score": 90,
     "risk_note": "高頻度アクセスは禁止。キャッシュと利用制限を守る。",
     "target_projects": [
       "Civil Open Data Intelligence Platform"
@@ -3491,35 +3491,33 @@
         ]
       },
       "integration": {
-        "score": 100,
+        "score": 90,
         "factors": [
           "APIキー(not_required) +30",
           "認証方式(none) +15",
           "扱いやすい形式(JSON/タイル等) +20",
           "具体的サンプルエンドポイント +15",
-          "公式ドキュメントあり +10",
-          "実接続検証 成功 +10"
+          "公式ドキュメントあり +10"
         ]
       },
       "trust": {
-        "score": 100,
+        "score": 90,
         "rank": "A",
         "factors": [
           "公的/国際/公式/財団 提供元 +30",
           "公式ドキュメントあり +20",
           "ライセンス明記 +20",
           "更新頻度あり +10",
-          "データ形式あり +10",
-          "実接続検証 成功 +10"
+          "データ形式あり +10"
         ]
       },
       "priority": {
-        "score": 79.3,
+        "score": 74.3,
         "rank": 4,
         "factors": [
-          "信頼度 100×0.30",
+          "信頼度 90×0.30",
           "事業適合度 73×0.35",
-          "連携実装性 100×0.20",
+          "連携実装性 90×0.20",
           "対象案件 25×0.15"
         ]
       }
