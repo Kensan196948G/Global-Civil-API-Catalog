@@ -422,13 +422,26 @@
       <p>このページに表示している「使用許諾条件」はそのデータの最新版のものとなります。旧版では使用許諾条件が異なることがありますので、必ず使用する版の使用許諾条件をご確認ください。</p>
 
       <div class="card-panel cyan darken-1 contents-card__index">
-        <span class="white-text" id="contents-tile__new">新着データ（2026年5月時点）</span>
+        <span class="white-text" id="contents-tile__new">新着データ（2026年9月時点）</span>
       </div>
 
       <div class="row">
         <div class="col s6 m4 l3">
-          <a href="../ksj/gml/datalist/KsjTmplt-A31a-2025.html">
+          <a href="../ksj/gml/datalist/KsjTmplt-L02-2026.html">
             <span class="new badge red badge__ksj-new"></span>
+            <div class="card contents-card_main hoverable">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img src="">
+              </div>
+              <div class="card-content">
+                <span class=" grey-text text-darken-4 ksj-card_text">都道府県地価調査</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col s6 m4 l3">
+          <a href="../ksj/gml/datalist/KsjTmplt-A31a-2025.html">
+            <!-- <span class="new badge red badge__ksj-new"></span> -->
             <div class="card contents-card_main hoverable">
               <div class="card-image waves-effect waves-block waves-light">
                 <img src="">
@@ -441,7 +454,7 @@
         </div>
         <div class="col s6 m4 l3">
           <a href="../ksj/gml/datalist/KsjTmplt-A31b-2025.html">
-            <span class="new badge red badge__ksj-new"></span>
+            <!-- <span class="new badge red badge__ksj-new"></span> -->
             <div class="card contents-card_main hoverable">
               <div class="card-image waves-effect waves-block waves-light">
                 <img src="">
@@ -452,7 +465,7 @@
             </div>
           </a>
         </div>
-        <div class="col s6 m4 l3">
+        <!-- <div class="col s6 m4 l3">
           <a href="../ksj/gml/datalist/KsjTmplt-A03-2025.html">
             <span class="new badge red badge__ksj-new"></span>
             <div class="card contents-card_main hoverable">
@@ -597,7 +610,7 @@
         </div>
         <div class="col s6 m4 l3">
           <a href="../ksj/gml/datalist/KsjTmplt-N13-2024.html">
-            <!-- <span class="new badge red badge__ksj-new"></span> -->
+            <span class="new badge red badge__ksj-new"></span>
             <div class="card contents-card_main hoverable">
               <div class="card-image waves-effect waves-block waves-light">
                 <img src="">
@@ -608,7 +621,6 @@
             </div>
           </a>
         </div>
-        <!--
         <div class="col s6 m4 l2">
           <a href="../ksj/gml/datalist/KsjTmplt-G09-2026.html">
            <span class="new badge red badge__ksj-new"></span>
@@ -621,11 +633,11 @@
               </div>
             </div>
           </a>
-        </div> -->
+        </div>
 
         <div class="col s6 m4 l3">
           <a href="../ksj/gml/datalist/KsjTmplt-L01-2026.html">
-            <!-- <span class="new badge red badge__ksj-new"></span> -->
+            <span class="new badge red badge__ksj-new"></span>
             <div class="card contents-card_main hoverable">
               <div class="card-image waves-effect waves-block waves-light">
                 <img src="">
@@ -634,8 +646,8 @@
                 <span class=" grey-text text-darken-4 ksj-card_text">地価公示データ</span>
               </div>
             </div>
-          </a>
-        </div>
+          </a> 
+      </div> -->
       </div>
 
       <div class="card-panel cyan darken-1 contents-card__index">
@@ -1137,9 +1149,9 @@
                     <div class="col s6">
                       <ul class="collection">
                         <li class="collection-item">
-                          <span class="new badge red badge__ksj-new"></span>
+                          <!-- <span class="new badge red badge__ksj-new"></span> -->
                           <a href="./gml/datalist/KsjTmplt-A45-2024.html">
-                            &emsp;&emsp;&emsp;国有林野（ポリゴン）（ライン）
+                            国有林野（ポリゴン）（ライン）
                           </a>
                           <i class="iconset material-icons green-text">stop</i>
                           <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
@@ -1192,9 +1204,9 @@
                     <div class="col s6">
                       <ul class="collection">
                         <li class="collection-item">
-                          <!-- <span class="new badge red badge__ksj-new"></span> -->
-                          <a href="./gml/datalist/KsjTmplt-L02-2025.html">
-                            都道府県地価調査（ポイント）
+                          <span class="new badge red badge__ksj-new"></span>
+                          <a href="./gml/datalist/KsjTmplt-L02-2026.html">
+                            &emsp;&emsp;&emsp;都道府県地価調査（ポイント）
                           </a>
                           <i class="iconset material-icons green-text">stop</i>
                           <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
@@ -1229,9 +1241,9 @@
                     <div class="col s6">
                       <ul class="collection">
                         <li class="collection-item">
-                          <span class="new badge red badge__ksj-new"></span>
+                          <!-- <span class="new badge red badge__ksj-new"></span> -->
                           <a href="./gml/datalist/KsjTmplt-N03-2026.html">
-                            &emsp;&emsp;&emsp;行政区域（ポリゴン）
+                            行政区域（ポリゴン）
                           </a>
                           <i class="iconset material-icons green-text">stop</i>
                           <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
@@ -1340,24 +1352,10 @@
                     <div class="col s6">
                       <ul class="collection">
                         <li class="collection-item">
-                          <span class="new badge red badge__ksj-new"></span>
+                          <!-- <span class="new badge red badge__ksj-new"></span> -->
                           <a href="./gml/datalist/KsjTmplt-A56-2025.html">
-                            &emsp;&emsp;&emsp;宅地造成等工事規制区域・特定盛土等規制区域（ポリゴン）
+                            宅地造成等工事規制区域・特定盛土等規制区域（ポリゴン）
                           </a>
                           <i class="iconset material-icons green-text">stop</i>
                           <a href="https://nlftp.mlit.go.jp/ksj/other/agreement_01.html">CC_BY_4.0</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div class="row paddingAll">
-                    <div class="card-panel blue lighten-1">
-                      <span class="white-text" id="collapsible-body__toshikeikaku">
-                        都市計画決定情報
-                      </span>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col s6">
-                      <ul class="collection
+                      
