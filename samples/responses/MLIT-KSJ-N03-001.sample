@@ -355,8 +355,7 @@
                                             （2025年（令和7年）1月1日時点）<br>
                                             「数値地図（国土基本情報）」の行政区画データから整備しました。必要に応じて、国土地理院の「地理院タイル」及び総務省の「全国地方公共団体コード一覧」を参照しました。<br>
                                             <br>
-											「測量法に基づく国土地理院長承認（複製）R 6JHf 503」<br>
-											「本製品を複製する場合には、国土地理院の長の承認を得なければなりません。」
+											「測量法に基づく国土地理院長承認（複製）R 6JHf 503」
                                         </p>
                                     </td>
                                 </tr>
@@ -364,8 +363,7 @@
                                     <th><a href="/ksj/other/agreement_01.html" target="_blank">このデータの使用許諾条件</a>
                                     </th>
                                     <td>
-                                        オープンデータ（CC_BY_4.0）<br>
-                                        ※本データを二次利用する場合には、国土地理院に申請等必要な場合があります。
+                                        オープンデータ（CC_BY_4.0）
                                     </td>
                                 </tr>
                                 <tr>
@@ -1096,4 +1094,10 @@
 					   </td>
 					</tr>
 					<tr>
-					   <td class="bgc
+					   <td class="bgc1" id="prefecture01">北海道</td>
+					   <td class="txtCenter">世界測地系</td>
+					   <td class="txtCenter">2022年（令和4年）</td>
+					   <td class="txtCenter">82.6MB</td>
+					   <td class="txtCenter">N03-20220101_01_GML.zip</td>
+					   <td class="txtCenter">
+	
