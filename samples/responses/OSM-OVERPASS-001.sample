@@ -1,18 +1,16 @@
-{
-  "version": 0.6,
-  "generator": "Overpass API 0.7.62.11 87bfad18",
-  "osm3s": {
-    "timestamp_osm_base": "2026-08-12T11:42:35Z",
-    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
-  },
-  "elements": [
+# 502 Gateway Timeout
 
-{
-  "type": "node",
-  "id": 207614750,
-  "lat": 35.6840423,
-  "lon": 139.7605136
-}
+This Overpass API server is currently at capacity. All query workers are busy
+and the request queue is full.
 
-  ]
-}
+## What to do
+
+Retry your request using exponential backoff: wait a short interval, then retry.
+If the request fails again, double the wait time and retry again.
+
+## For heavy or automated use
+
+This public endpoint is intended for browser-based and human-operated tools.
+For automated or high-volume use, run a local Overpass API instance:
+
+https://github.com/b1tw153/Overpass-API/blob/main/README.md
